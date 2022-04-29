@@ -4,11 +4,14 @@
 
 <div align="center">
 
-  <h2>📈</h2>
-  <h2>react-native-graph</h2>
-  <img src="./img/demo.gif" align="center" width="35%">
+  <h1>
+    📈 <br/>
+    react-native-graph <br/> <br/>
+    <img src="./img/demo.gif" align="center" width="35%">
+  </h1>
 
-  <p>Beautiful, high-performance Graphs/Charts for React Native.</p>
+
+  <b>Beautiful, high-performance Graphs/Charts for React Native.</b>
 
 </div>
 
