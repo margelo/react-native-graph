@@ -46,6 +46,8 @@ Example:
 
 ### `enablePanGesture`
 
+<img src="./img/pan.gif" align="right" height="250" />
+
 Whether to enable the pan gesture.
 
 >  Requires `animated` to be `true`.
@@ -55,8 +57,6 @@ There are three events fired when the user interacts with the graph:
 1. `onGestureStart`: Fired once the user presses and holds down on the graph. The pan gesture _activates_.
 2. `onPointSelected`: Fired for each point the user pans through. You can use this event to update labels or highlight selection in the graph.
 3. `onGestureEnd`: Fired once the user releases his finger and the pan gesture _deactivates_.
-
-<img src="./img/pan.gif" align="right" height="250" />
 
 Example:
 
@@ -73,13 +73,13 @@ Example:
 
 ### `TopAxisLabel` / `BottomAxisLabel`
 
+<img src="./img/label.png" align="right" height="250" />
+
 Used to render labels above or below the Graph.
 
 >  Requires `animated` to be `true`.
 
 Usually this is used to render the maximum and minimum values of the Graph. You can get the maximum and minimum values from your graph points array, and smoothly animate the labels on the X axis accordingly.
-
-<img src="./img/label.png" align="right" height="250" />
 
 Example:
 
@@ -94,11 +94,11 @@ Example:
 
 ### `selectionDotShadowColor`
 
+<img src="./img/selection-dot.jpeg" align="right" height="250" />
+
 The color of the selection dot.
 
 >  Requires `animated` and `enablePanGesture` to be `true`.
-
-<img src="./img/selection-dot.jpeg" align="right" height="250" />
 
 Example:
 
