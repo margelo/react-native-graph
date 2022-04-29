@@ -1,6 +1,7 @@
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { useColors } from '../hooks/useColors'
 
 interface Props {
   title: string
@@ -9,9 +10,13 @@ interface Props {
 }
 
 export function Toggle({ title, isEnabled, setIsEnabled }: Props) {
+  const colors = useColors()
+
   return (
     <View style={styles.row}>
-      <Text style={styles.toggleText}>{title}</Text>
+      <Text style={[styles.toggleText, { color: colors.foreground }]}>
+        {title}
+      </Text>
 
       <View style={styles.spacer} />
 
