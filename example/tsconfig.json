@@ -1,0 +1,16 @@
+
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "paths": {
+      "react-native-graph": ["../src/index"]
+    },
+  },
+  "include": [
+    "src",
+    "index.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
