@@ -10,22 +10,13 @@ Beautiful, high-performance Graphs/Charts for React Native.
 
 ## Installation
 
-1. Install [react-native-reanimated (v2)](https://github.com/software-mansion/react-native-reanimated)
-    ```sh
-    yarn add react-native-reanimated
-    ```
-2. Install [react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler)
-    ```sh
-    yarn add react-native-gesture-handler
-    ```
-3. Install [@shopify/react-native-skia](https://github.com/Shopify/react-native-skia)
-    ```sh
-    yarn add @shopify/react-native-skia
-    ```
-4. Install **react-native-graph**
-    ```sh
-    yarn add react-native-graph
-    ```
+
+<pre>
+yarn add <a href="https://github.com/software-mansion/react-native-reanimated">react-native-reanimated</a>
+yarn add <a href="https://github.com/software-mansion/react-native-gesture-handler">react-native-gesture-handler</a>
+yarn add <a href="https://github.com/Shopify/react-native-skia">@shopify/react-native-skia</a>
+yarn add <b>react-native-graph</b>
+</pre>
 
 ## Usage
 
