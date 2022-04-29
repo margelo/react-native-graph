@@ -50,6 +50,7 @@ export function GraphPage() {
         points={points}
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
+        onGestureStart={() => hapticFeedback('impactLight')}
       />
 
       <Button title="Refresh" onPress={refreshData} />
