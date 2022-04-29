@@ -1,27 +1,24 @@
-# react-native-graph
+<a href="https://margelo.io">
+  <img src="./img/banner.svg" width="100%" />
+</a>
 
-📈 Beautiful, high-performance Graphs and Charts for React Native
+# 📈 react-native-graph
+
+Beautiful, high-performance Graphs/Charts for React Native.
 
 ## Installation
 
 ```sh
-npm install react-native-graph
+yarn add @shopify/react-native-skia
+yarn add react-native-graph
 ```
 
 ## Usage
 
 ```js
-import { multiply } from "react-native-graph";
-
 // ...
-
-const result = await multiply(3, 7);
 ```
 
-## Contributing
+## Adopting at scale
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
-
-## License
-
-MIT
+react-native-graph was built at Margelo, an elite app development agency. For enterprise support or other business inquiries, contact us at <a href="mailto:hello@margelo.io?subject=Adopting react-native-graph at scale">hello@margelo.io</a>!
