@@ -17,7 +17,7 @@ export function GraphPage() {
 
   const [isAnimated, setIsAnimated] = useState(true)
   const [enablePanGesture, setEnablePanGesture] = useState(true)
-  const [enableFadeInEffect, setEnableFadeInEffect] = useState(true)
+  const [enableFadeInEffect, setEnableFadeInEffect] = useState(false)
 
   const [points, setPoints] = useState(() => generateRandomGraphData(POINTS))
   const smallPoints = generateSinusGraphData(9)
