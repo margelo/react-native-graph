@@ -2,7 +2,7 @@
   <img src="./img/banner.svg" width="100%" />
 </a>
 
-<img src="./img/change.gif" align="right">
+<img src="./img/change.gif" align="right" width="35%">
 
 # 📈 react-native-graph
 
@@ -27,8 +27,6 @@ function App() {
 
 ### `animated`
 
-<img src="./img/change.gif" align="right">
-
 Whether to animate between changes.
 
 Example:
@@ -40,9 +38,9 @@ Example:
 />
 ```
 
-### `enablePanGesture`
+<img src="./img/change.gif">
 
-<img src="./img/pan.gif" align="right">
+### `enablePanGesture`
 
 Whether to enable the pan gesture.
 
@@ -51,6 +49,20 @@ There are three events fired when the user interacts with the graph:
 1. `onGestureStart`: Fired once the user presses and holds down on the graph. The pan gesture _activates_.
 2. `onPointSelected`: Fired for each point the user pans through. You can use this event to update labels or highlight selection in the graph.
 3. `onGestureEnd`: Fired once the user releases his finger and the pan gesture _deactivates_.
+
+Example:
+
+```jsx
+<LineGraph
+  points={priceHistory}
+  enablePanGesture={true}
+  onGestureStart={() => hapticFeedback('impactLight')}
+  onPointSelected={(p) => updatePriceTitle(p)}
+  onGestureEnd={() => resetPriceTitle()}
+/>
+```
+
+<img src="./img/pan.gif">
 
 ## Adopting at scale
 
