@@ -31,7 +31,9 @@ function App() {
 
 <img src="./img/change.gif" align="right" height="250" />
 
-Whether to animate between changes.
+Whether to animate between data changes.
+
+Animations are ran using the [Skia animation system](https://shopify.github.io/react-native-skia/docs/animations/animations) and are fully natively interpolated to ensure best possible performance.
 
 Example:
 
@@ -46,6 +48,8 @@ Example:
 
 Whether to enable the pan gesture.
 
+>  Requires `animated` to be `true`.
+
 There are three events fired when the user interacts with the graph:
 
 1. `onGestureStart`: Fired once the user presses and holds down on the graph. The pan gesture _activates_.
@@ -59,10 +63,32 @@ Example:
 ```jsx
 <LineGraph
   points={priceHistory}
+  animated={true}
   enablePanGesture={true}
   onGestureStart={() => hapticFeedback('impactLight')}
   onPointSelected={(p) => updatePriceTitle(p)}
   onGestureEnd={() => resetPriceTitle()}
+/>
+```
+
+### `TopAxisLabel` / `BottomAxisLabel`
+
+Used to render labels above or below the Graph.
+
+>  Requires `animated` to be `true`.
+
+Usually this is used to render the maximum and minimum values of the Graph. You can get the maximum and minimum values from your graph points array, and smoothly animate the labels on the X axis accordingly.
+
+<img src="./img/label.png" align="right" height="250" />
+
+Example:
+
+```jsx
+<LineGraph
+  points={priceHistory}
+  animated={true}
+  TopAxisLabel={() => <AxisLabel x={max.x} value={max.value} />}
+  BottomAxisLabel={() => <AxisLabel x={min.x} value={min.value} />}
 />
 ```
 
