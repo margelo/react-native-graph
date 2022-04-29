@@ -22,7 +22,7 @@ export function GraphPage() {
   }, [])
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.row}>
         <Text style={[styles.title, { color: colors.foreground }]}>
           react-native-graph
