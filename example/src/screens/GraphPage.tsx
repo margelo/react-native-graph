@@ -6,8 +6,9 @@ import {
   generateSinusGraphData,
 } from '../data/GraphData'
 import { useColors } from '../hooks/useColors'
+import { hapticFeedback } from '../utils/HapticFeedback'
 
-const POINTS = 180
+const POINTS = 70
 
 export function GraphPage() {
   const colors = useColors()
@@ -17,6 +18,7 @@ export function GraphPage() {
 
   const refreshData = useCallback(() => {
     setPoints(generateRandomGraphData(POINTS))
+    hapticFeedback('impactLight')
   }, [])
 
   return (

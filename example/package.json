@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@shopify/react-native-skia": "^0.1.123",
+    "@types/gaussian": "^1.2.0",
+    "gaussian": "^1.2.0",
     "react": "^17.0.2",
     "react-native": "^0.67.4",
     "react-native-gesture-handler": "^2.4.1",
