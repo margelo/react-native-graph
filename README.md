@@ -92,6 +92,25 @@ Example:
 />
 ```
 
+### `selectionDotShadowColor`
+
+The color of the selection dot.
+
+>  Requires `animated` and `enablePanGesture` to be `true`.
+
+<img src="./img/selection-dot.jpeg" align="right" height="250" />
+
+Example:
+
+```jsx
+<LineGraph
+  points={priceHistory}
+  animated={true}
+  enablePanGesture={true}
+  selectionDotShadowColor="#333333"
+/>
+```
+
 ## Adopting at scale
 
 react-native-graph was built at Margelo, an elite app development agency. For enterprise support or other business inquiries, contact us at <a href="mailto:hello@margelo.io?subject=Adopting react-native-graph at scale">hello@margelo.io</a>!
