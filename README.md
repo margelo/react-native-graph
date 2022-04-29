@@ -15,7 +15,7 @@
 
 ## About
 
-**react-native-graph** is a Line Graph implementation based on the high performance 2D graphics rendering engine "Skia".
+**react-native-graph** is a Line Graph implementation based on the high performance 2D graphics rendering engine "Skia". It's used in the [Pink Panda Wallet app](https://pinkpanda.io) to power thousands of token graphs every day.
 
 * 🏎️ Faster and smoother than react-native-svg graphs
 * ⚡️ Native path interpolation in Skia
