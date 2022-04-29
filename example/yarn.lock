@@ -920,6 +920,11 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@react-native-segmented-control/segmented-control@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-segmented-control/segmented-control/-/segmented-control-2.4.0.tgz#0a88f22ad2c0fe07ecc002ee1e5d62c55a3dd0ae"
+  integrity sha512-2s1AaT6xk/Do5s6u7ioCXucqesAt02NQlLKBOM28dJWI7PTH9o89x6AwsGHIeMkTe4nQ6iENiJKzO7Y3SGG9Ew==
+
 "@react-native/assets@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@react-native/assets/-/assets-1.0.0.tgz#c6f9bf63d274bafc8e970628de24986b30a55c8e"
@@ -3498,6 +3503,11 @@ react-native-reanimated@^2.8.0:
     lodash.isequal "^4.5.0"
     setimmediate "^1.0.5"
     string-hash-64 "^1.0.3"
+
+react-native-static-safe-area-insets@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-static-safe-area-insets/-/react-native-static-safe-area-insets-2.1.1.tgz#394a3510c7029288895bbaccf1dadf4fa46c4b88"
+  integrity sha512-NUSRNZp+0IJOuLeoHoU4kw/cY9g7ozUo2ApCbJAiPyYbkbv49S8gdAcZRkeR0nqwzFDA07sCZCbPI03iEV0RTQ==
 
 react-native@^0.67.4:
   version "0.67.4"

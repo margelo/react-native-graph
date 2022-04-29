@@ -209,6 +209,8 @@ PODS:
   - React-jsinspector (0.67.4)
   - React-logger (0.67.4):
     - glog
+  - react-native-segmented-control (2.4.0):
+    - React-Core
   - react-native-skia (0.1.123):
     - React
     - React-callinvoker
@@ -334,6 +336,8 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNStaticSafeAreaInsets (2.1.1):
+    - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -356,6 +360,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-segmented-control (from `../node_modules/@react-native-segmented-control/segmented-control`)"
   - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -372,6 +377,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
+  - RNStaticSafeAreaInsets (from `../node_modules/react-native-static-safe-area-insets`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -413,6 +419,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-segmented-control:
+    :path: "../node_modules/@react-native-segmented-control/segmented-control"
   react-native-skia:
     :path: "../node_modules/@shopify/react-native-skia"
   React-perflogger:
@@ -445,6 +453,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
+  RNStaticSafeAreaInsets:
+    :path: "../node_modules/react-native-static-safe-area-insets"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -467,6 +477,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: cbdf37cebdc4f5d8b3d0bf5ccaa6147fd9de9f3d
   React-jsinspector: f4775ea9118cbe1f72b834f0f842baa7a99508d8
   React-logger: a1f028f6d8639a3f364ef80419e5e862e1115250
+  react-native-segmented-control: 06607462630512ff8eef652ec560e6235a30cc3e
   react-native-skia: 8a3e1b513020e2c9b0b4e49404f396d2a88f9ac7
   React-perflogger: 0afaf2f01a47fd0fc368a93bfbb5bd3b26db6e7f
   React-RCTActionSheet: 59f35c4029e0b532fc42114241a06e170b7431a2
@@ -483,6 +494,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 4f4986408310a43f1606c391f38f76e0d6e790d5
   RNReactNativeHapticFeedback: 4085973f5a38b40d3c6793a3ee5724773eae045e
   RNReanimated: 46cdb89ca59ab7181334f4ed05a70e82ddb36751
+  RNStaticSafeAreaInsets: 6103cf09647fa427186d30f67b0f5163c1ae8252
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
 
 PODFILE CHECKSUM: be163226dbc2f7c5e09bb61978faea763076f02a

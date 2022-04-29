@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { View, StyleSheet, Text, Button } from 'react-native'
 import { LineGraph } from 'react-native-graph'
+import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
 import {
   generateRandomGraphData,
   generateSinusGraphData,
@@ -35,6 +36,8 @@ export function GraphPage() {
         />
       </View>
 
+      <View style={styles.spacer} />
+
       <LineGraph
         style={styles.graph}
         animated={true}
@@ -51,8 +54,12 @@ export function GraphPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 15,
+    paddingTop: StaticSafeAreaInsets.safeAreaInsetsTop,
+    paddingBottom: StaticSafeAreaInsets.safeAreaInsetsBottom,
+  },
+  spacer: {
+    flexGrow: 1,
   },
   row: {
     flexDirection: 'row',

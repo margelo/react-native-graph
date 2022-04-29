@@ -9,6 +9,7 @@
     "start": "react-native start"
   },
   "dependencies": {
+    "@react-native-segmented-control/segmented-control": "^2.4.0",
     "@shopify/react-native-skia": "^0.1.123",
     "@types/gaussian": "^1.2.0",
     "gaussian": "^1.2.0",
@@ -17,7 +18,8 @@
     "react-native-gesture-handler": "^2.4.1",
     "react-native-haptic-feedback": "^1.13.1",
     "react-native-pressable-scale": "^1.0.6",
-    "react-native-reanimated": "^2.8.0"
+    "react-native-reanimated": "^2.8.0",
+    "react-native-static-safe-area-insets": "^2.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
