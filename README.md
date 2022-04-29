@@ -10,10 +10,20 @@
     <img src="./img/demo.gif" align="center" width="35%">
   </h1>
 
-
   <b>Beautiful, high-performance Graphs/Charts for React Native.</b>
-
 </div>
+
+## About
+
+**react-native-graph** is a Line Graph implementation based on the high performance 2D graphics rendering engine "Skia".
+
+* 🏎️ Faster and smoother than react-native-svg graphs
+* ⚡️ Native path interpolation in Skia
+* 🐎 Up to 120 FPS animations
+* 📈 Cubic bezier rendering for smoother edges
+* 👍 Smooth pan/scrubbing gesture
+* 💰 Made for crypto apps and Wallets
+* ❌ Does not block navigation, press or scroll animations
 
 ## Installation
 
@@ -127,6 +137,14 @@ Example:
   selectionDotShadowColor="#333333"
 />
 ```
+
+## Sponsor
+
+<img src="./img/pinkpanda.png" align="right" height="50">
+
+**react-native-graph** is sponsored by [Pink Panda](https://pinkpanda.io).
+
+Download the Pink Panda mobile app to see react-native-graph in action!
 
 ## Adopting at scale
 
