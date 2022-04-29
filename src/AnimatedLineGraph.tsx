@@ -167,22 +167,20 @@ export function AnimatedLineGraph({
 
   const setFingerX = useCallback(
     (fingerX: number) => {
-      if (isActive.value) {
-        const y = getYForX(commands.current, fingerX)
+      const y = getYForX(commands.current, fingerX)
 
-        if (y != null) {
-          circleY.current = y
-          circleX.current = fingerX
-        }
-        pathEnd.current = fingerX / width
-
-        const index = Math.round((fingerX / width) * points.length)
-        const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
-        const dataPoint = points[Math.round(pointIndex)]
-        if (dataPoint != null) onPointSelected?.(dataPoint)
+      if (y != null) {
+        circleY.current = y
+        circleX.current = fingerX
       }
+      pathEnd.current = fingerX / width
+
+      const index = Math.round((fingerX / width) * points.length)
+      const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
+      const dataPoint = points[Math.round(pointIndex)]
+      if (dataPoint != null) onPointSelected?.(dataPoint)
     },
-    [circleX, circleY, isActive, onPointSelected, pathEnd, points, width]
+    [circleX, circleY, onPointSelected, pathEnd, points, width]
   )
   const setIsActive = useCallback(
     (active: boolean) => {
