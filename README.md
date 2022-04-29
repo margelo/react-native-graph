@@ -1,6 +1,6 @@
 # react-native-graph
 
-PLACEHOLDER
+📈 Beautiful, high-performance Graphs and Charts for React Native
 
 ## Installation
 
