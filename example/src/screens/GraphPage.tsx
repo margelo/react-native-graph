@@ -37,6 +37,7 @@ export function GraphPage() {
         animated={true}
         color="#6a7ee7"
         points={points}
+        enablePanGesture={true}
       />
     </View>
   )
