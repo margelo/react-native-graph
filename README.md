@@ -2,11 +2,15 @@
   <img src="./img/banner.svg" width="100%" />
 </a>
 
-<img src="./img/change.gif" align="right" width="35%">
+<div align="center">
 
-# 📈 react-native-graph
+  <h2>📈</h2>
+  <h2>react-native-graph</h2>
+  <img src="./img/demo.gif" align="center" width="35%">
 
-Beautiful, high-performance Graphs/Charts for React Native.
+  <p>Beautiful, high-performance Graphs/Charts for React Native.</p>
+
+</div>
 
 ## Installation
 
