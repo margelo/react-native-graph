@@ -1,9 +1,14 @@
-import * as React from 'react';
-import {View, StyleSheet} from 'react-native'
+import React from 'react'
+import { View, StyleSheet, Text } from 'react-native'
 
 export function GraphPage() {
-  return <View />
+  return (
+    <View style={styles.container}>
+      <Text>react-native-graph</Text>
+    </View>
+  )
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -15,4 +20,4 @@ const styles = StyleSheet.create({
     height: 60,
     marginVertical: 20,
   },
-});
+})
