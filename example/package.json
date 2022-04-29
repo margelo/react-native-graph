@@ -9,8 +9,11 @@
     "start": "react-native start"
   },
   "dependencies": {
+    "@shopify/react-native-skia": "^0.1.123",
     "react": "16.13.1",
-    "react-native": "0.63.4"
+    "react-native": "0.63.4",
+    "react-native-gesture-handler": "^2.4.1",
+    "react-native-reanimated": "^2.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
