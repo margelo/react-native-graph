@@ -51,6 +51,7 @@ export function GraphPage() {
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
         onGestureStart={() => hapticFeedback('impactLight')}
+        selectionDotShadowColor={colors.foreground}
       />
 
       <Button title="Refresh" onPress={refreshData} />
