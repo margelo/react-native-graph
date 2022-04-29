@@ -1,6 +1,8 @@
 import type { Vector, PathCommand } from '@shopify/react-native-skia'
 import { PathVerb, vec } from '@shopify/react-native-skia'
 
+// code from William Candillon
+
 const round = (value: number, precision = 0): number => {
   const p = Math.pow(10, precision)
   return Math.round(value * p) / p
