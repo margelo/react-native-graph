@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { GraphPage } from './GraphPage'
+import { GraphPage } from './screens/GraphPage'
 
 export default function App() {
   return (

@@ -25,7 +25,7 @@
   "include": [
     "src",
     ".eslintrc.js",
-    "babel.config.js",
+    "babel.config.js", "example/src/components/GraphDisplayModeSelector.tsx",
   ],
   "exclude": [
     "node_modules",

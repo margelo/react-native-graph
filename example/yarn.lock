@@ -3426,6 +3426,11 @@ react-native-gesture-handler@^2.4.1:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
+react-native-pressable-scale@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-pressable-scale/-/react-native-pressable-scale-1.0.6.tgz#4a1c449dec813bc1d688a79600f0da4a2e7eafa8"
+  integrity sha512-rs8g2PBSpnxVI3hz2QqdT8kmau4aLJ8x7VcNII+YLQ5FgY7S+God0FeB7M9LVurHMoijraaqdB/XfhklcoBMCA==
+
 react-native-reanimated@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.8.0.tgz#93c06ca84d91fb3865110b0857c49a24e316130e"
