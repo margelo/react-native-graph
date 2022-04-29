@@ -128,11 +128,13 @@ export function AnimatedLineGraph({
       return [
         `${getSixDigitHex(color)}00`,
         `${getSixDigitHex(color)}ff`,
+        `${getSixDigitHex(color)}ff`,
         `${getSixDigitHex(color)}33`,
         `${getSixDigitHex(color)}33`,
       ]
     } else {
       return [
+        color,
         color,
         color,
         `${getSixDigitHex(color)}33`,
@@ -212,7 +214,13 @@ export function AnimatedLineGraph({
     [isActive, setIsActive]
   )
   const positions = useDerivedValue(
-    () => [0, pathEnd.current, pathEnd.current, 1],
+    () => [
+      0,
+      Math.min(0.15, pathEnd.current),
+      pathEnd.current,
+      pathEnd.current,
+      1,
+    ],
     [pathEnd]
   )
 
