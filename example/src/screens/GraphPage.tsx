@@ -17,6 +17,7 @@ export function GraphPage() {
 
   const [isAnimated, setIsAnimated] = useState(true)
   const [enablePanGesture, setEnablePanGesture] = useState(true)
+  const [enableFadeInEffect, setEnableFadeInEffect] = useState(true)
 
   const [points, setPoints] = useState(() => generateRandomGraphData(POINTS))
   const smallPoints = generateSinusGraphData(9)
@@ -48,6 +49,7 @@ export function GraphPage() {
         color="#6a7ee7"
         points={points}
         enablePanGesture={enablePanGesture}
+        enableFadeInMask={enableFadeInEffect}
       />
 
       <Button title="Refresh" onPress={refreshData} />
@@ -62,6 +64,11 @@ export function GraphPage() {
           title="Enable Gesture:"
           isEnabled={enablePanGesture}
           setIsEnabled={setEnablePanGesture}
+        />
+        <Toggle
+          title="Enable Fade-in effect:"
+          isEnabled={enableFadeInEffect}
+          setIsEnabled={setEnableFadeInEffect}
         />
       </View>
 
