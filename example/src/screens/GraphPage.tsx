@@ -1,22 +1,23 @@
-import React from 'react'
-import { View, StyleSheet, Text } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { View, StyleSheet, Text, Button } from 'react-native'
 import { LineGraph } from 'react-native-graph'
-import type { GraphPoint } from '../../../src/LineGraphProps'
+import {
+  generateRandomGraphData,
+  generateSinusGraphData,
+} from '../data/GraphData'
 import { useColors } from '../hooks/useColors'
 
-function generateRandomPoints(): GraphPoint[] {
-  return Array<number>(180)
-    .fill(0)
-    .map((v) => ({
-      date: new Date(v),
-      value: Math.random(),
-    }))
-}
+const POINTS = 180
 
 export function GraphPage() {
   const colors = useColors()
 
-  const points = generateRandomPoints()
+  const [points, setPoints] = useState(() => generateRandomGraphData(POINTS))
+  const smallPoints = generateSinusGraphData(9)
+
+  const refreshData = useCallback(() => {
+    setPoints(generateRandomGraphData(POINTS))
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -28,7 +29,7 @@ export function GraphPage() {
           style={styles.miniGraph}
           animated={false}
           color={colors.foreground}
-          points={points}
+          points={smallPoints}
         />
       </View>
 
@@ -39,6 +40,8 @@ export function GraphPage() {
         points={points}
         enablePanGesture={true}
       />
+
+      <Button title="Refresh" onPress={refreshData} />
     </View>
   )
 }
