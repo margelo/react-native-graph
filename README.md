@@ -2,6 +2,8 @@
   <img src="./img/banner.svg" width="100%" />
 </a>
 
+<img src="./img/change.gif" align="right">
+
 # 📈 react-native-graph
 
 Beautiful, high-performance Graphs/Charts for React Native.
