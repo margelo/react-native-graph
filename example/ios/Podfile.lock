@@ -305,6 +305,8 @@ PODS:
     - React-perflogger (= 0.67.4)
   - RNGestureHandler (2.4.1):
     - React-Core
+  - RNReactNativeHapticFeedback (1.13.1):
+    - React-Core
   - RNReanimated (2.8.0):
     - DoubleConversion
     - FBLazyVector
@@ -368,6 +370,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -438,6 +441,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   Yoga:
@@ -476,6 +481,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: a9d3c82ddf7ffdad9fbe6a81c6d6f8c06385464d
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
   RNGestureHandler: 4f4986408310a43f1606c391f38f76e0d6e790d5
+  RNReactNativeHapticFeedback: 4085973f5a38b40d3c6793a3ee5724773eae045e
   RNReanimated: 46cdb89ca59ab7181334f4ed05a70e82ddb36751
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
 

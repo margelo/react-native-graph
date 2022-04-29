@@ -3466,6 +3466,11 @@ react-native-gesture-handler@^2.4.1:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
+react-native-haptic-feedback@^1.13.1:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/react-native-haptic-feedback/-/react-native-haptic-feedback-1.13.1.tgz#f3b429732f1373b2b0f9d8a07e213feb59bc4d86"
+  integrity sha512-aP4AhnxMPnlMEeG0ZVit5+ji85mhzvqQjWkGuOpNwjlJuWJ7IkUvLv/H32+S+Kb41eAl78z9k3FG9waPmLv/IQ==
+
 react-native-pressable-scale@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/react-native-pressable-scale/-/react-native-pressable-scale-1.0.6.tgz#4a1c449dec813bc1d688a79600f0da4a2e7eafa8"
