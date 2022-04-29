@@ -7,7 +7,7 @@
   <h1>
     📈 <br/>
     react-native-graph <br/> <br/>
-    <img src="./img/demo.gif" align="center" width="35%">
+    <img src="./img/demo.gif" align="center" height="130">
   </h1>
 
   <b>Beautiful, high-performance Graphs/Charts for React Native.</b>
