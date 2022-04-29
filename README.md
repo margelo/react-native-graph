@@ -44,6 +44,8 @@ Example:
 />
 ```
 
+---
+
 ### `enablePanGesture`
 
 <img src="./img/pan.gif" align="right" height="250" />
@@ -71,6 +73,8 @@ Example:
 />
 ```
 
+---
+
 ### `TopAxisLabel` / `BottomAxisLabel`
 
 <img src="./img/label.png" align="right" height="250" />
@@ -91,6 +95,8 @@ Example:
   BottomAxisLabel={() => <AxisLabel x={min.x} value={min.value} />}
 />
 ```
+
+---
 
 ### `selectionDotShadowColor`
 
