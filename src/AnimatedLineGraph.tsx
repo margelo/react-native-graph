@@ -41,6 +41,9 @@ export function AnimatedLineGraph({
   TopAxisLabel,
   BottomAxisLabel,
   selectionDotShadowColor,
+  gestureHoldDuration = 300,
+  initialIndex,
+  resetPositionOnRelease,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -53,6 +56,7 @@ export function AnimatedLineGraph({
       setWidth(Math.round(layout.width))
       setHeight(Math.round(layout.height))
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
@@ -158,7 +162,9 @@ export function AnimatedLineGraph({
     [interpolateProgress]
   )
 
-  const { gesture, isActive, x } = useHoldOrPanGesture({ holdDuration: 300 })
+  const { gesture, isActive, x } = useHoldOrPanGesture({
+    holdDuration: gestureHoldDuration,
+  })
   const circleX = useValue(0)
   const circleY = useValue(0)
   const pathEnd = useValue(0)
@@ -193,17 +199,25 @@ export function AnimatedLineGraph({
         damping: 50,
         velocity: 0,
       })
-      if (!active) pathEnd.current = 1
+      if (!active && resetPositionOnRelease) pathEnd.current = 1
 
       if (active) onGestureStart?.()
       else onGestureEnd?.()
     },
-    [circleRadius, onGestureEnd, onGestureStart, pathEnd]
+    [
+      circleRadius,
+      onGestureEnd,
+      onGestureStart,
+      pathEnd,
+      resetPositionOnRelease,
+    ]
   )
   useAnimatedReaction(
-    () => x.value,
-    (fingerX) => {
-      runOnJS(setFingerX)(fingerX)
+    () => [x.value, isActive.value],
+    ([fingerX, isActiveValue]) => {
+      if (isActiveValue) {
+        runOnJS(setFingerX)(fingerX as number)
+      }
     },
     [isActive, setFingerX, width, x]
   )
@@ -215,15 +229,21 @@ export function AnimatedLineGraph({
     [isActive, setIsActive]
   )
   const positions = useDerivedValue(
-    () => [
-      0,
-      Math.min(0.15, pathEnd.current),
-      pathEnd.current,
-      pathEnd.current,
-      1,
-    ],
+    () => [0, pathEnd.current, pathEnd.current, pathEnd.current, 1],
     [pathEnd]
   )
+
+  useEffect(() => {
+    if (
+      typeof initialIndex === 'number' &&
+      initialIndex < points.length &&
+      width
+    ) {
+      const xForIndex = Math.round((initialIndex * width) / points.length)
+      setFingerX(xForIndex)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [points, initialIndex, width])
 
   return (
     <View {...props}>

@@ -62,6 +62,21 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The element that gets rendered below the Graph (usually the "min" point/value of the Graph)
    */
   BottomAxisLabel?: () => React.ReactElement | null
+
+  /**
+   * Hold duration for the graph gesture
+   */
+  gestureHoldDuration?: number
+
+  /**
+   * Initial index shown on the graph
+   */
+  initialIndex?: number
+
+  /**
+   * Wether to reset or not the circle position when releasing the gesture
+   */
+  resetPositionOnRelease?: boolean
 }
 
 export type LineGraphProps =
