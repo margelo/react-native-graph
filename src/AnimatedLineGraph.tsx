@@ -14,6 +14,7 @@ import {
   Group,
   Shadow,
   PathCommand,
+  useValueEffect,
 } from '@shopify/react-native-skia'
 import type { AnimatedLineGraphProps } from './LineGraphProps'
 import { createGraphPath } from './CreateGraphPath'
@@ -41,6 +42,8 @@ export function AnimatedLineGraph({
   TopAxisLabel,
   BottomAxisLabel,
   selectionDotShadowColor,
+  gestureHoldDuration = 300,
+  resetPositionOnRelease = true,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -158,7 +161,9 @@ export function AnimatedLineGraph({
     [interpolateProgress]
   )
 
-  const { gesture, isActive, x } = useHoldOrPanGesture({ holdDuration: 300 })
+  const { gesture, isActive, x } = useHoldOrPanGesture({
+    holdDuration: gestureHoldDuration,
+  })
   const circleX = useValue(0)
   const circleY = useValue(0)
   const pathEnd = useValue(0)
@@ -167,6 +172,15 @@ export function AnimatedLineGraph({
     () => circleRadius.current * 6,
     [circleRadius]
   )
+
+  useValueEffect(pathEnd, (pathEndValue) => {
+    const index = Math.round(pathEndValue * points.length)
+    const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
+    const dataPoint = points[Math.round(pointIndex)]
+    if (dataPoint != null && onPointSelected) {
+      runOnJS(onPointSelected)(dataPoint)
+    }
+  })
 
   const setFingerX = useCallback(
     (fingerX: number) => {
@@ -177,13 +191,8 @@ export function AnimatedLineGraph({
         circleX.current = fingerX
       }
       pathEnd.current = fingerX / width
-
-      const index = Math.round((fingerX / width) * points.length)
-      const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
-      const dataPoint = points[Math.round(pointIndex)]
-      if (dataPoint != null) onPointSelected?.(dataPoint)
     },
-    [circleX, circleY, onPointSelected, pathEnd, points, width]
+    [circleX, circleY, pathEnd, width]
   )
   const setIsActive = useCallback(
     (active: boolean) => {
@@ -193,17 +202,25 @@ export function AnimatedLineGraph({
         damping: 50,
         velocity: 0,
       })
-      if (!active) pathEnd.current = 1
+      if (!active && resetPositionOnRelease) pathEnd.current = 1
 
       if (active) onGestureStart?.()
       else onGestureEnd?.()
     },
-    [circleRadius, onGestureEnd, onGestureStart, pathEnd]
+    [
+      circleRadius,
+      onGestureEnd,
+      onGestureStart,
+      pathEnd,
+      resetPositionOnRelease,
+    ]
   )
   useAnimatedReaction(
-    () => x.value,
-    (fingerX) => {
-      runOnJS(setFingerX)(fingerX)
+    () => [x.value, isActive.value],
+    ([fingerX, isActiveValue]) => {
+      if (isActiveValue) {
+        runOnJS(setFingerX)(fingerX as number)
+      }
     },
     [isActive, setFingerX, width, x]
   )
@@ -220,10 +237,17 @@ export function AnimatedLineGraph({
       Math.min(0.15, pathEnd.current),
       pathEnd.current,
       pathEnd.current,
+      pathEnd.current,
       1,
     ],
     [pathEnd]
   )
+
+  useEffect(() => {
+    if (width != null) {
+      setFingerX(width)
+    }
+  }, [width, setFingerX])
 
   return (
     <View {...props}>
