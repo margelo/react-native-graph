@@ -69,11 +69,6 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
   gestureHoldDuration?: number
 
   /**
-   * Initial index shown on the graph
-   */
-  initialIndex?: number
-
-  /**
    * Wether to reset or not the circle position when releasing the gesture
    */
   resetPositionOnRelease?: boolean

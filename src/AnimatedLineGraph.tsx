@@ -14,6 +14,7 @@ import {
   Group,
   Shadow,
   PathCommand,
+  useValueEffect,
 } from '@shopify/react-native-skia'
 import type { AnimatedLineGraphProps } from './LineGraphProps'
 import { createGraphPath } from './CreateGraphPath'
@@ -42,8 +43,7 @@ export function AnimatedLineGraph({
   BottomAxisLabel,
   selectionDotShadowColor,
   gestureHoldDuration = 300,
-  initialIndex,
-  resetPositionOnRelease,
+  resetPositionOnRelease = true,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -56,7 +56,6 @@ export function AnimatedLineGraph({
       setWidth(Math.round(layout.width))
       setHeight(Math.round(layout.height))
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
@@ -174,6 +173,15 @@ export function AnimatedLineGraph({
     [circleRadius]
   )
 
+  useValueEffect(pathEnd, (pathEndValue) => {
+    const index = Math.round(pathEndValue * points.length)
+    const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
+    const dataPoint = points[Math.round(pointIndex)]
+    if (dataPoint != null && onPointSelected) {
+      runOnJS(onPointSelected)(dataPoint)
+    }
+  })
+
   const setFingerX = useCallback(
     (fingerX: number) => {
       const y = getYForX(commands.current, fingerX)
@@ -183,13 +191,8 @@ export function AnimatedLineGraph({
         circleX.current = fingerX
       }
       pathEnd.current = fingerX / width
-
-      const index = Math.round((fingerX / width) * points.length)
-      const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
-      const dataPoint = points[Math.round(pointIndex)]
-      if (dataPoint != null) onPointSelected?.(dataPoint)
     },
-    [circleX, circleY, onPointSelected, pathEnd, points, width]
+    [circleX, circleY, pathEnd, width]
   )
   const setIsActive = useCallback(
     (active: boolean) => {
@@ -229,21 +232,22 @@ export function AnimatedLineGraph({
     [isActive, setIsActive]
   )
   const positions = useDerivedValue(
-    () => [0, pathEnd.current, pathEnd.current, pathEnd.current, 1],
+    () => [
+      0,
+      Math.min(0.15, pathEnd.current),
+      pathEnd.current,
+      pathEnd.current,
+      pathEnd.current,
+      1,
+    ],
     [pathEnd]
   )
 
   useEffect(() => {
-    if (
-      typeof initialIndex === 'number' &&
-      initialIndex < points.length &&
-      width
-    ) {
-      const xForIndex = Math.round((initialIndex * width) / points.length)
-      setFingerX(xForIndex)
+    if (width != null) {
+      setFingerX(width)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [points, initialIndex, width])
+  }, [width, setFingerX])
 
   return (
     <View {...props}>
