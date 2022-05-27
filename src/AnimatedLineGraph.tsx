@@ -41,6 +41,7 @@ export function AnimatedLineGraph({
   TopAxisLabel,
   BottomAxisLabel,
   selectionDotShadowColor,
+  axisLabelContainerStyle,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -230,7 +231,13 @@ export function AnimatedLineGraph({
   return (
     <View {...props}>
       <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
-        <ReanimatedView style={styles.container}>
+        <ReanimatedView
+          style={[
+            styles.container,
+            styles.axisLabelContainer,
+            axisLabelContainerStyle,
+          ]}
+        >
           {/* Top Label (max price) */}
           {TopAxisLabel != null && (
             <View style={styles.axisRow}>
@@ -298,6 +305,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  axisLabelContainer: {
+    paddingVertical: 20,
   },
   axisRow: {
     height: 17,
