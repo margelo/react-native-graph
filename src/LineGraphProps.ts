@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { ViewProps } from 'react-native'
+import type { StyleProp, ViewStyle, ViewProps } from 'react-native'
 
 export interface GraphPoint {
   value: number
@@ -62,6 +62,10 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The element that gets rendered below the Graph (usually the "min" point/value of the Graph)
    */
   BottomAxisLabel?: () => React.ReactElement | null
+  /**
+   * Style to be applied to the container wrapping the graph and the AxisLabels (Top/Bottom)
+   */
+  axisLabelContainerStyle?: StyleProp<ViewStyle>
 }
 
 export type LineGraphProps =
