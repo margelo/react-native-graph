@@ -203,7 +203,9 @@ export function AnimatedLineGraph({
   useAnimatedReaction(
     () => x.value,
     (fingerX) => {
-      runOnJS(setFingerX)(fingerX)
+      if (isActive.value) {
+        runOnJS(setFingerX)(fingerX)
+      }
     },
     [isActive, setFingerX, width, x]
   )
