@@ -84,10 +84,10 @@ export function AnimatedLineGraph({
 
     const path = createGraphPath({
       points: points,
+      range: range,
       graphPadding: graphPadding,
       canvasHeight: height,
       canvasWidth: width,
-      range: range,
     })
 
     const previous = paths.current

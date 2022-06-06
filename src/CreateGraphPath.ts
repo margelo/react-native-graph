@@ -3,8 +3,8 @@ import type { GraphPoint } from './LineGraphProps'
 
 export interface GraphPathRange {
   x?: {
-    min: number
-    max: number
+    min: Date
+    max: Date
   }
   y?: {
     min: number
@@ -38,15 +38,15 @@ const PIXEL_RATIO = 2
 
 export function createGraphPath({
   points: graphData,
+  range,
   graphPadding,
   canvasHeight: height,
   canvasWidth: width,
-  range,
 }: GraphPathConfig): SkPath {
   const innerHeight = height - 2 * graphPadding
 
-  const minValueX = range?.x != null && range.x.min >= 0 ? range.x.min : 0
-  const maxValueX = range?.x != null ? range.x.max : width
+  const minValueX = range?.x?.min
+  const maxValueX = range?.x?.max
 
   const minValueY =
     range?.y != null
@@ -66,29 +66,25 @@ export function createGraphPath({
 
   const points: SkPoint[] = []
 
-  const graphDataOffset = graphData.findIndex(
-    (point) => point.value >= minValueY
-  )
-  const graphDataLength =
-    graphData.findIndex((point) => point.value <= maxValueY) - graphDataOffset
+  const leftBoundary =
+    width -
+    width *
+      (((graphData[0]?.date ?? minValueX)?.getTime() ?? 0) /
+        (minValueX?.getTime() ?? 0))
+  const rightBoundary =
+    width -
+    width *
+      (((graphData[graphData.length - 1]?.date ?? maxValueX)?.getTime() ?? 0) /
+        (maxValueX?.getTime() ?? 0))
 
-  const firstValue = graphData[graphDataOffset]?.date.getTime() ?? 0
-  const lastValue =
-    graphData[graphDataOffset + graphDataLength]?.date.getTime() ?? maxValueX
+  const actualWidth = width - rightBoundary - leftBoundary
 
-  const pixelOffset = firstValue - minValueX
-  const pixelLength = lastValue * (maxValueX / width)
-
-  for (let pixel = pixelOffset; pixel < pixelLength; pixel += PIXEL_RATIO) {
-    const index =
-      Math.floor(((pixel - pixelOffset) / pixelLength) * graphDataLength) +
-      graphDataOffset
-    const value = graphData[index]?.value ?? 0
+  for (let pixel = leftBoundary; pixel < rightBoundary; pixel += PIXEL_RATIO) {
+    const index = Math.floor((pixel / actualWidth) * graphData.length)
+    const value = graphData[index]?.value ?? minValueY
 
     const x =
-      (pixel / maxValueX) * (maxValueX - 2 * graphPadding) +
-      graphPadding -
-      minValueX
+      (pixel / actualWidth) * (actualWidth - 2 * graphPadding) + graphPadding
     const y =
       height -
       ((value - minValueY) / (maxValueY - minValueY)) * innerHeight -

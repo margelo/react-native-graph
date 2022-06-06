@@ -12,6 +12,8 @@ interface BaseLineGraphProps extends ViewProps {
    * All points to be marked in the graph. Coordinate system will adjust to scale automatically.
    */
   points: GraphPoint[]
+
+  range?: GraphPathRange
   /**
    * Color of the graph line (path)
    */
@@ -41,8 +43,6 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The color of the selection dot when the user is panning the graph.
    */
   selectionDotShadowColor?: string
-
-  range?: GraphPathRange
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph

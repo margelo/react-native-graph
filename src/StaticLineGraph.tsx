@@ -7,6 +7,7 @@ import type { StaticLineGraphProps } from './LineGraphProps'
 
 export function StaticLineGraph({
   points,
+  range,
   color,
   lineThickness = 3,
   enableFadeInMask,
@@ -29,11 +30,12 @@ export function StaticLineGraph({
     () =>
       createGraphPath({
         points: points,
+        range,
         canvasHeight: height,
         canvasWidth: width,
         graphPadding: graphPadding,
       }),
-    [graphPadding, height, points, width]
+    [graphPadding, height, points, range, width]
   )
 
   const gradientColors = useMemo(
