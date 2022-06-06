@@ -1,6 +1,17 @@
 import { SkPath, SkPoint, Skia } from '@shopify/react-native-skia'
 import type { GraphPoint } from './LineGraphProps'
 
+export interface GraphPathRange {
+  x?: {
+    min: number
+    max: number
+  }
+  y?: {
+    min: number
+    max: number
+  }
+}
+
 interface GraphPathConfig {
   /**
    * Graph Points to use for the Path. Will be normalized and centered.
@@ -18,6 +29,8 @@ interface GraphPathConfig {
    * Width of the Canvas (Measured with onLayout)
    */
   canvasWidth: number
+
+  range?: GraphPathRange
 }
 
 // A Graph Point will be drawn every second "pixel"
@@ -28,28 +41,42 @@ export function createGraphPath({
   graphPadding,
   canvasHeight: height,
   canvasWidth: width,
+  range,
 }: GraphPathConfig): SkPath {
   const innerHeight = height - 2 * graphPadding
 
-  const maxValue = graphData.reduce(
-    (prev, curr) => (curr.value > prev ? curr.value : prev),
-    Number.MIN_SAFE_INTEGER
-  )
-  const minValue = graphData.reduce(
-    (prev, curr) => (curr.value < prev ? curr.value : prev),
-    Number.MAX_SAFE_INTEGER
-  )
+  const minValueX = range?.x != null && range.x.min >= 0 ? range.x.min : 0
+  const maxValueX = range?.x != null ? range.x.max : width
+
+  const minValueY =
+    range?.y != null
+      ? range.y.min
+      : graphData.reduce(
+          (prev, curr) => (curr.value < prev ? curr.value : prev),
+          Number.MAX_SAFE_INTEGER
+        )
+
+  const maxValueY =
+    range?.y != null
+      ? range.y.max
+      : graphData.reduce(
+          (prev, curr) => (curr.value > prev ? curr.value : prev),
+          Number.MIN_SAFE_INTEGER
+        )
 
   const points: SkPoint[] = []
 
   for (let pixel = 0; pixel < width; pixel += PIXEL_RATIO) {
     const index = Math.floor((pixel / width) * graphData.length)
-    const value = graphData[index]?.value ?? minValue
+    const value = graphData[index]?.value ?? minValueY
 
-    const x = (pixel / width) * (width - 2 * graphPadding) + graphPadding
+    const x =
+      (pixel / maxValueX) * (maxValueX - 2 * graphPadding) +
+      graphPadding -
+      minValueX
     const y =
       height -
-      ((value - minValue) / (maxValue - minValue)) * innerHeight -
+      ((value - minValueY) / (maxValueY - minValueY)) * innerHeight -
       graphPadding
 
     points.push({ x: x, y: y })

@@ -33,6 +33,7 @@ export function AnimatedLineGraph({
   points,
   color,
   lineThickness = 3,
+  range,
   enableFadeInMask,
   enablePanGesture,
   onPointSelected,
@@ -86,6 +87,7 @@ export function AnimatedLineGraph({
       graphPadding: graphPadding,
       canvasHeight: height,
       canvasWidth: width,
+      range: range,
     })
 
     const previous = paths.current
@@ -122,6 +124,7 @@ export function AnimatedLineGraph({
     interpolateProgress,
     paths,
     points,
+    range,
     straightLine,
     width,
   ])

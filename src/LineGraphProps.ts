@@ -1,5 +1,6 @@
 import type React from 'react'
 import type { ViewProps } from 'react-native'
+import type { GraphPathRange } from './CreateGraphPath'
 
 export interface GraphPoint {
   value: number
@@ -40,6 +41,8 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The color of the selection dot when the user is panning the graph.
    */
   selectionDotShadowColor?: string
+
+  range?: GraphPathRange
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph
