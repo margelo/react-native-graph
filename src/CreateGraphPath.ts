@@ -66,26 +66,35 @@ export function createGraphPath({
 
   const points: SkPoint[] = []
 
-  for (let pixel = 0; pixel < maxValueY; pixel += PIXEL_RATIO) {
-    const index = Math.floor((pixel / width) * graphData.length)
-    const graphDataValue = graphData[index]?.value
-    const value =
-      graphDataValue != null && graphDataValue >= minValueY
-        ? graphDataValue
-        : undefined
+  const graphDataOffset = graphData.findIndex(
+    (point) => point.value >= minValueY
+  )
+  const graphDataLength =
+    graphData.findIndex((point) => point.value <= maxValueY) - graphDataOffset
 
-    if (value != null) {
-      const x =
-        (pixel / maxValueX) * (maxValueX - 2 * graphPadding) +
-        graphPadding -
-        minValueX
-      const y =
-        height -
-        ((value - minValueY) / (maxValueY - minValueY)) * innerHeight -
-        graphPadding
+  const firstValue = graphData[graphDataOffset]?.date.getTime() ?? 0
+  const lastValue =
+    graphData[graphDataOffset + graphDataLength]?.date.getTime() ?? maxValueX
 
-      points.push({ x: x, y: y })
-    }
+  const pixelOffset = firstValue - minValueX
+  const pixelLength = lastValue * (maxValueX / width)
+
+  for (let pixel = pixelOffset; pixel < pixelLength; pixel += PIXEL_RATIO) {
+    const index =
+      Math.floor(((pixel - pixelOffset) / pixelLength) * graphDataLength) +
+      graphDataOffset
+    const value = graphData[index]?.value ?? 0
+
+    const x =
+      (pixel / maxValueX) * (maxValueX - 2 * graphPadding) +
+      graphPadding -
+      minValueX
+    const y =
+      height -
+      ((value - minValueY) / (maxValueY - minValueY)) * innerHeight -
+      graphPadding
+
+    points.push({ x: x, y: y })
   }
 
   const path = Skia.Path.Make()
