@@ -66,31 +66,70 @@ export function createGraphPath({
 
   const points: SkPoint[] = []
 
-  const leftBoundary =
-    width -
-    width *
-      (((graphData[0]?.date ?? minValueX)?.getTime() ?? 0) /
-        (minValueX?.getTime() ?? 0))
-  const rightBoundary =
-    width -
-    width *
-      (((graphData[graphData.length - 1]?.date ?? maxValueX)?.getTime() ?? 0) /
-        (maxValueX?.getTime() ?? 0))
+  let leftBoundary = 0
+  let rightBoundary = width
 
-  const actualWidth = width - rightBoundary - leftBoundary
+  if (minValueX != null && maxValueX != null) {
+    const timeDifference = maxValueX.getTime() - minValueX.getTime()
+
+    const leftmostPointTime = Math.max(
+      (graphData[0]?.date ?? minValueX).getTime() - minValueX.getTime(),
+      0
+    )
+
+    const rightmostPointTime = Math.min(
+      (graphData[graphData.length - 1]?.date ?? maxValueX).getTime() -
+        minValueX.getTime(),
+      timeDifference
+    )
+
+    leftBoundary = width * (leftmostPointTime / timeDifference)
+    rightBoundary = width * (rightmostPointTime / timeDifference)
+  }
+
+  const actualWidth = rightBoundary - leftBoundary
 
   for (let pixel = leftBoundary; pixel < rightBoundary; pixel += PIXEL_RATIO) {
     const index = Math.floor((pixel / actualWidth) * graphData.length)
     const value = graphData[index]?.value ?? minValueY
 
-    const x =
-      (pixel / actualWidth) * (actualWidth - 2 * graphPadding) + graphPadding
-    const y =
-      height -
-      ((value - minValueY) / (maxValueY - minValueY)) * innerHeight -
-      graphPadding
+    if (value >= minValueY && value <= maxValueY) {
+      const x =
+        (pixel / actualWidth) * (actualWidth - 2 * graphPadding) + graphPadding
+      // const y =
+      //   height -
+      //   ((value - minValueY) / (maxValueY - minValueY)) * innerHeight -
+      //   graphPadding
 
-    points.push({ x: x, y: y })
+      let lowerBoundary = 0
+      let upperBoundary = height
+
+      if (minValueY != null && maxValueY != null) {
+        const difference = maxValueY - minValueY
+
+        const graphPointValues = graphData.map((gp) => gp.value)
+
+        const lowestPoint = Math.max(
+          (Math.min(...graphPointValues) ?? minValueY) - minValueY,
+          0
+        )
+
+        const highestPoint = Math.min(
+          (Math.max(...graphPointValues) ?? maxValueY) - minValueY,
+          difference
+        )
+
+        lowerBoundary = width * (lowestPoint / difference)
+        upperBoundary = width * (highestPoint / difference)
+      }
+
+      const y =
+        height -
+        ((value - minValueY) / (upperBoundary - lowerBoundary)) * innerHeight -
+        graphPadding
+
+      points.push({ x: x, y: y })
+    }
   }
 
   const path = Skia.Path.Make()
