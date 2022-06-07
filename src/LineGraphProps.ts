@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { StyleProp, ViewStyle, ViewProps } from 'react-native'
+import type { ViewProps } from 'react-native'
 
 export interface GraphPoint {
   value: number
@@ -40,6 +40,14 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The color of the selection dot when the user is panning the graph.
    */
   selectionDotShadowColor?: string
+  /**
+   * Horizontal padding applied to graph, so the selectionDot doesn't get cut off horizontally
+   */
+  horizontalPadding?: number
+  /**
+   * Vertical padding applied to graph, so the selectionDot doesn't get cut off vertically
+   */
+  verticalPadding?: number
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph
@@ -62,10 +70,6 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The element that gets rendered below the Graph (usually the "min" point/value of the Graph)
    */
   BottomAxisLabel?: () => React.ReactElement | null
-  /**
-   * Style to be applied to the container wrapping the graph and the AxisLabels (Top/Bottom)
-   */
-  axisLabelContainerStyle?: StyleProp<ViewStyle>
 }
 
 export type LineGraphProps =
