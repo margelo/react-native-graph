@@ -1,5 +1,6 @@
 import type React from 'react'
 import type { ViewProps } from 'react-native'
+import type { GraphPathRange } from './CreateGraphPath'
 
 export interface GraphPoint {
   value: number
@@ -11,6 +12,8 @@ interface BaseLineGraphProps extends ViewProps {
    * All points to be marked in the graph. Coordinate system will adjust to scale automatically.
    */
   points: GraphPoint[]
+
+  range?: GraphPathRange
   /**
    * Color of the graph line (path)
    */
@@ -40,6 +43,18 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The color of the selection dot when the user is panning the graph.
    */
   selectionDotShadowColor?: string
+  /**
+   * Horizontal padding applied to graph, so the selection dot doesn't get cut off horizontally
+   */
+  horizontalPadding?: number
+  /**
+   * Vertical padding applied to graph, so the selection dot doesn't get cut off vertically
+   */
+  verticalPadding?: number
+  /**
+   * Enables an indicator which is displayed at the end of the graph
+   */
+  alwaysShowIndicator?: boolean
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph
