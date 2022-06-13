@@ -16,7 +16,11 @@ import {
   PathCommand,
 } from '@shopify/react-native-skia'
 import type { AnimatedLineGraphProps } from './LineGraphProps'
-import { createGraphPath } from './CreateGraphPath'
+import {
+  createGraphPath,
+  getGraphPathRange,
+  GraphPathRange,
+} from './CreateGraphPath'
 import Reanimated, {
   runOnJS,
   useAnimatedReaction,
@@ -77,6 +81,11 @@ export function AnimatedLineGraph({
   const paths = useValue<{ from?: SkPath; to?: SkPath }>({})
   const commands = useRef<PathCommand[]>([])
 
+  const pathRange: GraphPathRange = useMemo(
+    () => getGraphPathRange(points, range),
+    [points, range]
+  )
+
   useEffect(() => {
     if (height < 1 || width < 1) {
       // view is not yet measured!
@@ -89,7 +98,7 @@ export function AnimatedLineGraph({
 
     const path = createGraphPath({
       points: points,
-      range: range,
+      range: pathRange,
       horizontalPadding: horizontalPadding,
       verticalPadding: verticalPadding,
       canvasHeight: height,
@@ -129,6 +138,7 @@ export function AnimatedLineGraph({
     height,
     horizontalPadding,
     interpolateProgress,
+    pathRange,
     paths,
     points,
     range,
