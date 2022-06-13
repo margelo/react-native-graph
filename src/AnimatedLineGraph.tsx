@@ -26,6 +26,9 @@ import { GestureDetector } from 'react-native-gesture-handler'
 import { useHoldOrPanGesture } from './hooks/useHoldOrPanGesture'
 import { getYForX } from './GetYForX'
 
+const CIRCLE_RADIUS = 5
+const CIRCLE_RADIUS_MULTIPLIER = 6
+
 // weird rea type bug
 const ReanimatedView = Reanimated.View as any
 
@@ -38,8 +41,8 @@ export function AnimatedLineGraph({
   onPointSelected,
   onGestureStart,
   onGestureEnd,
-  horizontalPadding = 30,
-  verticalPadding = 30,
+  horizontalPadding = CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
+  verticalPadding = lineThickness + CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
   TopAxisLabel,
   BottomAxisLabel,
   selectionDotShadowColor,
@@ -48,16 +51,7 @@ export function AnimatedLineGraph({
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
   const interpolateProgress = useValue(0)
-
-  const { gesture, isActive, x } = useHoldOrPanGesture({ holdDuration: 300 })
-  const circleX = useValue(0)
-  const circleY = useValue(0)
-  const pathEnd = useValue(0)
-  const circleRadius = useValue(0)
-  const circleStrokeRadius = useDerivedValue(
-    () => circleRadius.current * 6,
-    [circleRadius]
-  )
+  const graphPadding = lineThickness
 
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -94,8 +88,8 @@ export function AnimatedLineGraph({
 
     const path = createGraphPath({
       points: points,
-      horizontalPadding: lineThickness + horizontalPadding,
-      verticalPadding: lineThickness + verticalPadding,
+      horizontalPadding: horizontalPadding,
+      verticalPadding: verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
     })
@@ -129,11 +123,10 @@ export function AnimatedLineGraph({
       }
     )
   }, [
-    circleStrokeRadius,
+    graphPadding,
     height,
     horizontalPadding,
     interpolateProgress,
-    lineThickness,
     paths,
     points,
     straightLine,
@@ -173,6 +166,16 @@ export function AnimatedLineGraph({
     [interpolateProgress]
   )
 
+  const { gesture, isActive, x } = useHoldOrPanGesture({ holdDuration: 300 })
+  const circleX = useValue(0)
+  const circleY = useValue(0)
+  const pathEnd = useValue(0)
+  const circleRadius = useValue(0)
+  const circleStrokeRadius = useDerivedValue(
+    () => circleRadius.current * 6,
+    [circleRadius]
+  )
+
   const setFingerX = useCallback(
     (fingerX: number) => {
       const y = getYForX(commands.current, fingerX)
@@ -205,7 +208,6 @@ export function AnimatedLineGraph({
     },
     [circleRadius, onGestureEnd, onGestureStart, pathEnd]
   )
-
   useAnimatedReaction(
     () => x.value,
     (fingerX) => {
@@ -222,7 +224,6 @@ export function AnimatedLineGraph({
     },
     [isActive, setIsActive]
   )
-
   const positions = useDerivedValue(
     () => [
       0,
@@ -237,7 +238,7 @@ export function AnimatedLineGraph({
   return (
     <View {...props}>
       <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
-        <ReanimatedView style={[styles.container, styles.axisLabelContainer]}>
+        <ReanimatedView style={styles.container}>
           {/* Top Label (max price) */}
           {TopAxisLabel != null && (
             <View style={styles.axisRow}>
@@ -305,9 +306,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  axisLabelContainer: {
-    paddingVertical: 20,
   },
   axisRow: {
     height: 17,
