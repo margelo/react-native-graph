@@ -43,6 +43,14 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The color of the selection dot when the user is panning the graph.
    */
   selectionDotShadowColor?: string
+  /**
+   * Horizontal padding applied to graph, so the selection dot doesn't get cut off horizontally
+   */
+  horizontalPadding?: number
+  /**
+   * Vertical padding applied to graph, so the selection dot doesn't get cut off vertically
+   */
+  verticalPadding?: number
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph

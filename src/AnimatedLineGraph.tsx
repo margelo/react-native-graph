@@ -26,6 +26,9 @@ import { GestureDetector } from 'react-native-gesture-handler'
 import { useHoldOrPanGesture } from './hooks/useHoldOrPanGesture'
 import { getYForX } from './GetYForX'
 
+const CIRCLE_RADIUS = 5
+const CIRCLE_RADIUS_MULTIPLIER = 6
+
 // weird rea type bug
 const ReanimatedView = Reanimated.View as any
 
@@ -39,6 +42,8 @@ export function AnimatedLineGraph({
   onPointSelected,
   onGestureStart,
   onGestureEnd,
+  horizontalPadding = CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
+  verticalPadding = lineThickness + CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
   TopAxisLabel,
   BottomAxisLabel,
   selectionDotShadowColor,
@@ -85,7 +90,8 @@ export function AnimatedLineGraph({
     const path = createGraphPath({
       points: points,
       range: range,
-      graphPadding: graphPadding,
+      horizontalPadding: horizontalPadding,
+      verticalPadding: verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
     })
@@ -121,11 +127,13 @@ export function AnimatedLineGraph({
   }, [
     graphPadding,
     height,
+    horizontalPadding,
     interpolateProgress,
     paths,
     points,
     range,
     straightLine,
+    verticalPadding,
     width,
   ])
 
@@ -206,7 +214,9 @@ export function AnimatedLineGraph({
   useAnimatedReaction(
     () => x.value,
     (fingerX) => {
-      runOnJS(setFingerX)(fingerX)
+      if (isActive.value) {
+        runOnJS(setFingerX)(fingerX)
+      }
     },
     [isActive, setFingerX, width, x]
   )
