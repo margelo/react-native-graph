@@ -16,7 +16,11 @@ import {
   PathCommand,
 } from '@shopify/react-native-skia'
 import type { AnimatedLineGraphProps } from './LineGraphProps'
-import { createGraphPath } from './CreateGraphPath'
+import {
+  createGraphPath,
+  getGraphPathRange,
+  GraphPathRange,
+} from './CreateGraphPath'
 import Reanimated, {
   runOnJS,
   useAnimatedReaction,
@@ -26,6 +30,9 @@ import { GestureDetector } from 'react-native-gesture-handler'
 import { useHoldOrPanGesture } from './hooks/useHoldOrPanGesture'
 import { getYForX } from './GetYForX'
 
+const CIRCLE_RADIUS = 5
+const CIRCLE_RADIUS_MULTIPLIER = 6
+
 // weird rea type bug
 const ReanimatedView = Reanimated.View as any
 
@@ -33,11 +40,14 @@ export function AnimatedLineGraph({
   points,
   color,
   lineThickness = 3,
+  range,
   enableFadeInMask,
   enablePanGesture,
   onPointSelected,
   onGestureStart,
   onGestureEnd,
+  horizontalPadding = CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
+  verticalPadding = lineThickness + CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
   TopAxisLabel,
   BottomAxisLabel,
   selectionDotShadowColor,
@@ -71,6 +81,11 @@ export function AnimatedLineGraph({
   const paths = useValue<{ from?: SkPath; to?: SkPath }>({})
   const commands = useRef<PathCommand[]>([])
 
+  const pathRange: GraphPathRange = useMemo(
+    () => getGraphPathRange(points, range),
+    [points, range]
+  )
+
   useEffect(() => {
     if (height < 1 || width < 1) {
       // view is not yet measured!
@@ -83,7 +98,9 @@ export function AnimatedLineGraph({
 
     const path = createGraphPath({
       points: points,
-      graphPadding: graphPadding,
+      range: pathRange,
+      horizontalPadding: horizontalPadding,
+      verticalPadding: verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
     })
@@ -119,10 +136,14 @@ export function AnimatedLineGraph({
   }, [
     graphPadding,
     height,
+    horizontalPadding,
     interpolateProgress,
+    pathRange,
     paths,
     points,
+    range,
     straightLine,
+    verticalPadding,
     width,
   ])
 
