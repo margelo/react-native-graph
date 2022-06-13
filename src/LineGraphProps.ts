@@ -51,6 +51,10 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * Vertical padding applied to graph, so the selection dot doesn't get cut off vertically
    */
   verticalPadding?: number
+  /**
+   * Enables an indicator which is displayed at the end of the graph
+   */
+  alwaysShowIndicator?: boolean
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph

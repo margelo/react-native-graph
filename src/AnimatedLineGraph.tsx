@@ -14,12 +14,14 @@ import {
   Group,
   Shadow,
   PathCommand,
+  useValueEffect,
 } from '@shopify/react-native-skia'
 import type { AnimatedLineGraphProps } from './LineGraphProps'
 import {
   createGraphPath,
   getGraphPathRange,
   GraphPathRange,
+  pixelFactorX,
 } from './CreateGraphPath'
 import Reanimated, {
   runOnJS,
@@ -32,6 +34,8 @@ import { getYForX } from './GetYForX'
 
 const CIRCLE_RADIUS = 5
 const CIRCLE_RADIUS_MULTIPLIER = 6
+const INDICATOR_RADIUS = 7
+const INDICATOR_BORDER_MULTIPLIER = 1.3
 
 // weird rea type bug
 const ReanimatedView = Reanimated.View as any
@@ -46,6 +50,7 @@ export function AnimatedLineGraph({
   onPointSelected,
   onGestureStart,
   onGestureEnd,
+  alwaysShowIndicator = false,
   horizontalPadding = CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
   verticalPadding = lineThickness + CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
   TopAxisLabel,
@@ -56,7 +61,33 @@ export function AnimatedLineGraph({
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
   const interpolateProgress = useValue(0)
-  const graphPadding = lineThickness
+  const [indicatorVisible, setIndicatorVisible] = useState(false)
+
+  const { gesture, isActive, x } = useHoldOrPanGesture({ holdDuration: 300 })
+  const circleX = useValue(0)
+  const circleY = useValue(0)
+  const pathEnd = useValue(0)
+  const circleRadius = useValue(0)
+  const circleStrokeRadius = useDerivedValue(
+    () => circleRadius.current * 6,
+    [circleRadius]
+  )
+  const indicatorRadius = useValue(alwaysShowIndicator ? INDICATOR_RADIUS : 0)
+  const indicatorBorderRadius = useDerivedValue(
+    () => indicatorRadius.current * INDICATOR_BORDER_MULTIPLIER,
+    [indicatorRadius]
+  )
+
+  const positions = useDerivedValue(
+    () => [
+      0,
+      Math.min(0.15, pathEnd.current),
+      pathEnd.current,
+      pathEnd.current,
+      1,
+    ],
+    [pathEnd]
+  )
 
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -84,6 +115,28 @@ export function AnimatedLineGraph({
   const pathRange: GraphPathRange = useMemo(
     () => getGraphPathRange(points, range),
     [points, range]
+  )
+
+  const drawingWidth = useMemo(() => {
+    const lastPoint = points[points.length - 1]!
+
+    return (
+      (width - 2 * horizontalPadding) *
+      pixelFactorX(lastPoint.date, pathRange.x.min, pathRange.x.max)
+    )
+  }, [horizontalPadding, pathRange.x.max, pathRange.x.min, points, width])
+
+  const indicatorX = useMemo(
+    () =>
+      indicatorVisible
+        ? Math.floor(drawingWidth) + horizontalPadding
+        : undefined,
+    [drawingWidth, horizontalPadding, indicatorVisible]
+  )
+  const indicatorY = useMemo(
+    () =>
+      indicatorX != null ? getYForX(commands.current, indicatorX) : undefined,
+    [indicatorX]
   )
 
   useEffect(() => {
@@ -134,7 +187,6 @@ export function AnimatedLineGraph({
       }
     )
   }, [
-    graphPadding,
     height,
     horizontalPadding,
     interpolateProgress,
@@ -179,33 +231,46 @@ export function AnimatedLineGraph({
     [interpolateProgress]
   )
 
-  const { gesture, isActive, x } = useHoldOrPanGesture({ holdDuration: 300 })
-  const circleX = useValue(0)
-  const circleY = useValue(0)
-  const pathEnd = useValue(0)
-  const circleRadius = useValue(0)
-  const circleStrokeRadius = useDerivedValue(
-    () => circleRadius.current * 6,
-    [circleRadius]
-  )
-
   const setFingerX = useCallback(
     (fingerX: number) => {
-      const y = getYForX(commands.current, fingerX)
+      const fingerXInRange = Math.min(
+        Math.max(fingerX, horizontalPadding + 1),
+        drawingWidth + horizontalPadding - 1
+      )
+      const y = getYForX(commands.current, fingerXInRange)
 
       if (y != null) {
         circleY.current = y
-        circleX.current = fingerX
+        circleX.current = fingerXInRange
       }
-      pathEnd.current = fingerX / width
 
-      const index = Math.round((fingerX / width) * points.length)
+      if (
+        fingerX > horizontalPadding &&
+        fingerX < drawingWidth + horizontalPadding
+      )
+        pathEnd.current = fingerX / width
+
+      const actualFingerX = fingerX - 2 * horizontalPadding + horizontalPadding
+
+      const index = Math.round(
+        (actualFingerX / (drawingWidth + horizontalPadding)) * points.length
+      )
       const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
-      const dataPoint = points[Math.round(pointIndex)]
+      const dataPoint = points[pointIndex]
       if (dataPoint != null) onPointSelected?.(dataPoint)
     },
-    [circleX, circleY, onPointSelected, pathEnd, points, width]
+    [
+      circleX,
+      circleY,
+      drawingWidth,
+      horizontalPadding,
+      onPointSelected,
+      pathEnd,
+      points,
+      width,
+    ]
   )
+
   const setIsActive = useCallback(
     (active: boolean) => {
       runSpring(circleRadius, active ? 5 : 0, {
@@ -214,12 +279,20 @@ export function AnimatedLineGraph({
         damping: 50,
         velocity: 0,
       })
+
+      runSpring(indicatorRadius, !active ? INDICATOR_RADIUS : 0, {
+        mass: 1,
+        stiffness: 1000,
+        damping: 50,
+        velocity: 0,
+      })
+
       if (!active) pathEnd.current = 1
 
       if (active) onGestureStart?.()
       else onGestureEnd?.()
     },
-    [circleRadius, onGestureEnd, onGestureStart, pathEnd]
+    [circleRadius, indicatorRadius, onGestureEnd, onGestureStart, pathEnd]
   )
   useAnimatedReaction(
     () => x.value,
@@ -237,16 +310,10 @@ export function AnimatedLineGraph({
     },
     [isActive, setIsActive]
   )
-  const positions = useDerivedValue(
-    () => [
-      0,
-      Math.min(0.15, pathEnd.current),
-      pathEnd.current,
-      pathEnd.current,
-      1,
-    ],
-    [pathEnd]
-  )
+
+  useValueEffect(paths, ({ from }) => {
+    runOnJS(setIndicatorVisible)(from != null)
+  })
 
   return (
     <View {...props}>
@@ -296,6 +363,25 @@ export function AnimatedLineGraph({
                   >
                     <Shadow dx={0} dy={0} color="rgba(0,0,0,0.5)" blur={4} />
                   </Circle>
+                </Group>
+              )}
+
+              {alwaysShowIndicator && indicatorVisible && (
+                <Group>
+                  <Circle
+                    cx={indicatorX}
+                    cy={indicatorY}
+                    r={indicatorBorderRadius}
+                    color={'#ffffff'}
+                  >
+                    <Shadow dx={2} dy={2} color="rgba(0,0,0,0.2)" blur={4} />
+                  </Circle>
+                  <Circle
+                    cx={indicatorX}
+                    cy={indicatorY}
+                    r={indicatorRadius}
+                    color={color}
+                  />
                 </Group>
               )}
             </Canvas>
