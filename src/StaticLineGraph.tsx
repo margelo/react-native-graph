@@ -15,7 +15,6 @@ export function StaticLineGraph({
 }: StaticLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
-  const graphPadding = lineThickness
 
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -31,9 +30,10 @@ export function StaticLineGraph({
         points: points,
         canvasHeight: height,
         canvasWidth: width,
-        graphPadding: graphPadding,
+        horizontalPadding: lineThickness,
+        verticalPadding: lineThickness,
       }),
-    [graphPadding, height, points, width]
+    [height, lineThickness, points, width]
   )
 
   const gradientColors = useMemo(
