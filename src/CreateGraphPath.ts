@@ -40,6 +40,8 @@ export function createGraphPath({
     Number.MAX_SAFE_INTEGER
   )
 
+  const areValuesSame = minValue === maxValue
+
   const points: SkPoint[] = []
 
   for (let pixel = 0; pixel < width; pixel += PIXEL_RATIO) {
@@ -47,10 +49,11 @@ export function createGraphPath({
     const value = graphData[index]?.value ?? minValue
 
     const x = (pixel / width) * (width - 2 * graphPadding) + graphPadding
-    const y =
-      height -
-      ((value - minValue) / (maxValue - minValue)) * innerHeight -
-      graphPadding
+    const y = areValuesSame
+      ? height / 2
+      : height -
+        ((value - minValue) / (maxValue - minValue)) * innerHeight -
+        graphPadding
 
     points.push({ x: x, y: y })
   }
