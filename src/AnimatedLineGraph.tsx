@@ -8,7 +8,7 @@ import {
   Path,
   Skia,
   useValue,
-  useDerivedValue,
+  useComputedValue,
   vec,
   Circle,
   Group,
@@ -89,11 +89,11 @@ export function AnimatedLineGraph({
     })
 
     const previous = paths.current
-    let from: SkPath = previous.to ?? straightLine
+    let from: SkPath | null = previous.to ?? straightLine
     if (previous.from != null && interpolateProgress.current < 1)
       from = from.interpolate(previous.from, interpolateProgress.current)
 
-    if (path.isInterpolatable(from)) {
+    if (from && path.isInterpolatable(from)) {
       paths.current = {
         from: from,
         to: path,
@@ -146,7 +146,7 @@ export function AnimatedLineGraph({
     }
   }, [color, enableFadeInMask])
 
-  const path = useDerivedValue(
+  const path = useComputedValue(
     () => {
       const from = paths.current.from ?? straightLine
       const to = paths.current.to ?? straightLine
@@ -163,7 +163,7 @@ export function AnimatedLineGraph({
   const circleY = useValue(0)
   const pathEnd = useValue(0)
   const circleRadius = useValue(0)
-  const circleStrokeRadius = useDerivedValue(
+  const circleStrokeRadius = useComputedValue(
     () => circleRadius.current * 6,
     [circleRadius]
   )
@@ -216,7 +216,7 @@ export function AnimatedLineGraph({
     },
     [isActive, setIsActive]
   )
-  const positions = useDerivedValue(
+  const positions = useComputedValue(
     () => [
       0,
       Math.min(0.15, pathEnd.current),
@@ -243,6 +243,7 @@ export function AnimatedLineGraph({
             <Canvas style={styles.svg}>
               <Group>
                 <Path
+                  // @ts-ignore
                   path={path}
                   strokeWidth={lineThickness}
                   style="stroke"
