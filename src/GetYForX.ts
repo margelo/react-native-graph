@@ -120,21 +120,25 @@ export const selectCurve = (
   cmds: PathCommand[],
   x: number
 ): Cubic | undefined => {
+  let from: Vector = vec(0, 0)
   for (let i = 0; i < cmds.length; i++) {
     const cmd = cmds[i]
     if (cmd == null) return undefined
-
-    if (cmd[0] === PathVerb.Cubic) {
-      const to = vec(cmd[1], cmd[2])
-      const from = vec(cmd[7], cmd[8])
-      if (x <= from.x && x >= to.x) {
+    if (cmd[0] === PathVerb.Move) {
+      from = vec(cmd[1], cmd[2])
+    } else if (cmd[0] === PathVerb.Cubic) {
+      const c1 = vec(cmd[1], cmd[2])
+      const c2 = vec(cmd[3], cmd[4])
+      const to = vec(cmd[5], cmd[6])
+      if (x >= from.x && x <= to.x) {
         return {
-          from: from,
-          c1: vec(cmd[3], cmd[4]),
-          c2: vec(cmd[5], cmd[6]),
-          to: to,
+          from,
+          c1,
+          c2,
+          to,
         }
       }
+      from = to
     }
   }
   return undefined
