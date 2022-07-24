@@ -94,7 +94,7 @@ export function AnimatedLineGraph({
       from =
         from.interpolate(previous.from, interpolateProgress.current) ?? from
 
-    if (from && path.isInterpolatable(from)) {
+    if (path.isInterpolatable(from)) {
       paths.current = {
         from: from,
         to: path,
