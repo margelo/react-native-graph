@@ -89,9 +89,10 @@ export function AnimatedLineGraph({
     })
 
     const previous = paths.current
-    let from: SkPath | null = previous.to ?? straightLine
+    let from: SkPath = previous.to ?? straightLine
     if (previous.from != null && interpolateProgress.current < 1)
-      from = from.interpolate(previous.from, interpolateProgress.current)
+      from =
+        from.interpolate(previous.from, interpolateProgress.current) ?? from
 
     if (from && path.isInterpolatable(from)) {
       paths.current = {
