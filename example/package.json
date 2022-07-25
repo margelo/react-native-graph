@@ -10,15 +10,15 @@
   },
   "dependencies": {
     "@react-native-segmented-control/segmented-control": "^2.4.0",
-    "@shopify/react-native-skia": "^0.1.123",
+    "@shopify/react-native-skia": "^0.1.136",
     "@types/gaussian": "^1.2.0",
     "gaussian": "^1.2.0",
     "react": "^17.0.2",
     "react-native": "^0.67.4",
-    "react-native-gesture-handler": "^2.4.1",
+    "react-native-gesture-handler": "^2.5.0",
     "react-native-haptic-feedback": "^1.13.1",
     "react-native-pressable-scale": "^1.0.6",
-    "react-native-reanimated": "^2.8.0",
+    "react-native-reanimated": "^2.9.1",
     "react-native-static-safe-area-insets": "^2.1.1"
   },
   "devDependencies": {
