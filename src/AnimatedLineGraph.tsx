@@ -26,9 +26,6 @@ import { GestureDetector } from 'react-native-gesture-handler'
 import { useHoldOrPanGesture } from './hooks/useHoldOrPanGesture'
 import { getYForX } from './GetYForX'
 
-// weird rea type bug
-const ReanimatedView = Reanimated.View as any
-
 export function AnimatedLineGraph({
   points,
   color,
@@ -231,7 +228,7 @@ export function AnimatedLineGraph({
   return (
     <View {...props}>
       <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
-        <ReanimatedView style={styles.container}>
+        <Reanimated.View style={styles.container}>
           {/* Top Label (max price) */}
           {TopAxisLabel != null && (
             <View style={styles.axisRow}>
@@ -288,7 +285,7 @@ export function AnimatedLineGraph({
               <BottomAxisLabel />
             </View>
           )}
-        </ReanimatedView>
+        </Reanimated.View>
       </GestureDetector>
     </View>
   )
