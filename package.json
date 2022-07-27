@@ -80,9 +80,6 @@
     "react-native-reanimated": ">=2",
     "react-native-gesture-handler": ">=2"
   },
-  "resolutions": {
-    "@types/react": "^17.0.42"
-  },
   "release-it": {
     "git": {
       "commitMessage": "chore: release ${version}",

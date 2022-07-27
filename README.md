@@ -127,7 +127,7 @@ Used to render the selection dot.
 
 >  Requires `animated` and `enablePanGesture` to be `true`.
 
-If `SelectionDot` is missing or `undefined`, a default one is visible with an outer ring and light shadow.
+If `SelectionDot` is missing or `undefined`, a default one is provided with an outer ring and light shadow.
 
 Example:
 

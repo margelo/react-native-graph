@@ -28,8 +28,5 @@
     "@types/react-native": "^0.67.4",
     "babel-plugin-module-resolver": "^4.0.0",
     "metro-react-native-babel-preset": "^0.66.2"
-  },
-  "resolutions": {
-    "@types/react": "^17.0.42"
   }
 }
