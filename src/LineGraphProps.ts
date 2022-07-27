@@ -1,9 +1,19 @@
 import type React from 'react'
 import type { ViewProps } from 'react-native'
+import type { SharedValue } from 'react-native-reanimated'
+import type { SkiaMutableValue } from '@shopify/react-native-skia'
 
 export interface GraphPoint {
   value: number
   date: Date
+}
+
+export interface SelectionDotProps {
+  isActive: SharedValue<boolean>
+  color: BaseLineGraphProps['color']
+  lineThickness: BaseLineGraphProps['lineThickness']
+  circleX: SkiaMutableValue<number>
+  circleY: SkiaMutableValue<number>
 }
 
 interface BaseLineGraphProps extends ViewProps {
@@ -37,11 +47,6 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
   enablePanGesture?: boolean
 
   /**
-   * The color of the selection dot when the user is panning the graph.
-   */
-  selectionDotShadowColor?: string
-
-  /**
    * Called for each point while the user is scrubbing/panning through the graph
    */
   onPointSelected?: (point: GraphPoint) => void
@@ -55,9 +60,15 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
   onGestureEnd?: () => void
 
   /**
+   * The element that renders the selection dot
+   */
+  SelectionDot?: React.ComponentType<SelectionDotProps> | null
+
+  /**
    * The element that gets rendered above the Graph (usually the "max" point/value of the Graph)
    */
   TopAxisLabel?: () => React.ReactElement | null
+
   /**
    * The element that gets rendered below the Graph (usually the "min" point/value of the Graph)
    */

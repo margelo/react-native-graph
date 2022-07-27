@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { View, StyleSheet, Text, Button } from 'react-native'
 import { LineGraph } from 'react-native-graph'
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
+import { SelectionDot } from '../components/CustomSelectionDot'
 import { Toggle } from '../components/Toggle'
 import {
   generateRandomGraphData,
@@ -51,7 +52,7 @@ export function GraphPage() {
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
         onGestureStart={() => hapticFeedback('impactLight')}
-        selectionDotShadowColor={colors.foreground}
+        SelectionDot={SelectionDot}
       />
 
       <Button title="Refresh" onPress={refreshData} />
