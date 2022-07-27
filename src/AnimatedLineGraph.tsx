@@ -10,12 +10,14 @@ import {
   useValue,
   useComputedValue,
   vec,
-  Circle,
   Group,
-  Shadow,
   PathCommand,
 } from '@shopify/react-native-skia'
-import type { AnimatedLineGraphProps } from './LineGraphProps'
+import type {
+  AnimatedLineGraphProps,
+  SelectionDotProps,
+} from './LineGraphProps'
+import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
 import { createGraphPath } from './CreateGraphPath'
 import Reanimated, {
   runOnJS,
@@ -26,9 +28,6 @@ import { GestureDetector } from 'react-native-gesture-handler'
 import { useHoldOrPanGesture } from './hooks/useHoldOrPanGesture'
 import { getYForX } from './GetYForX'
 
-// weird rea type bug
-const ReanimatedView = Reanimated.View as any
-
 export function AnimatedLineGraph({
   points,
   color,
@@ -38,9 +37,9 @@ export function AnimatedLineGraph({
   onPointSelected,
   onGestureStart,
   onGestureEnd,
+  SelectionDot = DefaultSelectionDot,
   TopAxisLabel,
   BottomAxisLabel,
-  selectionDotShadowColor,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -163,11 +162,6 @@ export function AnimatedLineGraph({
   const circleX = useValue(0)
   const circleY = useValue(0)
   const pathEnd = useValue(0)
-  const circleRadius = useValue(0)
-  const circleStrokeRadius = useComputedValue(
-    () => circleRadius.current * 6,
-    [circleRadius]
-  )
 
   const setFingerX = useCallback(
     (fingerX: number) => {
@@ -188,18 +182,11 @@ export function AnimatedLineGraph({
   )
   const setIsActive = useCallback(
     (active: boolean) => {
-      runSpring(circleRadius, active ? 5 : 0, {
-        mass: 1,
-        stiffness: 1000,
-        damping: 50,
-        velocity: 0,
-      })
       if (!active) pathEnd.current = 1
-
       if (active) onGestureStart?.()
       else onGestureEnd?.()
     },
-    [circleRadius, onGestureEnd, onGestureStart, pathEnd]
+    [onGestureEnd, onGestureStart, pathEnd]
   )
   useAnimatedReaction(
     () => x.value,
@@ -227,11 +214,18 @@ export function AnimatedLineGraph({
     ],
     [pathEnd]
   )
+  const dotProps: SelectionDotProps = {
+    isActive,
+    color,
+    lineThickness,
+    circleX,
+    circleY,
+  }
 
   return (
     <View {...props}>
       <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
-        <ReanimatedView style={styles.container}>
+        <Reanimated.View style={styles.container}>
           {/* Top Label (max price) */}
           {TopAxisLabel != null && (
             <View style={styles.axisRow}>
@@ -260,25 +254,7 @@ export function AnimatedLineGraph({
                 </Path>
               </Group>
 
-              {enablePanGesture && (
-                <Group>
-                  <Circle
-                    opacity={0.05}
-                    cx={circleX}
-                    cy={circleY}
-                    r={circleStrokeRadius}
-                    color={selectionDotShadowColor}
-                  />
-                  <Circle
-                    cx={circleX}
-                    cy={circleY}
-                    r={circleRadius}
-                    color={color}
-                  >
-                    <Shadow dx={0} dy={0} color="rgba(0,0,0,0.5)" blur={4} />
-                  </Circle>
-                </Group>
-              )}
+              {SelectionDot != null && <SelectionDot {...dotProps} />}
             </Canvas>
           </View>
 
@@ -288,7 +264,7 @@ export function AnimatedLineGraph({
               <BottomAxisLabel />
             </View>
           )}
-        </ReanimatedView>
+        </Reanimated.View>
       </GestureDetector>
     </View>
   )
