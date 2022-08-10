@@ -13,10 +13,7 @@ import {
   Group,
   PathCommand,
 } from '@shopify/react-native-skia'
-import type {
-  AnimatedLineGraphProps,
-  SelectionDotProps,
-} from './LineGraphProps'
+import type { AnimatedLineGraphProps } from './LineGraphProps'
 import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
 import { createGraphPath } from './CreateGraphPath'
 import Reanimated, {
@@ -217,13 +214,6 @@ export function AnimatedLineGraph({
     ],
     [pathEnd]
   )
-  const dotProps: SelectionDotProps = {
-    isActive,
-    color,
-    lineThickness,
-    circleX,
-    circleY,
-  }
 
   return (
     <View {...props}>
@@ -257,7 +247,15 @@ export function AnimatedLineGraph({
                 </Path>
               </Group>
 
-              {SelectionDot != null && <SelectionDot {...dotProps} />}
+              {SelectionDot != null && (
+                <SelectionDot
+                  isActive={isActive}
+                  color={color}
+                  lineThickness={lineThickness}
+                  circleX={circleX}
+                  circleY={circleY}
+                />
+              )}
             </Canvas>
           </View>
 
