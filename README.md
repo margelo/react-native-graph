@@ -40,7 +40,7 @@ yarn add <b>react-native-graph</b>
 function App() {
   const priceHistory = usePriceHistory('ethereum')
 
-  return <LineGraph points={priceHistory} />
+  return <LineGraph points={priceHistory} color="#4484B2" />
 }
 ```
 
@@ -62,6 +62,7 @@ Example:
 <LineGraph
   points={priceHistory}
   animated={true}
+  color="#4484B2"
 />
 ```
 
@@ -87,6 +88,7 @@ Example:
 <LineGraph
   points={priceHistory}
   animated={true}
+  color="#4484B2"
   enablePanGesture={true}
   onGestureStart={() => hapticFeedback('impactLight')}
   onPointSelected={(p) => updatePriceTitle(p)}
@@ -112,6 +114,7 @@ Example:
 <LineGraph
   points={priceHistory}
   animated={true}
+  color="#4484B2"
   TopAxisLabel={() => <AxisLabel x={max.x} value={max.value} />}
   BottomAxisLabel={() => <AxisLabel x={min.x} value={min.value} />}
 />
@@ -133,6 +136,7 @@ Example:
 <LineGraph
   points={priceHistory}
   animated={true}
+  color="#4484B2"
   enablePanGesture={true}
   selectionDotShadowColor="#333333"
 />
