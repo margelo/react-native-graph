@@ -122,13 +122,15 @@ Example:
 
 ---
 
-### `selectionDotShadowColor`
+### `SelectionDot`
 
 <img src="./img/selection-dot.jpeg" align="right" height="250" />
 
-The color of the selection dot.
+Used to render the selection dot.
 
 >  Requires `animated` and `enablePanGesture` to be `true`.
+
+If `SelectionDot` is missing or `undefined`, a default one is provided with an outer ring and light shadow.
 
 Example:
 
@@ -138,9 +140,11 @@ Example:
   animated={true}
   color="#4484B2"
   enablePanGesture={true}
-  selectionDotShadowColor="#333333"
+  SelectionDot={CustomSelectionDot}
 />
 ```
+
+See this [example `<SelectionDot />` component](./example/src/components/CustomSelectionDot.tsx).
 
 ## Sponsor
 
