@@ -2,7 +2,7 @@ import type React from 'react'
 import type { ViewProps } from 'react-native'
 import type { GraphPathRange } from './CreateGraphPath'
 import type { SharedValue } from 'react-native-reanimated'
-import type { SkiaMutableValue } from '@shopify/react-native-skia'
+import type { Color, SkiaMutableValue } from '@shopify/react-native-skia'
 
 export interface GraphPoint {
   value: number
@@ -33,6 +33,10 @@ interface BaseLineGraphProps extends ViewProps {
    * Color of the graph line (path)
    */
   color: string
+  /**
+   * (Optional) Colors for the fill gradient below the graph line
+   */
+  gradientFillColors?: Color[]
   /**
    * The width of the graph line (path)
    *
