@@ -57,6 +57,7 @@
   "devDependencies": {
     "@react-native-community/eslint-config": "^2.0.0",
     "@release-it/conventional-changelog": "^2.0.0",
+    "@shopify/react-native-skia": "^0.1.136",
     "@types/react": "^17.0.42",
     "@types/react-native": "^0.67.4",
     "eslint": "^7.2.0",
@@ -67,18 +68,17 @@
     "react": "^17.0.2",
     "react-native": "^0.67.4",
     "react-native-builder-bob": "^0.18.0",
-    "release-it": "^14.2.2",
-    "typescript": "^4.4.3",
     "react-native-gesture-handler": "^2.5.0",
     "react-native-reanimated": "^2.9.1",
-    "@shopify/react-native-skia": "^0.1.136"
+    "release-it": "^14.2.2",
+    "typescript": "^4.4.3"
   },
   "peerDependencies": {
+    "@shopify/react-native-skia": "*",
     "react": "*",
     "react-native": "*",
-    "@shopify/react-native-skia": "*",
-    "react-native-reanimated": ">=2",
-    "react-native-gesture-handler": ">=2"
+    "react-native-gesture-handler": ">=2",
+    "react-native-reanimated": ">=2"
   },
   "release-it": {
     "git": {

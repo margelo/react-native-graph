@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { View, StyleSheet, Text, Button } from 'react-native'
 import { LineGraph } from 'react-native-graph'
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
@@ -19,6 +19,11 @@ export function GraphPage() {
   const [isAnimated, setIsAnimated] = useState(true)
   const [enablePanGesture, setEnablePanGesture] = useState(true)
   const [enableFadeInEffect, setEnableFadeInEffect] = useState(false)
+  const [enableCustomSelectionDot, setEnableCustomSelectionDot] =
+    useState(false)
+  const [enableRange, setEnableRange] = useState(false)
+  const [enableIndicator, setEnableIndicator] = useState(false)
+  const [indicatorPulsating, setIndicatorPulsating] = useState(false)
 
   const [points, setPoints] = useState(() => generateRandomGraphData(POINTS))
   const smallPoints = generateSinusGraphData(9)
@@ -27,6 +32,8 @@ export function GraphPage() {
     setPoints(generateRandomGraphData(POINTS))
     hapticFeedback('impactLight')
   }, [])
+
+  const highestDate = useMemo(() => points[POINTS - 1]!.date, [])
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -52,7 +59,23 @@ export function GraphPage() {
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
         onGestureStart={() => hapticFeedback('impactLight')}
-        SelectionDot={SelectionDot}
+        SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
+        range={
+          enableRange
+            ? {
+                x: {
+                  min: points[0]!.date,
+                  max: new Date(highestDate.getTime() + 30),
+                },
+                y: {
+                  min: -200,
+                  max: 200,
+                },
+              }
+            : undefined
+        }
+        enableIndicator={enableIndicator}
+        indicatorPulsating={indicatorPulsating}
       />
 
       <Button title="Refresh" onPress={refreshData} />
@@ -72,6 +95,26 @@ export function GraphPage() {
           title="Enable Fade-in effect:"
           isEnabled={enableFadeInEffect}
           setIsEnabled={setEnableFadeInEffect}
+        />
+        <Toggle
+          title="Custom Selection Dot:"
+          isEnabled={enableCustomSelectionDot}
+          setIsEnabled={setEnableCustomSelectionDot}
+        />
+        <Toggle
+          title="Enable Range:"
+          isEnabled={enableRange}
+          setIsEnabled={setEnableRange}
+        />
+        <Toggle
+          title="Enable Indicator:"
+          isEnabled={enableIndicator}
+          setIsEnabled={setEnableIndicator}
+        />
+        <Toggle
+          title="Indicator pulsating:"
+          isEnabled={indicatorPulsating}
+          setIsEnabled={setIndicatorPulsating}
         />
       </View>
 
