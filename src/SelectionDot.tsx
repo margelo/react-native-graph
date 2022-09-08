@@ -10,6 +10,9 @@ import {
 } from '@shopify/react-native-skia'
 import type { SelectionDotProps } from './LineGraphProps'
 
+export const CIRCLE_RADIUS = 5
+export const CIRCLE_RADIUS_MULTIPLIER = 6
+
 export function SelectionDot({
   isActive,
   color,
@@ -18,13 +21,13 @@ export function SelectionDot({
 }: SelectionDotProps): React.ReactElement {
   const circleRadius = useValue(0)
   const circleStrokeRadius = useComputedValue(
-    () => circleRadius.current * 6,
+    () => circleRadius.current * CIRCLE_RADIUS_MULTIPLIER,
     [circleRadius]
   )
 
   const setIsActive = useCallback(
     (active: boolean) => {
-      runSpring(circleRadius, active ? 5 : 0, {
+      runSpring(circleRadius, active ? CIRCLE_RADIUS : 0, {
         mass: 1,
         stiffness: 1000,
         damping: 50,

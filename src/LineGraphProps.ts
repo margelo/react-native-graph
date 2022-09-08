@@ -1,5 +1,6 @@
 import type React from 'react'
 import type { ViewProps } from 'react-native'
+import type { GraphPathRange } from './CreateGraphPath'
 import type { SharedValue } from 'react-native-reanimated'
 import type { SkiaMutableValue } from '@shopify/react-native-skia'
 
@@ -7,6 +8,8 @@ export interface GraphPoint {
   value: number
   date: Date
 }
+
+export type GraphRange = Partial<GraphPathRange>
 
 export interface SelectionDotProps {
   isActive: SharedValue<boolean>
@@ -21,6 +24,11 @@ interface BaseLineGraphProps extends ViewProps {
    * All points to be marked in the graph. Coordinate system will adjust to scale automatically.
    */
   points: GraphPoint[]
+  /**
+   * Range of the graph's x and y-axis. The range must be greater
+   * than the range given by the points.
+   */
+  range?: GraphRange
   /**
    * Color of the graph line (path)
    */
@@ -45,6 +53,26 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * Whether to enable Graph scrubbing/pan gesture.
    */
   enablePanGesture?: boolean
+  /**
+   * The color of the selection dot when the user is panning the graph.
+   */
+  selectionDotShadowColor?: string
+  /**
+   * Horizontal padding applied to graph, so the pan gesture dot doesn't get cut off horizontally
+   */
+  horizontalPadding?: number
+  /**
+   * Vertical padding applied to graph, so the pan gesture dot doesn't get cut off vertically
+   */
+  verticalPadding?: number
+  /**
+   * Enables an indicator which is displayed at the end of the graph
+   */
+  enableIndicator?: boolean
+  /**
+   * Let's the indicator pulsate
+   */
+  indicatorPulsating?: boolean
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph
