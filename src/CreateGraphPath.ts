@@ -200,19 +200,18 @@ export function createGraphPath({
       currentPoint
     )
 
-    const reps = Math.floor(
-      (actualWidth *
-        pixelFactorX(
-          new Date(point.date.getTime() - prev.date.getTime()),
-          range.x.min,
-          range.x.max
-        ) +
-        horizontalPadding) /
-        PIXEL_RATIO
+    // Calculates how many points between two points must be
+    // calculated and drawn onto the canvas
+    const drawingFactor = pixelFactorX(
+      new Date(point.date.getTime() - prev.date.getTime()),
+      range.x.min,
+      range.x.max
     )
+    const drawingPixels = actualWidth * drawingFactor + horizontalPadding
+    const numberOfDrawingPoints = Math.floor(drawingPixels / PIXEL_RATIO)
 
-    for (let i2 = 0; i2 <= reps; i2++) {
-      const p = splineFunction(i2 / reps)
+    for (let i2 = 0; i2 <= numberOfDrawingPoints; i2++) {
+      const p = splineFunction(i2 / numberOfDrawingPoints)
 
       if (p == null) return
       path.cubicTo(p.x, p.y, p.x, p.y, p.x, p.y)
