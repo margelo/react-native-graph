@@ -26,14 +26,39 @@ export function GraphPage() {
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
 
   const [points, setPoints] = useState(() => generateRandomGraphData(POINTS))
-  const smallPoints = generateSinusGraphData(9)
+  const smallPoints = useMemo(() => generateSinusGraphData(9), [])
 
   const refreshData = useCallback(() => {
     setPoints(generateRandomGraphData(POINTS))
     hapticFeedback('impactLight')
   }, [])
 
-  const highestDate = useMemo(() => points[POINTS - 1]!.date, [])
+  const highestDate = useMemo(
+    () =>
+      points.length !== 0 && points[points.length - 1] != null
+        ? points[points.length]!.date
+        : undefined,
+    [points]
+  )
+  const range = useMemo(
+    () =>
+      enableRange
+        ? {
+            x:
+              points.length !== 0 && highestDate != null
+                ? {
+                    min: points[0]!.date,
+                    max: new Date(highestDate.getTime() + 30),
+                  }
+                : undefined,
+            y: {
+              min: -200,
+              max: 200,
+            },
+          }
+        : undefined,
+    [enableRange, highestDate, points]
+  )
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -60,20 +85,7 @@ export function GraphPage() {
         enableFadeInMask={enableFadeInEffect}
         onGestureStart={() => hapticFeedback('impactLight')}
         SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
-        range={
-          enableRange
-            ? {
-                x: {
-                  min: points[0]!.date,
-                  max: new Date(highestDate.getTime() + 30),
-                },
-                y: {
-                  min: -200,
-                  max: 200,
-                },
-              }
-            : undefined
-        }
+        range={range}
         enableIndicator={enableIndicator}
         indicatorPulsating={indicatorPulsating}
       />
