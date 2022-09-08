@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { View, StyleSheet, Text, Button } from 'react-native'
 import { LineGraph } from 'react-native-graph'
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
+import type { GraphRange } from '../../../src/LineGraphProps'
 import { SelectionDot } from '../components/CustomSelectionDot'
 import { Toggle } from '../components/Toggle'
 import {
@@ -36,29 +37,29 @@ export function GraphPage() {
   const highestDate = useMemo(
     () =>
       points.length !== 0 && points[points.length - 1] != null
-        ? points[points.length]!.date
+        ? points[points.length - 1]!.date
         : undefined,
     [points]
   )
-  const range = useMemo(
-    () =>
-      enableRange
-        ? {
-            x:
-              points.length !== 0 && highestDate != null
-                ? {
-                    min: points[0]!.date,
-                    max: new Date(highestDate.getTime() + 30),
-                  }
-                : undefined,
-            y: {
-              min: -200,
-              max: 200,
-            },
-          }
-        : undefined,
-    [enableRange, highestDate, points]
-  )
+  const range: GraphRange = useMemo(() => {
+    if (enableRange) {
+      let r: GraphRange = {
+        y: {
+          min: -200,
+          max: 200,
+        },
+      }
+
+      if (points.length !== 0 && highestDate != null) {
+        r.x = {
+          min: points[0]!.date,
+          max: new Date(highestDate.getTime() + 30),
+        }
+      }
+    }
+
+    return range
+  }, [enableRange, highestDate, points])
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
