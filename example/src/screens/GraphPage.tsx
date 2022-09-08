@@ -41,9 +41,11 @@ export function GraphPage() {
         : undefined,
     [points]
   )
-  const range: GraphRange = useMemo(() => {
+  const range: GraphRange | undefined = useMemo(() => {
+    let r: GraphRange | undefined
+
     if (enableRange) {
-      let r: GraphRange = {
+      r = {
         y: {
           min: -200,
           max: 200,
@@ -58,7 +60,7 @@ export function GraphPage() {
       }
     }
 
-    return range
+    return r
   }, [enableRange, highestDate, points])
 
   return (
