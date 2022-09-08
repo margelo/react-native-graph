@@ -12,7 +12,11 @@ import {
 import { useColors } from '../hooks/useColors'
 import { hapticFeedback } from '../utils/HapticFeedback'
 
-const POINTS = 70
+const POINT_COUNT = 70
+const POINTS = generateRandomGraphData(POINT_COUNT)
+const COLOR = '#6a7ee7'
+const GRADIENT_FILL_COLORS = ['#7476df5D', '#7476df4D', '#7476df00']
+const SMALL_POINTS = generateSinusGraphData(9)
 
 export function GraphPage() {
   const colors = useColors()
@@ -22,15 +26,15 @@ export function GraphPage() {
   const [enableFadeInEffect, setEnableFadeInEffect] = useState(false)
   const [enableCustomSelectionDot, setEnableCustomSelectionDot] =
     useState(false)
+  const [enableGradient, setEnableGradient] = useState(false)
   const [enableRange, setEnableRange] = useState(false)
   const [enableIndicator, setEnableIndicator] = useState(false)
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
 
-  const [points, setPoints] = useState(() => generateRandomGraphData(POINTS))
-  const smallPoints = useMemo(() => generateSinusGraphData(9), [])
+  const [points, setPoints] = useState(POINTS)
 
   const refreshData = useCallback(() => {
-    setPoints(generateRandomGraphData(POINTS))
+    setPoints(generateRandomGraphData(POINT_COUNT))
     hapticFeedback('impactLight')
   }, [])
 
@@ -76,7 +80,7 @@ export function GraphPage() {
           style={styles.miniGraph}
           animated={false}
           color={colors.foreground}
-          points={smallPoints}
+          points={SMALL_POINTS}
         />
       </View>
 
@@ -85,14 +89,16 @@ export function GraphPage() {
       <LineGraph
         style={styles.graph}
         animated={isAnimated}
-        color="#6a7ee7"
+        color={COLOR}
         points={points}
+        gradientFillColors={enableGradient ? GRADIENT_FILL_COLORS : undefined}
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
         onGestureStart={() => hapticFeedback('impactLight')}
         SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
         range={range}
         enableIndicator={enableIndicator}
+        horizontalPadding={enableIndicator ? 15 : 0}
         indicatorPulsating={indicatorPulsating}
       />
 
@@ -120,6 +126,11 @@ export function GraphPage() {
           setIsEnabled={setEnableCustomSelectionDot}
         />
         <Toggle
+          title="Enable Gradient:"
+          isEnabled={enableGradient}
+          setIsEnabled={setEnableGradient}
+        />
+        <Toggle
           title="Enable Range:"
           isEnabled={enableRange}
           setIsEnabled={setEnableRange}
@@ -144,7 +155,6 @@ export function GraphPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 15,
     paddingTop: StaticSafeAreaInsets.safeAreaInsetsTop + 15,
     paddingBottom: StaticSafeAreaInsets.safeAreaInsetsBottom + 15,
   },
@@ -158,6 +168,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: '700',
+    paddingHorizontal: 15,
   },
   graph: {
     alignSelf: 'center',
@@ -173,5 +184,6 @@ const styles = StyleSheet.create({
   controls: {
     flexGrow: 1,
     justifyContent: 'center',
+    paddingHorizontal: 15,
   },
 })

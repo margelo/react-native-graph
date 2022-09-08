@@ -22,7 +22,7 @@ export interface GraphPathRange {
   y: GraphYRange
 }
 
-interface GraphPathConfig {
+type GraphPathConfig = {
   /**
    * Graph Points to use for the Path. Will be normalized and centered.
    */
@@ -51,6 +51,13 @@ interface GraphPathConfig {
    * Range of the graph's x and y-axis
    */
   range: GraphPathRange
+}
+
+type GraphPathConfigWithGradient = GraphPathConfig & {
+  shouldFillGradient: true
+}
+type GraphPathConfigWithoutGradient = GraphPathConfig & {
+  shouldFillGradient: false
 }
 
 export const controlPoint = (
@@ -129,7 +136,14 @@ export const pixelFactorY = (
 // A Graph Point will be drawn every second "pixel"
 const PIXEL_RATIO = 2
 
-export function createGraphPath({
+type GraphPathWithGradient = { path: SkPath; gradientPath: SkPath }
+
+function createGraphPathBase(
+  props: GraphPathConfigWithGradient
+): GraphPathWithGradient
+function createGraphPathBase(props: GraphPathConfigWithoutGradient): SkPath
+
+function createGraphPathBase({
   points,
   smoothing = 0.2,
   range,
@@ -137,7 +151,10 @@ export function createGraphPath({
   verticalPadding,
   canvasHeight: height,
   canvasWidth: width,
-}: GraphPathConfig): SkPath {
+  shouldFillGradient,
+}: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
+  | SkPath
+  | GraphPathWithGradient {
   const path = Skia.Path.Make()
 
   const actualWidth = width - 2 * horizontalPadding
@@ -218,5 +235,34 @@ export function createGraphPath({
     }
   })
 
-  return path
+  if (!shouldFillGradient) return path
+
+  const gradientPath = path.copy()
+
+  const lastPointX = pixelFactorX(
+    points[points.length - 1]!.date,
+    range.x.min,
+    range.x.max
+  )
+
+  gradientPath.lineTo(
+    actualWidth * lastPointX + horizontalPadding,
+    height + verticalPadding
+  )
+  gradientPath.lineTo(0 + horizontalPadding, height + verticalPadding)
+
+  return { path: path, gradientPath: gradientPath }
+}
+
+export function createGraphPath(props: GraphPathConfig): SkPath {
+  return createGraphPathBase({ ...props, shouldFillGradient: false })
+}
+
+export function createGraphPathWithGradient(
+  props: GraphPathConfig
+): GraphPathWithGradient {
+  return createGraphPathBase({
+    ...props,
+    shouldFillGradient: true,
+  })
 }

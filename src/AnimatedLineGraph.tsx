@@ -18,13 +18,10 @@ import {
   Shadow,
 } from '@shopify/react-native-skia'
 import type { AnimatedLineGraphProps } from './LineGraphProps'
-import {
-  CIRCLE_RADIUS,
-  CIRCLE_RADIUS_MULTIPLIER,
-  SelectionDot as DefaultSelectionDot,
-} from './SelectionDot'
+import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
 import {
   createGraphPath,
+  createGraphPathWithGradient,
   getGraphPathRange,
   GraphPathRange,
   pixelFactorX,
@@ -59,6 +56,7 @@ const ReanimatedView = Reanimated.View as any
 export function AnimatedLineGraph({
   points,
   color,
+  gradientFillColors,
   lineThickness = 3,
   range,
   enableFadeInMask,
@@ -69,8 +67,10 @@ export function AnimatedLineGraph({
   SelectionDot = DefaultSelectionDot,
   enableIndicator = false,
   indicatorPulsating = false,
-  horizontalPadding = CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
-  verticalPadding = lineThickness + CIRCLE_RADIUS * CIRCLE_RADIUS_MULTIPLIER,
+  horizontalPadding = enableIndicator
+    ? INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER
+    : 0,
+  verticalPadding = lineThickness,
   TopAxisLabel,
   BottomAxisLabel,
   ...props
@@ -107,7 +107,6 @@ export function AnimatedLineGraph({
     ],
     [pathEnd]
   )
-
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       setWidth(Math.round(layout.width))
@@ -129,6 +128,7 @@ export function AnimatedLineGraph({
   }, [height, width])
 
   const paths = useValue<{ from?: SkPath; to?: SkPath }>({})
+  const gradientPaths = useValue<{ from?: SkPath; to?: SkPath }>({})
   const commands = useRef<PathCommand[]>([])
   const [commandsChanged, setCommandsChanged] = useState(0)
 
@@ -166,6 +166,8 @@ export function AnimatedLineGraph({
 
   const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color])
 
+  const shouldFillGradient = gradientFillColors != null
+
   useEffect(() => {
     if (height < 1 || width < 1) {
       // view is not yet measured!
@@ -176,16 +178,49 @@ export function AnimatedLineGraph({
       return
     }
 
-    const path = createGraphPath({
+    let path
+    let gradientPath
+
+    const createGraphPathProps = {
       points: points,
       range: pathRange,
       horizontalPadding: horizontalPadding,
       verticalPadding: verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
-    })
+    }
+
+    if (shouldFillGradient) {
+      const { path: pathNew, gradientPath: gradientPathNew } =
+        createGraphPathWithGradient(createGraphPathProps)
+
+      path = pathNew
+      gradientPath = gradientPathNew
+    } else {
+      path = createGraphPath(createGraphPathProps)
+    }
 
     commands.current = path.toCmds()
+
+    if (gradientPath != null) {
+      const previous = gradientPaths.current
+      let from: SkPath = previous.to ?? straightLine
+      if (previous.from != null && interpolateProgress.current < 1)
+        from =
+          from.interpolate(previous.from, interpolateProgress.current) ?? from
+
+      if (gradientPath.isInterpolatable(from)) {
+        gradientPaths.current = {
+          from: from,
+          to: gradientPath,
+        }
+      } else {
+        gradientPaths.current = {
+          from: gradientPath,
+          to: gradientPath,
+        }
+      }
+    }
 
     const previous = paths.current
     let from: SkPath = previous.to ?? straightLine
@@ -224,6 +259,8 @@ export function AnimatedLineGraph({
     interpolateProgress,
     pathRange,
     paths,
+    shouldFillGradient,
+    gradientPaths,
     points,
     range,
     straightLine,
@@ -255,6 +292,17 @@ export function AnimatedLineGraph({
     () => {
       const from = paths.current.from ?? straightLine
       const to = paths.current.to ?? straightLine
+
+      return to.interpolate(from, interpolateProgress.current)
+    },
+    // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
+    [interpolateProgress]
+  )
+
+  const gradientPath = useComputedValue(
+    () => {
+      const from = gradientPaths.current.from ?? straightLine
+      const to = gradientPaths.current.to ?? straightLine
 
       return to.interpolate(from, interpolateProgress.current)
     },
@@ -424,6 +472,19 @@ export function AnimatedLineGraph({
                     positions={positions}
                   />
                 </Path>
+
+                {shouldFillGradient && (
+                  <Path
+                    // @ts-ignore
+                    path={gradientPath}
+                  >
+                    <LinearGradient
+                      start={vec(0, 0)}
+                      end={vec(0, height)}
+                      colors={gradientFillColors}
+                    />
+                  </Path>
+                )}
               </Group>
 
               {SelectionDot != null && (
