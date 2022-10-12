@@ -77,6 +77,10 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * Let's the indicator pulsate
    */
   indicatorPulsating?: boolean
+  /**
+   * Timeout before the pan gesture starts
+   */
+  panGestureTimeout?: number
 
   /**
    * Called for each point while the user is scrubbing/panning through the graph

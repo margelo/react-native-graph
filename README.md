@@ -82,6 +82,10 @@ There are three events fired when the user interacts with the graph:
 2. `onPointSelected`: Fired for each point the user pans through. You can use this event to update labels or highlight selection in the graph.
 3. `onGestureEnd`: Fired once the user releases his finger and the pan gesture _deactivates_.
 
+Pan gesture can be configures using these props:
+
+1. `panGestureTimeout`: Set timeout for the pan gesture to activate. Set to `0` to start immediately after touch. Defaults to `300`.
+
 Example:
 
 ```jsx
