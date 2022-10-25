@@ -47,12 +47,23 @@ export function StaticLineGraph({
     [height, lineThickness, pathRange, points, width]
   )
 
+  const primaryColor = useMemo(() => {
+    if (typeof color === 'string') return color
+    return color[0] ?? '#FFF'
+  }, [color])
+
   const gradientColors = useMemo(
-    () => [`${getSixDigitHex(color)}00`, `${getSixDigitHex(color)}ff`],
+    () =>
+      typeof color === 'string'
+        ? [`${getSixDigitHex(color)}00`, `${getSixDigitHex(color)}ff`]
+        : color,
     [color]
   )
   const gradientFrom = useMemo(() => vec(0, 0), [])
-  const gradientTo = useMemo(() => vec(width * 0.15, 0), [width])
+  const gradientTo = useMemo(
+    () => vec(typeof color === 'string' ? width * 0.15 : width, 0),
+    [width, color]
+  )
 
   return (
     <View {...props} style={style} onLayout={onLayout}>
@@ -60,12 +71,12 @@ export function StaticLineGraph({
         <Path
           path={path}
           strokeWidth={lineThickness}
-          color={enableFadeInMask ? undefined : color}
+          color={enableFadeInMask ? undefined : primaryColor}
           style="stroke"
           strokeJoin="round"
           strokeCap="round"
         >
-          {enableFadeInMask && (
+          {(enableFadeInMask || typeof color !== 'string') && (
             <LinearGradient
               start={gradientFrom}
               end={gradientTo}

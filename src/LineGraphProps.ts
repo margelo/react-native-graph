@@ -30,9 +30,9 @@ interface BaseLineGraphProps extends ViewProps {
    */
   range?: GraphRange
   /**
-   * Color of the graph line (path)
+   * Color of the graph line (path) either as a single solid color or an array of colors for a line gradient
    */
-  color: string
+  color: string | string[]
   /**
    * (Optional) Colors for the fill gradient below the graph line
    */

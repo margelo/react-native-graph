@@ -16,6 +16,7 @@ const POINT_COUNT = 70
 const POINTS = generateRandomGraphData(POINT_COUNT)
 const COLOR = '#6a7ee7'
 const GRADIENT_FILL_COLORS = ['#7476df5D', '#7476df4D', '#7476df00']
+const GRADIENT_LINE_COLORS = ['#FF0000', '#00FF00', '#0000FF']
 const SMALL_POINTS = generateSinusGraphData(9)
 
 export function GraphPage() {
@@ -26,7 +27,8 @@ export function GraphPage() {
   const [enableFadeInEffect, setEnableFadeInEffect] = useState(false)
   const [enableCustomSelectionDot, setEnableCustomSelectionDot] =
     useState(false)
-  const [enableGradient, setEnableGradient] = useState(false)
+  const [enableFillGradient, setEnableFillGradient] = useState(false)
+  const [enableLineGradient, setEnableLineGradient] = useState(false)
   const [enableRange, setEnableRange] = useState(false)
   const [enableIndicator, setEnableIndicator] = useState(false)
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
@@ -89,9 +91,11 @@ export function GraphPage() {
       <LineGraph
         style={styles.graph}
         animated={isAnimated}
-        color={COLOR}
+        color={enableLineGradient ? GRADIENT_LINE_COLORS : COLOR}
         points={points}
-        gradientFillColors={enableGradient ? GRADIENT_FILL_COLORS : undefined}
+        gradientFillColors={
+          enableFillGradient ? GRADIENT_FILL_COLORS : undefined
+        }
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
         onGestureStart={() => hapticFeedback('impactLight')}
@@ -126,9 +130,14 @@ export function GraphPage() {
           setIsEnabled={setEnableCustomSelectionDot}
         />
         <Toggle
-          title="Enable Gradient:"
-          isEnabled={enableGradient}
-          setIsEnabled={setEnableGradient}
+          title="Enable Fill Gradient:"
+          isEnabled={enableFillGradient}
+          setIsEnabled={setEnableFillGradient}
+        />
+        <Toggle
+          title="Enable Line Gradient:"
+          isEnabled={enableLineGradient}
+          setIsEnabled={setEnableLineGradient}
         />
         <Toggle
           title="Enable Range:"

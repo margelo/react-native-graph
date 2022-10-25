@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { runOnJS, useAnimatedReaction } from 'react-native-reanimated'
 import {
   runSpring,
@@ -45,6 +45,11 @@ export function SelectionDot({
     [isActive, setIsActive]
   )
 
+  const primaryColor = useMemo(() => {
+    if (typeof color === 'string') return color
+    return color[0] ?? '#FFF'
+  }, [color])
+
   return (
     <Group>
       <Circle
@@ -54,7 +59,7 @@ export function SelectionDot({
         r={circleStrokeRadius}
         color="#333333"
       />
-      <Circle cx={circleX} cy={circleY} r={circleRadius} color={color}>
+      <Circle cx={circleX} cy={circleY} r={circleRadius} color={primaryColor}>
         <Shadow dx={0} dy={0} color="rgba(0,0,0,0.5)" blur={4} />
       </Circle>
     </Group>
