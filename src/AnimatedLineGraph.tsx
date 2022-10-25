@@ -97,16 +97,20 @@ export function AnimatedLineGraph({
   const indicatorPulseRadius = useValue(INDICATOR_PULSE_BLUR_RADIUS_SMALL)
   const indicatorPulseOpacity = useValue(1)
 
-  const positions = useComputedValue(
-    () => [
-      0,
-      Math.min(0.15, pathEnd.current),
-      pathEnd.current,
-      pathEnd.current,
-      1,
-    ],
-    [pathEnd]
-  )
+  const positions = useComputedValue(() => {
+    if (typeof color === 'string') {
+      return [
+        0,
+        Math.min(0.15, pathEnd.current),
+        pathEnd.current,
+        pathEnd.current,
+        1,
+      ]
+    } else {
+      return color.map((_, index) => index / (color.length - 1))
+    }
+  }, [pathEnd, color])
+
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       setWidth(Math.round(layout.width))
@@ -114,6 +118,8 @@ export function AnimatedLineGraph({
     },
     []
   )
+
+  console.log(positions, color)
 
   const straightLine = useMemo(() => {
     const path = Skia.Path.Make()
@@ -164,7 +170,15 @@ export function AnimatedLineGraph({
     [commandsChanged, indicatorX]
   )
 
-  const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color])
+  const primaryColor = useMemo(() => {
+    if (typeof color === 'string') return color
+    return color[0] ?? '#FFF'
+  }, [color])
+
+  const indicatorPulseColor = useMemo(
+    () => hexToRgba(primaryColor, 0.4),
+    [primaryColor]
+  )
 
   const shouldFillGradient = gradientFillColors != null
 
@@ -494,7 +508,7 @@ export function AnimatedLineGraph({
               {SelectionDot != null && (
                 <SelectionDot
                   isActive={isActive}
-                  color={color}
+                  color={primaryColor}
                   lineThickness={lineThickness}
                   circleX={circleX}
                   circleY={circleY}
@@ -526,7 +540,7 @@ export function AnimatedLineGraph({
                     cx={indicatorX}
                     cy={indicatorY}
                     r={indicatorRadius}
-                    color={color}
+                    color={primaryColor}
                   />
                 </Group>
               )}
