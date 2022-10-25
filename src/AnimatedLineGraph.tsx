@@ -1,5 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, StyleSheet, LayoutChangeEvent } from 'react-native'
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
 import {
   Canvas,
   runSpring,
@@ -16,16 +22,16 @@ import {
   mix,
   Circle,
   Shadow,
-} from '@shopify/react-native-skia'
-import type { AnimatedLineGraphProps } from './LineGraphProps'
-import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
+} from '@shopify/react-native-skia';
+import type { AnimatedLineGraphProps } from './LineGraphProps';
+import { SelectionDot as DefaultSelectionDot } from './SelectionDot';
 import {
   createGraphPath,
   createGraphPathWithGradient,
   getGraphPathRange,
   GraphPathRange,
   pixelFactorX,
-} from './CreateGraphPath'
+} from './CreateGraphPath';
 import Reanimated, {
   runOnJS,
   useAnimatedReaction,
@@ -36,22 +42,22 @@ import Reanimated, {
   withSequence,
   withTiming,
   withDelay,
-} from 'react-native-reanimated'
-import { getSixDigitHex } from './utils/getSixDigitHex'
-import { GestureDetector } from 'react-native-gesture-handler'
-import { usePanGesture } from './hooks/usePanGesture'
-import { getYForX } from './GetYForX'
-import { hexToRgba } from './utils/hexToRgba'
+} from 'react-native-reanimated';
+import { getSixDigitHex } from './utils/getSixDigitHex';
+import { GestureDetector } from 'react-native-gesture-handler';
+import { usePanGesture } from './hooks/usePanGesture';
+import { getYForX } from './GetYForX';
+import { hexToRgba } from './utils/hexToRgba';
 
-const INDICATOR_RADIUS = 7
-const INDICATOR_BORDER_MULTIPLIER = 1.3
+const INDICATOR_RADIUS = 7;
+const INDICATOR_BORDER_MULTIPLIER = 1.3;
 const INDICATOR_PULSE_BLUR_RADIUS_SMALL =
-  INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER
+  INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER;
 const INDICATOR_PULSE_BLUR_RADIUS_BIG =
-  INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER + 20
+  INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER + 20;
 
 // weird rea type bug
-const ReanimatedView = Reanimated.View as any
+const ReanimatedView = Reanimated.View as any;
 
 export function AnimatedLineGraph({
   points,
@@ -75,27 +81,27 @@ export function AnimatedLineGraph({
   BottomAxisLabel,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
-  const [width, setWidth] = useState(0)
-  const [height, setHeight] = useState(0)
-  const interpolateProgress = useValue(0)
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+  const interpolateProgress = useValue(0);
 
-  const { gesture, isActive, x } = usePanGesture({ holdDuration: 300 })
-  const circleX = useValue(0)
-  const circleY = useValue(0)
-  const pathEnd = useValue(0)
-  const indicatorRadius = useValue(enableIndicator ? INDICATOR_RADIUS : 0)
+  const { gesture, isActive, x } = usePanGesture({ holdDuration: 300 });
+  const circleX = useValue(0);
+  const circleY = useValue(0);
+  const pathEnd = useValue(0);
+  const indicatorRadius = useValue(enableIndicator ? INDICATOR_RADIUS : 0);
   const indicatorBorderRadius = useComputedValue(
     () => indicatorRadius.current * INDICATOR_BORDER_MULTIPLIER,
     [indicatorRadius]
-  )
+  );
 
   const pulseTrigger = useDerivedValue(() => {
-    'worklet'
-    return isActive.value ? 1 : 0
-  }, [])
-  const indicatorPulseAnimation = useSharedValue(0)
-  const indicatorPulseRadius = useValue(INDICATOR_PULSE_BLUR_RADIUS_SMALL)
-  const indicatorPulseOpacity = useValue(1)
+    'worklet';
+    return isActive.value ? 1 : 0;
+  }, []);
+  const indicatorPulseAnimation = useSharedValue(0);
+  const indicatorPulseRadius = useValue(INDICATOR_PULSE_BLUR_RADIUS_SMALL);
+  const indicatorPulseOpacity = useValue(1);
 
   const positions = useComputedValue(
     () => [
@@ -106,39 +112,39 @@ export function AnimatedLineGraph({
       1,
     ],
     [pathEnd]
-  )
+  );
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-      setWidth(Math.round(layout.width))
-      setHeight(Math.round(layout.height))
+      setWidth(Math.round(layout.width));
+      setHeight(Math.round(layout.height));
     },
     []
-  )
+  );
 
   const straightLine = useMemo(() => {
-    const path = Skia.Path.Make()
-    path.moveTo(0, height / 2)
+    const path = Skia.Path.Make();
+    path.moveTo(0, height / 2);
     for (let i = 0; i < width - 1; i += 2) {
-      const x = i
-      const y = height / 2
-      path.cubicTo(x, y, x, y, x, y)
+      const x = i;
+      const y = height / 2;
+      path.cubicTo(x, y, x, y, x, y);
     }
 
-    return path
-  }, [height, width])
+    return path;
+  }, [height, width]);
 
-  const paths = useValue<{ from?: SkPath; to?: SkPath }>({})
-  const gradientPaths = useValue<{ from?: SkPath; to?: SkPath }>({})
-  const commands = useRef<PathCommand[]>([])
-  const [commandsChanged, setCommandsChanged] = useState(0)
+  const paths = useValue<{ from?: SkPath; to?: SkPath }>({});
+  const gradientPaths = useValue<{ from?: SkPath; to?: SkPath }>({});
+  const commands = useRef<PathCommand[]>([]);
+  const [commandsChanged, setCommandsChanged] = useState(0);
 
   const pathRange: GraphPathRange = useMemo(
     () => getGraphPathRange(points, range),
     [points, range]
-  )
+  );
 
   const drawingWidth = useMemo(() => {
-    const lastPoint = points[points.length - 1]!
+    const lastPoint = points[points.length - 1]!;
 
     return Math.max(
       Math.floor(
@@ -146,8 +152,8 @@ export function AnimatedLineGraph({
           pixelFactorX(lastPoint.date, pathRange.x.min, pathRange.x.max)
       ),
       0
-    )
-  }, [horizontalPadding, pathRange.x.max, pathRange.x.min, points, width])
+    );
+  }, [horizontalPadding, pathRange.x.max, pathRange.x.min, points, width]);
 
   const indicatorX = useMemo(
     () =>
@@ -155,31 +161,31 @@ export function AnimatedLineGraph({
         ? Math.floor(drawingWidth) + horizontalPadding
         : undefined,
     [commandsChanged, drawingWidth, horizontalPadding]
-  )
+  );
   const indicatorY = useMemo(
     () =>
       commandsChanged >= 0 && indicatorX != null
         ? getYForX(commands.current, indicatorX)
         : undefined,
     [commandsChanged, indicatorX]
-  )
+  );
 
-  const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color])
+  const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color]);
 
-  const shouldFillGradient = gradientFillColors != null
+  const shouldFillGradient = gradientFillColors != null;
 
   useEffect(() => {
     if (height < 1 || width < 1) {
       // view is not yet measured!
-      return
+      return;
     }
     if (points.length < 1) {
       // points are still empty!
-      return
+      return;
     }
 
-    let path
-    let gradientPath
+    let path;
+    let gradientPath;
 
     const createGraphPathProps = {
       points: points,
@@ -188,59 +194,59 @@ export function AnimatedLineGraph({
       verticalPadding: verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
-    }
+    };
 
     if (shouldFillGradient) {
       const { path: pathNew, gradientPath: gradientPathNew } =
-        createGraphPathWithGradient(createGraphPathProps)
+        createGraphPathWithGradient(createGraphPathProps);
 
-      path = pathNew
-      gradientPath = gradientPathNew
+      path = pathNew;
+      gradientPath = gradientPathNew;
     } else {
-      path = createGraphPath(createGraphPathProps)
+      path = createGraphPath(createGraphPathProps);
     }
 
-    commands.current = path.toCmds()
+    commands.current = path.toCmds();
 
     if (gradientPath != null) {
-      const previous = gradientPaths.current
-      let from: SkPath = previous.to ?? straightLine
+      const previous = gradientPaths.current;
+      let from: SkPath = previous.to ?? straightLine;
       if (previous.from != null && interpolateProgress.current < 1)
         from =
-          from.interpolate(previous.from, interpolateProgress.current) ?? from
+          from.interpolate(previous.from, interpolateProgress.current) ?? from;
 
       if (gradientPath.isInterpolatable(from)) {
         gradientPaths.current = {
           from: from,
           to: gradientPath,
-        }
+        };
       } else {
         gradientPaths.current = {
           from: gradientPath,
           to: gradientPath,
-        }
+        };
       }
     }
 
-    const previous = paths.current
-    let from: SkPath = previous.to ?? straightLine
+    const previous = paths.current;
+    let from: SkPath = previous.to ?? straightLine;
     if (previous.from != null && interpolateProgress.current < 1)
       from =
-        from.interpolate(previous.from, interpolateProgress.current) ?? from
+        from.interpolate(previous.from, interpolateProgress.current) ?? from;
 
     if (path.isInterpolatable(from)) {
       paths.current = {
         from: from,
         to: path,
-      }
+      };
     } else {
       paths.current = {
         from: path,
         to: path,
-      }
+      };
     }
 
-    setCommandsChanged(commandsChanged + 1)
+    setCommandsChanged(commandsChanged + 1);
 
     runSpring(
       interpolateProgress,
@@ -251,7 +257,7 @@ export function AnimatedLineGraph({
         damping: 400,
         velocity: 0,
       }
-    )
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     height,
@@ -266,54 +272,58 @@ export function AnimatedLineGraph({
     straightLine,
     verticalPadding,
     width,
-  ])
+  ]);
 
   const gradientColors = useMemo(() => {
-    if (enableFadeInMask) {
-      return [
-        `${getSixDigitHex(color)}00`,
-        `${getSixDigitHex(color)}ff`,
-        `${getSixDigitHex(color)}ff`,
-        `${getSixDigitHex(color)}33`,
-        `${getSixDigitHex(color)}33`,
-      ]
+    if (typeof color === 'string') {
+      if (enableFadeInMask) {
+        return [
+          `${getSixDigitHex(color)}00`,
+          `${getSixDigitHex(color)}ff`,
+          `${getSixDigitHex(color)}ff`,
+          `${getSixDigitHex(color)}33`,
+          `${getSixDigitHex(color)}33`,
+        ];
+      } else {
+        return [
+          color,
+          color,
+          color,
+          `${getSixDigitHex(color)}33`,
+          `${getSixDigitHex(color)}33`,
+        ];
+      }
     } else {
-      return [
-        color,
-        color,
-        color,
-        `${getSixDigitHex(color)}33`,
-        `${getSixDigitHex(color)}33`,
-      ]
+      return color;
     }
-  }, [color, enableFadeInMask])
+  }, [color, enableFadeInMask]);
 
   const path = useComputedValue(
     () => {
-      const from = paths.current.from ?? straightLine
-      const to = paths.current.to ?? straightLine
+      const from = paths.current.from ?? straightLine;
+      const to = paths.current.to ?? straightLine;
 
-      return to.interpolate(from, interpolateProgress.current)
+      return to.interpolate(from, interpolateProgress.current);
     },
     // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
     [interpolateProgress]
-  )
+  );
 
   const gradientPath = useComputedValue(
     () => {
-      const from = gradientPaths.current.from ?? straightLine
-      const to = gradientPaths.current.to ?? straightLine
+      const from = gradientPaths.current.from ?? straightLine;
+      const to = gradientPaths.current.to ?? straightLine;
 
-      return to.interpolate(from, interpolateProgress.current)
+      return to.interpolate(from, interpolateProgress.current);
     },
     // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
     [interpolateProgress]
-  )
+  );
 
   const stopPulsating = useCallback(() => {
-    cancelAnimation(indicatorPulseAnimation)
-    indicatorPulseAnimation.value = 0
-  }, [indicatorPulseAnimation])
+    cancelAnimation(indicatorPulseAnimation);
+    indicatorPulseAnimation.value = 0;
+  }, [indicatorPulseAnimation]);
 
   const startPulsating = useCallback(() => {
     indicatorPulseAnimation.value = withRepeat(
@@ -328,31 +338,34 @@ export function AnimatedLineGraph({
         )
       ),
       -1
-    )
-  }, [indicatorPulseAnimation])
+    );
+  }, [indicatorPulseAnimation]);
 
   const setFingerX = useCallback(
     (fingerX: number) => {
-      const lowerBound = horizontalPadding
-      const upperBound = drawingWidth + horizontalPadding
+      const lowerBound = horizontalPadding;
+      const upperBound = drawingWidth + horizontalPadding;
 
-      const fingerXInRange = Math.min(Math.max(fingerX, lowerBound), upperBound)
-      const y = getYForX(commands.current, fingerXInRange)
+      const fingerXInRange = Math.min(
+        Math.max(fingerX, lowerBound),
+        upperBound
+      );
+      const y = getYForX(commands.current, fingerXInRange);
 
       if (y != null) {
-        circleY.current = y
-        circleX.current = fingerXInRange
+        circleY.current = y;
+        circleX.current = fingerXInRange;
       }
 
       if (fingerX > lowerBound && fingerX < upperBound && isActive.value)
-        pathEnd.current = fingerX / width
+        pathEnd.current = fingerX / width;
 
-      const actualFingerX = fingerX - horizontalPadding
+      const actualFingerX = fingerX - horizontalPadding;
 
-      const index = Math.round((actualFingerX / upperBound) * points.length)
-      const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
-      const dataPoint = points[pointIndex]
-      if (dataPoint != null) onPointSelected?.(dataPoint)
+      const index = Math.round((actualFingerX / upperBound) * points.length);
+      const pointIndex = Math.min(Math.max(index, 0), points.length - 1);
+      const dataPoint = points[pointIndex];
+      if (dataPoint != null) onPointSelected?.(dataPoint);
     },
     [
       circleX,
@@ -365,7 +378,7 @@ export function AnimatedLineGraph({
       points,
       width,
     ]
-  )
+  );
 
   const setIsActive = useCallback(
     (active: boolean) => {
@@ -374,15 +387,15 @@ export function AnimatedLineGraph({
         stiffness: 1000,
         damping: 50,
         velocity: 0,
-      })
+      });
 
       if (active) {
-        onGestureStart?.()
-        stopPulsating()
+        onGestureStart?.();
+        stopPulsating();
       } else {
-        onGestureEnd?.()
-        pathEnd.current = 1
-        startPulsating()
+        onGestureEnd?.();
+        pathEnd.current = 1;
+        startPulsating();
       }
     },
     [
@@ -393,37 +406,37 @@ export function AnimatedLineGraph({
       startPulsating,
       stopPulsating,
     ]
-  )
+  );
 
   useAnimatedReaction(
     () => x.value,
     (fingerX) => {
       if (isActive.value || fingerX) {
-        runOnJS(setFingerX)(fingerX)
+        runOnJS(setFingerX)(fingerX);
       }
     },
     [isActive, setFingerX, width, x]
-  )
+  );
 
   useAnimatedReaction(
     () => isActive.value,
     (active) => {
-      runOnJS(setIsActive)(active)
+      runOnJS(setIsActive)(active);
     },
     [isActive, setIsActive]
-  )
+  );
 
   useEffect(() => {
     if (points.length !== 0 && commands.current.length !== 0)
-      pathEnd.current = 1
-  }, [commands, pathEnd, points.length])
+      pathEnd.current = 1;
+  }, [commands, pathEnd, points.length]);
 
   useEffect(() => {
     if (indicatorPulsating) {
-      startPulsating()
+      startPulsating();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [indicatorPulsating])
+  }, [indicatorPulsating]);
 
   useSharedValueEffect(
     () => {
@@ -432,15 +445,19 @@ export function AnimatedLineGraph({
           indicatorPulseAnimation.value,
           INDICATOR_PULSE_BLUR_RADIUS_SMALL,
           INDICATOR_PULSE_BLUR_RADIUS_BIG
-        )
-        indicatorPulseOpacity.current = mix(indicatorPulseAnimation.value, 1, 0)
+        );
+        indicatorPulseOpacity.current = mix(
+          indicatorPulseAnimation.value,
+          1,
+          0
+        );
       } else {
-        indicatorPulseRadius.current = 0
+        indicatorPulseRadius.current = 0;
       }
     },
     indicatorPulseAnimation,
     pulseTrigger
-  )
+  );
 
   return (
     <View {...props}>
@@ -538,7 +555,7 @@ export function AnimatedLineGraph({
         </ReanimatedView>
       </GestureDetector>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -554,4 +571,4 @@ const styles = StyleSheet.create({
   axisRow: {
     height: 17,
   },
-})
+});
