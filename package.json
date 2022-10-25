@@ -112,7 +112,8 @@
           "tabWidth": 2,
           "semi": false,
           "trailingComma": "es5",
-          "useTabs": false
+          "useTabs": false,
+          "semi": false
         }
       ]
     }
@@ -126,7 +127,8 @@
     "singleQuote": true,
     "tabWidth": 2,
     "trailingComma": "es5",
-    "useTabs": false
+    "useTabs": false,
+    "semi": false
   },
   "react-native-builder-bob": {
     "source": "src",

@@ -1,44 +1,44 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
-import { LineGraph } from 'react-native-graph';
-import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
-import type { GraphRange } from '../../../src/LineGraphProps';
-import { SelectionDot } from '../components/CustomSelectionDot';
-import { Toggle } from '../components/Toggle';
+import React, { useCallback, useMemo, useState } from 'react'
+import { View, StyleSheet, Text, Button } from 'react-native'
+import { LineGraph } from 'react-native-graph'
+import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
+import type { GraphRange } from '../../../src/LineGraphProps'
+import { SelectionDot } from '../components/CustomSelectionDot'
+import { Toggle } from '../components/Toggle'
 import {
   generateRandomGraphData,
   generateSinusGraphData,
-} from '../data/GraphData';
-import { useColors } from '../hooks/useColors';
-import { hapticFeedback } from '../utils/HapticFeedback';
+} from '../data/GraphData'
+import { useColors } from '../hooks/useColors'
+import { hapticFeedback } from '../utils/HapticFeedback'
 
-const POINT_COUNT = 70;
-const POINTS = generateRandomGraphData(POINT_COUNT);
-const COLOR = '#6a7ee7';
-const GRADIENT_FILL_COLORS = ['#7476df5D', '#7476df4D', '#7476df00'];
-const GRADIENT_LINE_COLORS = ['#FF0000', '#00FF00', '#0000FF'];
-const SMALL_POINTS = generateSinusGraphData(9);
+const POINT_COUNT = 70
+const POINTS = generateRandomGraphData(POINT_COUNT)
+const COLOR = '#6a7ee7'
+const GRADIENT_FILL_COLORS = ['#7476df5D', '#7476df4D', '#7476df00']
+const GRADIENT_LINE_COLORS = ['#FF0000', '#00FF00', '#0000FF']
+const SMALL_POINTS = generateSinusGraphData(9)
 
 export function GraphPage() {
-  const colors = useColors();
+  const colors = useColors()
 
-  const [isAnimated, setIsAnimated] = useState(true);
-  const [enablePanGesture, setEnablePanGesture] = useState(true);
-  const [enableFadeInEffect, setEnableFadeInEffect] = useState(false);
+  const [isAnimated, setIsAnimated] = useState(true)
+  const [enablePanGesture, setEnablePanGesture] = useState(true)
+  const [enableFadeInEffect, setEnableFadeInEffect] = useState(false)
   const [enableCustomSelectionDot, setEnableCustomSelectionDot] =
-    useState(false);
-  const [enableFillGradient, setEnableFillGradient] = useState(false);
-  const [enableLineGradient, setEnableLineGradient] = useState(false);
-  const [enableRange, setEnableRange] = useState(false);
-  const [enableIndicator, setEnableIndicator] = useState(false);
-  const [indicatorPulsating, setIndicatorPulsating] = useState(false);
+    useState(false)
+  const [enableFillGradient, setEnableFillGradient] = useState(false)
+  const [enableLineGradient, setEnableLineGradient] = useState(false)
+  const [enableRange, setEnableRange] = useState(false)
+  const [enableIndicator, setEnableIndicator] = useState(false)
+  const [indicatorPulsating, setIndicatorPulsating] = useState(false)
 
-  const [points, setPoints] = useState(POINTS);
+  const [points, setPoints] = useState(POINTS)
 
   const refreshData = useCallback(() => {
-    setPoints(generateRandomGraphData(POINT_COUNT));
-    hapticFeedback('impactLight');
-  }, []);
+    setPoints(generateRandomGraphData(POINT_COUNT))
+    hapticFeedback('impactLight')
+  }, [])
 
   const highestDate = useMemo(
     () =>
@@ -46,10 +46,10 @@ export function GraphPage() {
         ? points[points.length - 1]!.date
         : undefined,
     [points]
-  );
+  )
   const range: GraphRange | undefined = useMemo(() => {
     // if range is disabled, default to infinite range (undefined)
-    if (!enableRange) return undefined;
+    if (!enableRange) return undefined
 
     if (points.length !== 0 && highestDate != null) {
       return {
@@ -61,16 +61,16 @@ export function GraphPage() {
           min: -200,
           max: 200,
         },
-      };
+      }
     } else {
       return {
         y: {
           min: -200,
           max: 200,
         },
-      };
+      }
     }
-  }, [enableRange, highestDate, points]);
+  }, [enableRange, highestDate, points])
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -158,7 +158,7 @@ export function GraphPage() {
 
       <View style={styles.spacer} />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -195,4 +195,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 15,
   },
-});
+})
