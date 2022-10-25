@@ -119,8 +119,6 @@ export function AnimatedLineGraph({
     []
   )
 
-  console.log(positions, color)
-
   const straightLine = useMemo(() => {
     const path = Skia.Path.Make()
     path.moveTo(0, height / 2)
