@@ -455,6 +455,7 @@ export function AnimatedLineGraph({
 
           {/* Actual Skia Graph */}
           <View style={styles.container} onLayout={onLayout}>
+            {// Fix for react-native-skia's incorrect type declarations}
             <Canvas
               style={styles.svg}
               onPointerEnter={undefined}
