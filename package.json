@@ -57,7 +57,7 @@
   "devDependencies": {
     "@react-native-community/eslint-config": "^2.0.0",
     "@release-it/conventional-changelog": "^2.0.0",
-    "@shopify/react-native-skia": "^0.1.157",
+    "@shopify/react-native-skia": "^0.1.159",
     "@types/react": "^17.0.42",
     "@types/react-native": "^0.67.4",
     "eslint": "^7.2.0",
