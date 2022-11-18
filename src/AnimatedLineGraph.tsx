@@ -50,9 +50,6 @@ const INDICATOR_PULSE_BLUR_RADIUS_SMALL =
 const INDICATOR_PULSE_BLUR_RADIUS_BIG =
   INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER + 20
 
-// weird rea type bug
-const ReanimatedView = Reanimated.View as any
-
 export function AnimatedLineGraph({
   points,
   color,
@@ -60,7 +57,7 @@ export function AnimatedLineGraph({
   lineThickness = 3,
   range,
   enableFadeInMask,
-  enablePanGesture,
+  enablePanGesture = false,
   onPointSelected,
   onGestureStart,
   onGestureEnd,
@@ -79,7 +76,10 @@ export function AnimatedLineGraph({
   const [height, setHeight] = useState(0)
   const interpolateProgress = useValue(0)
 
-  const { gesture, isActive, x } = usePanGesture({ holdDuration: 300 })
+  const { gesture, isActive, x } = usePanGesture({
+    enabled: enablePanGesture,
+    holdDuration: 300,
+  })
   const circleX = useValue(0)
   const circleY = useValue(0)
   const pathEnd = useValue(0)
@@ -444,8 +444,8 @@ export function AnimatedLineGraph({
 
   return (
     <View {...props}>
-      <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
-        <ReanimatedView style={[styles.container, styles.axisLabelContainer]}>
+      <GestureDetector gesture={gesture}>
+        <Reanimated.View style={[styles.container, styles.axisLabelContainer]}>
           {/* Top Label (max price) */}
           {TopAxisLabel != null && (
             <View style={styles.axisRow}>
@@ -455,7 +455,23 @@ export function AnimatedLineGraph({
 
           {/* Actual Skia Graph */}
           <View style={styles.container} onLayout={onLayout}>
-            <Canvas style={styles.svg}>
+            <Canvas
+              style={styles.svg}
+              onPointerEnter={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeave={undefined}
+              onPointerLeaveCapture={undefined}
+              onPointerMove={undefined}
+              onPointerMoveCapture={undefined}
+              onPointerCancel={undefined}
+              onPointerCancelCapture={undefined}
+              onPointerDown={undefined}
+              onPointerDownCapture={undefined}
+              onPointerUp={undefined}
+              onPointerUpCapture={undefined}
+              accessibilityLabelledBy={undefined}
+              accessibilityLanguage={undefined}
+            >
               <Group>
                 <Path
                   // @ts-ignore
@@ -535,7 +551,7 @@ export function AnimatedLineGraph({
               <BottomAxisLabel />
             </View>
           )}
-        </ReanimatedView>
+        </Reanimated.View>
       </GestureDetector>
     </View>
   )
