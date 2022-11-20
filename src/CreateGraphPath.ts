@@ -87,8 +87,9 @@ export function getGraphPathRange(
   points: GraphPoint[],
   range?: GraphRange
 ): GraphPathRange {
-  const minValueX = range?.x?.min ?? points[0]!.date
-  const maxValueX = range?.x?.max ?? points[points.length - 1]!.date
+  const minValueX = range?.x?.min ?? points[0]?.date ?? new Date()
+  const maxValueX =
+    range?.x?.max ?? points[points.length - 1]?.date ?? new Date()
 
   const minValueY =
     range?.y?.min ??
