@@ -143,7 +143,9 @@ export function AnimatedLineGraph({
   }, [horizontalPadding, width])
 
   const lineWidth = useMemo(() => {
-    const lastPoint = points[points.length - 1]!
+    const lastPoint = points[points.length - 1]
+
+    if (lastPoint == null) return width - 2 * horizontalPadding
 
     return Math.max(
       Math.floor(
