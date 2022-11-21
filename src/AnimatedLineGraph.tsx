@@ -131,6 +131,7 @@ export function AnimatedLineGraph({
   const gradientPaths = useValue<{ from?: SkPath; to?: SkPath }>({})
   const commands = useRef<PathCommand[]>([])
   const [commandsChanged, setCommandsChanged] = useState(0)
+  const pointSelectedIndex = useRef<number>()
 
   const pathRange: GraphPathRange = useMemo(
     () => getGraphPathRange(points, range),
@@ -138,7 +139,13 @@ export function AnimatedLineGraph({
   )
 
   const drawingWidth = useMemo(() => {
-    const lastPoint = points[points.length - 1]!
+    return Math.max(Math.floor(width - 2 * horizontalPadding), 0)
+  }, [horizontalPadding, width])
+
+  const lineWidth = useMemo(() => {
+    const lastPoint = points[points.length - 1]
+
+    if (lastPoint == null) return width - 2 * horizontalPadding
 
     return Math.max(
       Math.floor(
@@ -152,9 +159,9 @@ export function AnimatedLineGraph({
   const indicatorX = useMemo(
     () =>
       commandsChanged >= 0
-        ? Math.floor(drawingWidth) + horizontalPadding
+        ? Math.floor(lineWidth) + horizontalPadding
         : undefined,
-    [commandsChanged, drawingWidth, horizontalPadding]
+    [commandsChanged, horizontalPadding, lineWidth]
   )
   const indicatorY = useMemo(
     () =>
@@ -163,7 +170,6 @@ export function AnimatedLineGraph({
         : undefined,
     [commandsChanged, indicatorX]
   )
-
   const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color])
 
   const shouldFillGradient = gradientFillColors != null
@@ -344,15 +350,23 @@ export function AnimatedLineGraph({
         circleX.current = fingerXInRange
       }
 
-      if (fingerX > lowerBound && fingerX < upperBound && isActive.value)
-        pathEnd.current = fingerX / width
+      if (isActive.value) pathEnd.current = fingerXInRange / width
 
       const actualFingerX = fingerX - horizontalPadding
 
-      const index = Math.round((actualFingerX / upperBound) * points.length)
+      const index = Math.round(
+        (actualFingerX / drawingWidth) * (points.length - 1)
+      )
       const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
-      const dataPoint = points[pointIndex]
-      if (dataPoint != null) onPointSelected?.(dataPoint)
+
+      if (pointSelectedIndex.current !== pointIndex) {
+        const dataPoint = points[pointIndex]
+        pointSelectedIndex.current = pointIndex
+
+        if (dataPoint != null) {
+          onPointSelected?.(dataPoint)
+        }
+      }
     },
     [
       circleX,
@@ -381,6 +395,7 @@ export function AnimatedLineGraph({
         stopPulsating()
       } else {
         onGestureEnd?.()
+        pointSelectedIndex.current = undefined
         pathEnd.current = 1
         startPulsating()
       }
