@@ -161,11 +161,13 @@ function createGraphPathBase({
   const actualWidth = width - 2 * horizontalPadding
   const actualHeight = height - 2 * verticalPadding
 
+  const areSameValues = range.y.min === range.y.max;
+
   const getGraphPoint = (point: GraphPoint): Vector => {
     const x =
       actualWidth * pixelFactorX(point.date, range.x.min, range.x.max) +
       horizontalPadding
-    const y =
+    const y = areSameValues ? actualHeight / 2 + verticalPadding :
       actualHeight -
       actualHeight * pixelFactorY(point.value, range.y.min, range.y.max) +
       verticalPadding
