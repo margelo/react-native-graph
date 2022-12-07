@@ -38,6 +38,10 @@ interface BaseLineGraphProps extends ViewProps {
    */
   smoothing: number
   /**
+   * Hold duration in "ms" for gesture activation
+   */
+  holdDuration: number
+  /**
    * (Optional) Colors for the fill gradient below the graph line
    */
   gradientFillColors?: Color[]

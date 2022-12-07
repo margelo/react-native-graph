@@ -38,7 +38,7 @@ import Reanimated, {
   withDelay,
 } from 'react-native-reanimated'
 import { getSixDigitHex } from './utils/getSixDigitHex'
-import { GestureDetector } from 'react-native-gesture-handler'
+import { GestureHandlerRootView, GestureDetector } from 'react-native-gesture-handler'
 import { usePanGesture } from './hooks/usePanGesture'
 import { getYForX } from './GetYForX'
 import { hexToRgba } from './utils/hexToRgba'
@@ -57,6 +57,7 @@ export function AnimatedLineGraph({
   points,
   color,
   smoothing = 0.2,
+  holdDuration = 300,
   gradientFillColors,
   lineThickness = 3,
   range,
@@ -80,7 +81,7 @@ export function AnimatedLineGraph({
   const [height, setHeight] = useState(0)
   const interpolateProgress = useValue(0)
 
-  const { gesture, isActive, x } = usePanGesture({ holdDuration: 300 })
+  const { gesture, isActive, x } = usePanGesture({ holdDuration })
   const circleX = useValue(0)
   const circleY = useValue(0)
   const pathEnd = useValue(0)
@@ -460,101 +461,103 @@ export function AnimatedLineGraph({
   )
 
   return (
-    <View {...props}>
-      <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
-        <ReanimatedView style={[styles.container, styles.axisLabelContainer]}>
-          {/* Top Label (max price) */}
-          {TopAxisLabel != null && (
-            <View style={styles.axisRow}>
-              <TopAxisLabel />
-            </View>
-          )}
+    <GestureHandlerRootView>
+      <View {...props}>
+        <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
+          <ReanimatedView style={[styles.container, styles.axisLabelContainer]}>
+            {/* Top Label (max price) */}
+            {TopAxisLabel != null && (
+              <View style={styles.axisRow}>
+                <TopAxisLabel />
+              </View>
+            )}
 
-          {/* Actual Skia Graph */}
-          <View style={styles.container} onLayout={onLayout}>
-            <Canvas style={styles.svg}>
-              <Group>
-                <Path
-                  // @ts-ignore
-                  path={path}
-                  strokeWidth={lineThickness}
-                  style="stroke"
-                  strokeJoin="round"
-                  strokeCap="round"
-                >
-                  <LinearGradient
-                    start={vec(0, 0)}
-                    end={vec(width, 0)}
-                    colors={gradientColors}
-                    positions={positions}
-                  />
-                </Path>
-
-                {shouldFillGradient && (
+            {/* Actual Skia Graph */}
+            <View style={styles.container} onLayout={onLayout}>
+              <Canvas style={styles.svg}>
+                <Group>
                   <Path
                     // @ts-ignore
-                    path={gradientPath}
+                    path={path}
+                    strokeWidth={lineThickness}
+                    style="stroke"
+                    strokeJoin="round"
+                    strokeCap="round"
                   >
                     <LinearGradient
                       start={vec(0, 0)}
-                      end={vec(0, height)}
-                      colors={gradientFillColors}
+                      end={vec(width, 0)}
+                      colors={gradientColors}
+                      positions={positions}
                     />
                   </Path>
+
+                  {shouldFillGradient && (
+                    <Path
+                      // @ts-ignore
+                      path={gradientPath}
+                    >
+                      <LinearGradient
+                        start={vec(0, 0)}
+                        end={vec(0, height)}
+                        colors={gradientFillColors}
+                      />
+                    </Path>
+                  )}
+                </Group>
+
+                {SelectionDot != null && (
+                  <SelectionDot
+                    isActive={isActive}
+                    color={color}
+                    lineThickness={lineThickness}
+                    circleX={circleX}
+                    circleY={circleY}
+                  />
                 )}
-              </Group>
 
-              {SelectionDot != null && (
-                <SelectionDot
-                  isActive={isActive}
-                  color={color}
-                  lineThickness={lineThickness}
-                  circleX={circleX}
-                  circleY={circleY}
-                />
-              )}
+                {enableIndicator && (
+                  <Group>
+                    {indicatorPulsating && (
+                      <Circle
+                        cx={indicatorX}
+                        cy={indicatorY}
+                        r={indicatorPulseRadius}
+                        opacity={indicatorPulseOpacity}
+                        color={indicatorPulseColor}
+                        style="fill"
+                      />
+                    )}
 
-              {enableIndicator && (
-                <Group>
-                  {indicatorPulsating && (
                     <Circle
                       cx={indicatorX}
                       cy={indicatorY}
-                      r={indicatorPulseRadius}
-                      opacity={indicatorPulseOpacity}
-                      color={indicatorPulseColor}
-                      style="fill"
+                      r={indicatorBorderRadius}
+                      color={'#ffffff'}
+                    >
+                      <Shadow dx={2} dy={2} color="rgba(0,0,0,0.2)" blur={4} />
+                    </Circle>
+                    <Circle
+                      cx={indicatorX}
+                      cy={indicatorY}
+                      r={indicatorRadius}
+                      color={color}
                     />
-                  )}
-
-                  <Circle
-                    cx={indicatorX}
-                    cy={indicatorY}
-                    r={indicatorBorderRadius}
-                    color={'#ffffff'}
-                  >
-                    <Shadow dx={2} dy={2} color="rgba(0,0,0,0.2)" blur={4} />
-                  </Circle>
-                  <Circle
-                    cx={indicatorX}
-                    cy={indicatorY}
-                    r={indicatorRadius}
-                    color={color}
-                  />
-                </Group>
-              )}
-            </Canvas>
-          </View>
-
-          {/* Bottom Label (min price) */}
-          {BottomAxisLabel != null && (
-            <View style={styles.axisRow}>
-              <BottomAxisLabel />
+                  </Group>
+                )}
+              </Canvas>
             </View>
-          )}
-        </ReanimatedView>
-      </GestureDetector>
-    </View>
+
+            {/* Bottom Label (min price) */}
+            {BottomAxisLabel != null && (
+              <View style={styles.axisRow}>
+                <BottomAxisLabel />
+              </View>
+            )}
+          </ReanimatedView>
+        </GestureDetector>
+      </View>
+    </GestureHandlerRootView>
   )
 }
 
