@@ -345,7 +345,6 @@ export function AnimatedLineGraph({
       const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
 
       if (pointSelectedIndex.current !== pointIndex) {
-        console.log(pointIndex)
         const dataPoint = points[pointIndex]
         pointSelectedIndex.current = pointIndex
 
