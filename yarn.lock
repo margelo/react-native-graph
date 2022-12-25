@@ -1489,7 +1489,7 @@
     conventional-recommended-bump "^6.1.0"
     prepend-file "^2.0.0"
 
-"@shopify/react-native-skia@^0.1.157":
+"@shopify/react-native-skia@^0.1.159":
   version "0.1.159"
   resolved "https://registry.yarnpkg.com/@shopify/react-native-skia/-/react-native-skia-0.1.159.tgz#c51bed7fac1be2af579f764fc1e14437d81b6f5d"
   integrity sha512-TKDZcixS+G0i0UbuSkn+8ofYrsSgrX0qQaiP0NpkpOtxGbJ3a0Xjbh45IaGhpLWg3B9D3brL7jQhLq7bdkuBjQ==
