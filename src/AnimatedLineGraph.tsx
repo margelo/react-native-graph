@@ -24,6 +24,7 @@ import {
   createGraphPathWithGradient,
   getGraphPathRange,
   GraphPathRange,
+  pixelFactorX,
 } from './CreateGraphPath'
 import Reanimated, {
   runOnJS,
@@ -141,12 +142,24 @@ export function AnimatedLineGraph({
     return Math.max(Math.floor(width - 2 * horizontalPadding), 0)
   }, [horizontalPadding, width])
 
+  const lineWidth = useMemo(() => {
+    const lastPoint = points[points.length - 1]!
+
+    return Math.max(
+      Math.floor(
+        (width - 2 * horizontalPadding) *
+          pixelFactorX(lastPoint.date, pathRange.x.min, pathRange.x.max)
+      ),
+      0
+    )
+  }, [horizontalPadding, pathRange.x.max, pathRange.x.min, points, width])
+
   const indicatorX = useMemo(
     () =>
       commandsChanged >= 0
-        ? Math.floor(drawingWidth) + horizontalPadding
+        ? Math.floor(lineWidth) + horizontalPadding
         : undefined,
-    [commandsChanged, drawingWidth, horizontalPadding]
+    [commandsChanged, horizontalPadding, lineWidth]
   )
   const indicatorY = useMemo(
     () =>
