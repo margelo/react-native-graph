@@ -221,7 +221,7 @@ function createGraphPathBase({
     // Calculates how many points between two points must be
     // calculated and drawn onto the canvas
     const drawingFactor = pixelFactorX(
-      new Date(point.date.getTime() - prev.date.getTime()),
+      point.date,
       range.x.min,
       range.x.max
     )
