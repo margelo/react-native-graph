@@ -3,6 +3,7 @@ import { Gesture, PanGesture } from 'react-native-gesture-handler'
 import Reanimated, { useSharedValue } from 'react-native-reanimated'
 
 interface Config {
+  enabled: boolean
   holdDuration: number
 }
 
@@ -13,7 +14,7 @@ interface Result {
   gesture: PanGesture
 }
 
-export function usePanGesture({ holdDuration = 300 }: Config): Result {
+export function usePanGesture({ enabled, holdDuration = 300 }: Config): Result {
   const x = useSharedValue(0)
   const y = useSharedValue(0)
   const isPanGestureActive = useSharedValue(false)
@@ -21,6 +22,7 @@ export function usePanGesture({ holdDuration = 300 }: Config): Result {
   const panGesture = useMemo(
     () =>
       Gesture.Pan()
+        .enabled(enabled)
         .activateAfterLongPress(holdDuration)
         .onChange((e) => {
           x.value = e.x
@@ -32,7 +34,7 @@ export function usePanGesture({ holdDuration = 300 }: Config): Result {
         .onEnd(() => {
           isPanGestureActive.value = false
         }),
-    [holdDuration, isPanGestureActive, x, y]
+    [enabled, holdDuration, isPanGestureActive, x, y]
   )
 
   return useMemo(
