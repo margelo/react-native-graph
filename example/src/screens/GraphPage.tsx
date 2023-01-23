@@ -53,7 +53,7 @@ export function GraphPage() {
       return {
         x: {
           min: points[0]!.date,
-          max: new Date(highestDate.getTime() + 30),
+          max: new Date(highestDate.getTime() + 50 * 1000 * 60 * 60 * 24),
         },
         y: {
           min: -200,
