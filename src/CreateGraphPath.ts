@@ -220,11 +220,9 @@ function createGraphPathBase({
 
     // Calculates how many points between two points must be
     // calculated and drawn onto the canvas
-    const drawingFactor = pixelFactorX(
-      new Date(point.date.getTime() - prev.date.getTime()),
-      range.x.min,
-      range.x.max
-    )
+    const spanX = range.x.max.getTime() - range.x.min.getTime()
+    const deltaX = point.date.getTime() - prev.date.getTime()
+    const drawingFactor = deltaX / spanX
     const drawingPixels = actualWidth * drawingFactor + horizontalPadding
     const numberOfDrawingPoints = Math.floor(drawingPixels / PIXEL_RATIO)
 
