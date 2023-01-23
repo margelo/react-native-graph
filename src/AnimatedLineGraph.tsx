@@ -61,7 +61,7 @@ export function AnimatedLineGraph({
   onPointSelected,
   onGestureStart,
   onGestureEnd,
-  panGestureTimeout = 300,
+  panGestureDelay = 300,
   SelectionDot = DefaultSelectionDot,
   enableIndicator = false,
   indicatorPulsating = false,
@@ -79,7 +79,7 @@ export function AnimatedLineGraph({
 
   const { gesture, isActive, x } = usePanGesture({
     enabled: enablePanGesture,
-    holdDuration: panGestureTimeout,
+    holdDuration: panGestureDelay,
   })
   const circleX = useValue(0)
   const circleY = useValue(0)
