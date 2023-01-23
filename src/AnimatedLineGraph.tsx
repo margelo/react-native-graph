@@ -457,10 +457,15 @@ export function AnimatedLineGraph({
     pulseTrigger
   )
 
+  const axisLabelContainerStyle = {
+    paddingTop: TopAxisLabel != null ? 20 : 0,
+    paddingBottom: BottomAxisLabel != null ? 20 : 0,
+  }
+
   return (
     <View {...props}>
       <GestureDetector gesture={gesture}>
-        <Reanimated.View style={[styles.container, styles.axisLabelContainer]}>
+        <Reanimated.View style={[styles.container, axisLabelContainerStyle]}>
           {/* Top Label (max price) */}
           {TopAxisLabel != null && (
             <View style={styles.axisRow}>
@@ -579,9 +584,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  axisLabelContainer: {
-    paddingVertical: 20,
   },
   axisRow: {
     height: 17,
