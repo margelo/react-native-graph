@@ -87,8 +87,9 @@ export function getGraphPathRange(
   points: GraphPoint[],
   range?: GraphRange
 ): GraphPathRange {
-  const minValueX = range?.x?.min ?? points[0]!.date
-  const maxValueX = range?.x?.max ?? points[points.length - 1]!.date
+  const minValueX = range?.x?.min ?? points[0]?.date ?? new Date()
+  const maxValueX =
+    range?.x?.max ?? points[points.length - 1]?.date ?? new Date()
 
   const minValueY =
     range?.y?.min ??
@@ -219,11 +220,9 @@ function createGraphPathBase({
 
     // Calculates how many points between two points must be
     // calculated and drawn onto the canvas
-    const drawingFactor = pixelFactorX(
-      new Date(point.date.getTime() - prev.date.getTime()),
-      range.x.min,
-      range.x.max
-    )
+    const spanX = range.x.max.getTime() - range.x.min.getTime()
+    const deltaX = point.date.getTime() - prev.date.getTime()
+    const drawingFactor = deltaX / spanX
     const drawingPixels = actualWidth * drawingFactor + horizontalPadding
     const numberOfDrawingPoints = Math.floor(drawingPixels / PIXEL_RATIO)
 
