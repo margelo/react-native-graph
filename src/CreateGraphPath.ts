@@ -46,7 +46,7 @@ type GraphPathConfig = {
   /**
    * Smoothing of the graph path (usually between 0.2 and 0.5)
    */
-  smoothing?: number
+  smoothing: number
   /**
    * Range of the graph's x and y-axis
    */
@@ -134,9 +134,6 @@ export const pixelFactorY = (
   return (y - minValue) / diff
 }
 
-// A Graph Point will be drawn every second "pixel"
-const PIXEL_RATIO = 2
-
 type GraphPathWithGradient = { path: SkPath; gradientPath: SkPath }
 
 function createGraphPathBase(
@@ -146,7 +143,7 @@ function createGraphPathBase(props: GraphPathConfigWithoutGradient): SkPath
 
 function createGraphPathBase({
   points,
-  smoothing = 0.2,
+  smoothing,
   range,
   horizontalPadding,
   verticalPadding,
@@ -227,7 +224,7 @@ function createGraphPathBase({
     const deltaX = point.date.getTime() - prev.date.getTime()
     const drawingFactor = deltaX / spanX
     const drawingPixels = actualWidth * drawingFactor + horizontalPadding
-    const numberOfDrawingPoints = Math.floor(drawingPixels / PIXEL_RATIO)
+    const numberOfDrawingPoints = Math.floor(drawingPixels)
 
     for (let i2 = 0; i2 <= numberOfDrawingPoints; i2++) {
       const p = splineFunction(i2 / numberOfDrawingPoints)
