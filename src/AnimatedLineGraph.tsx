@@ -50,9 +50,6 @@ const INDICATOR_PULSE_BLUR_RADIUS_SMALL =
 const INDICATOR_PULSE_BLUR_RADIUS_BIG =
   INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER + 20
 
-// weird rea type bug
-const ReanimatedView = Reanimated.View as any
-
 export function AnimatedLineGraph({
   points,
   color,
@@ -60,7 +57,7 @@ export function AnimatedLineGraph({
   lineThickness = 3,
   range,
   enableFadeInMask,
-  enablePanGesture,
+  enablePanGesture = false,
   onPointSelected,
   onGestureStart,
   onGestureEnd,
@@ -79,7 +76,10 @@ export function AnimatedLineGraph({
   const [height, setHeight] = useState(0)
   const interpolateProgress = useValue(0)
 
-  const { gesture, isActive, x } = usePanGesture({ holdDuration: 300 })
+  const { gesture, isActive, x } = usePanGesture({
+    enabled: enablePanGesture,
+    holdDuration: 300,
+  })
   const circleX = useValue(0)
   const circleY = useValue(0)
   const pathEnd = useValue(0)
@@ -131,6 +131,7 @@ export function AnimatedLineGraph({
   const gradientPaths = useValue<{ from?: SkPath; to?: SkPath }>({})
   const commands = useRef<PathCommand[]>([])
   const [commandsChanged, setCommandsChanged] = useState(0)
+  const pointSelectedIndex = useRef<number>()
 
   const pathRange: GraphPathRange = useMemo(
     () => getGraphPathRange(points, range),
@@ -138,7 +139,13 @@ export function AnimatedLineGraph({
   )
 
   const drawingWidth = useMemo(() => {
-    const lastPoint = points[points.length - 1]!
+    return Math.max(Math.floor(width - 2 * horizontalPadding), 0)
+  }, [horizontalPadding, width])
+
+  const lineWidth = useMemo(() => {
+    const lastPoint = points[points.length - 1]
+
+    if (lastPoint == null) return width - 2 * horizontalPadding
 
     return Math.max(
       Math.floor(
@@ -152,9 +159,9 @@ export function AnimatedLineGraph({
   const indicatorX = useMemo(
     () =>
       commandsChanged >= 0
-        ? Math.floor(drawingWidth) + horizontalPadding
+        ? Math.floor(lineWidth) + horizontalPadding
         : undefined,
-    [commandsChanged, drawingWidth, horizontalPadding]
+    [commandsChanged, horizontalPadding, lineWidth]
   )
   const indicatorY = useMemo(
     () =>
@@ -163,7 +170,6 @@ export function AnimatedLineGraph({
         : undefined,
     [commandsChanged, indicatorX]
   )
-
   const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color])
 
   const shouldFillGradient = gradientFillColors != null
@@ -344,15 +350,23 @@ export function AnimatedLineGraph({
         circleX.current = fingerXInRange
       }
 
-      if (fingerX > lowerBound && fingerX < upperBound && isActive.value)
-        pathEnd.current = fingerX / width
+      if (isActive.value) pathEnd.current = fingerXInRange / width
 
       const actualFingerX = fingerX - horizontalPadding
 
-      const index = Math.round((actualFingerX / upperBound) * points.length)
+      const index = Math.round(
+        (actualFingerX / drawingWidth) * (points.length - 1)
+      )
       const pointIndex = Math.min(Math.max(index, 0), points.length - 1)
-      const dataPoint = points[pointIndex]
-      if (dataPoint != null) onPointSelected?.(dataPoint)
+
+      if (pointSelectedIndex.current !== pointIndex) {
+        const dataPoint = points[pointIndex]
+        pointSelectedIndex.current = pointIndex
+
+        if (dataPoint != null) {
+          onPointSelected?.(dataPoint)
+        }
+      }
     },
     [
       circleX,
@@ -381,6 +395,7 @@ export function AnimatedLineGraph({
         stopPulsating()
       } else {
         onGestureEnd?.()
+        pointSelectedIndex.current = undefined
         pathEnd.current = 1
         startPulsating()
       }
@@ -449,8 +464,8 @@ export function AnimatedLineGraph({
 
   return (
     <View {...props}>
-      <GestureDetector gesture={enablePanGesture ? gesture : undefined}>
-        <ReanimatedView style={[styles.container, axisLabelContainerStyle]}>
+      <GestureDetector gesture={gesture}>
+        <Reanimated.View style={[styles.container, axisLabelContainerStyle]}>
           {/* Top Label (max price) */}
           {TopAxisLabel != null && (
             <View style={styles.axisRow}>
@@ -460,7 +475,24 @@ export function AnimatedLineGraph({
 
           {/* Actual Skia Graph */}
           <View style={styles.container} onLayout={onLayout}>
-            <Canvas style={styles.svg}>
+            {/* Fix for react-native-skia's incorrect type declarations */}
+            <Canvas
+              style={styles.svg}
+              onPointerEnter={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeave={undefined}
+              onPointerLeaveCapture={undefined}
+              onPointerMove={undefined}
+              onPointerMoveCapture={undefined}
+              onPointerCancel={undefined}
+              onPointerCancelCapture={undefined}
+              onPointerDown={undefined}
+              onPointerDownCapture={undefined}
+              onPointerUp={undefined}
+              onPointerUpCapture={undefined}
+              accessibilityLabelledBy={undefined}
+              accessibilityLanguage={undefined}
+            >
               <Group>
                 <Path
                   // @ts-ignore
@@ -540,7 +572,7 @@ export function AnimatedLineGraph({
               <BottomAxisLabel />
             </View>
           )}
-        </ReanimatedView>
+        </Reanimated.View>
       </GestureDetector>
     </View>
   )
