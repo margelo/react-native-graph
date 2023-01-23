@@ -161,16 +161,17 @@ function createGraphPathBase({
   const actualWidth = width - 2 * horizontalPadding
   const actualHeight = height - 2 * verticalPadding
 
-  const areSameValues = range.y.min === range.y.max;
+  const areSameValues = range.y.min === range.y.max
 
   const getGraphPoint = (point: GraphPoint): Vector => {
     const x =
       actualWidth * pixelFactorX(point.date, range.x.min, range.x.max) +
       horizontalPadding
-    const y = areSameValues ? actualHeight / 2 + verticalPadding :
-      actualHeight -
-      actualHeight * pixelFactorY(point.value, range.y.min, range.y.max) +
-      verticalPadding
+    const y = areSameValues
+      ? actualHeight / 2 + verticalPadding
+      : actualHeight -
+        actualHeight * pixelFactorY(point.value, range.y.min, range.y.max) +
+        verticalPadding
 
     return { x: x, y: y }
   }
@@ -222,11 +223,9 @@ function createGraphPathBase({
 
     // Calculates how many points between two points must be
     // calculated and drawn onto the canvas
-    const drawingFactor = pixelFactorX(
-      new Date(point.date.getTime() - prev.date.getTime()),
-      range.x.min,
-      range.x.max
-    )
+    const spanX = range.x.max.getTime() - range.x.min.getTime()
+    const deltaX = point.date.getTime() - prev.date.getTime()
+    const drawingFactor = deltaX / spanX
     const drawingPixels = actualWidth * drawingFactor + horizontalPadding
     const numberOfDrawingPoints = Math.floor(drawingPixels / PIXEL_RATIO)
 
