@@ -1,11 +1,12 @@
 import {
   SkPath,
   Skia,
-  Vector,
   cartesian2Polar,
+  SkPoint,
 } from '@shopify/react-native-skia'
 import type { GraphPoint, GraphRange } from './LineGraphProps'
-import { createSplineFunction } from './Maths'
+
+const PIXEL_RATIO = 2
 
 export interface GraphXRange {
   min: Date
@@ -26,7 +27,7 @@ type GraphPathConfig = {
   /**
    * Graph Points to use for the Path. Will be normalized and centered.
    */
-  points: GraphPoint[]
+  pointsInRange: GraphPoint[]
   /**
    * Optional Padding (left, right) for the Graph to correctly round the Path.
    */
@@ -63,10 +64,10 @@ type GraphPathConfigWithoutGradient = GraphPathConfig & {
 export const controlPoint = (
   reverse: boolean,
   smoothing: number,
-  current: Vector,
-  previous: Vector,
-  next: Vector
-): Vector => {
+  current: SkPoint,
+  previous: SkPoint,
+  next: SkPoint
+): SkPoint => {
   const p = previous
   const n = next
   // Properties of the opposed-line
@@ -110,28 +111,50 @@ export function getGraphPathRange(
   }
 }
 
-export const pixelFactorX = (
+export const getXPositionInRange = (
   date: Date,
-  minValue: Date,
-  maxValue: Date
+  xRange: GraphXRange
 ): number => {
-  const diff = maxValue.getTime() - minValue.getTime()
+  const diff = xRange.max.getTime() - xRange.min.getTime()
   const x = date.getTime()
 
-  if (x < minValue.getTime() || x > maxValue.getTime()) return 0
-  return (x - minValue.getTime()) / diff
+  return (x - xRange.min.getTime()) / diff
 }
 
-export const pixelFactorY = (
-  value: number,
-  minValue: number,
-  maxValue: number
+export const getXInRange = (
+  width: number,
+  date: Date,
+  xRange: GraphXRange
 ): number => {
-  const diff = maxValue - minValue
+  return Math.floor(width * getXPositionInRange(date, xRange))
+}
+
+export const getYPositionInRange = (
+  value: number,
+  yRange: GraphYRange
+): number => {
+  const diff = yRange.max - yRange.min
   const y = value
 
-  if (y < minValue || y > maxValue) return 0
-  return (y - minValue) / diff
+  return (y - yRange.min) / diff
+}
+
+export const getYInRange = (
+  height: number,
+  value: number,
+  yRange: GraphYRange
+): number => {
+  return Math.floor(height * getYPositionInRange(value, yRange))
+}
+
+export const getPointsInRange = (
+  allPoints: GraphPoint[],
+  range: GraphPathRange
+) => {
+  return allPoints.filter((point) => {
+    const portionFactorX = getXPositionInRange(point.date, range.x)
+    return portionFactorX <= 1 && portionFactorX >= 0
+  })
 }
 
 type GraphPathWithGradient = { path: SkPath; gradientPath: SkPath }
@@ -142,8 +165,8 @@ function createGraphPathBase(
 function createGraphPathBase(props: GraphPathConfigWithoutGradient): SkPath
 
 function createGraphPathBase({
-  points,
-  smoothing,
+  pointsInRange: graphData,
+  smoothing: _smoothing,
   range,
   horizontalPadding,
   verticalPadding,
@@ -155,99 +178,98 @@ function createGraphPathBase({
   | GraphPathWithGradient {
   const path = Skia.Path.Make()
 
-  const actualWidth = width - 2 * horizontalPadding
-  const actualHeight = height - 2 * verticalPadding
+  // Canvas width substracted by the horizontal padding => Actual drawing width
+  const drawingWidth = width - 2 * horizontalPadding
+  // Canvas height substracted by the vertical padding => Actual drawing height
+  const drawingHeight = height - 2 * verticalPadding
 
-  const areSameValues = range.y.min === range.y.max
+  if (graphData[0] == null) return path
 
-  const getGraphPoint = (point: GraphPoint): Vector => {
-    const x =
-      actualWidth * pixelFactorX(point.date, range.x.min, range.x.max) +
-      horizontalPadding
-    const y = areSameValues
-      ? actualHeight / 2 + verticalPadding
-      : actualHeight -
-        actualHeight * pixelFactorY(point.value, range.y.min, range.y.max) +
-        verticalPadding
+  const points: SkPoint[] = []
 
-    return { x: x, y: y }
+  const startX =
+    getXInRange(drawingWidth, graphData[0]!.date, range.x) + horizontalPadding
+  const endX =
+    getXInRange(drawingWidth, graphData[graphData.length - 1]!.date, range.x) +
+    horizontalPadding
+
+  const getGraphDataIndex = (pixel: number) =>
+    Math.round(((pixel - startX) / (endX - startX)) * (graphData.length - 1))
+
+  const getNextPixelValue = (pixel: number) => {
+    if (pixel === endX || pixel + PIXEL_RATIO < endX) return pixel + PIXEL_RATIO
+    return endX
   }
 
-  if (points[0] == null) return path
+  for (
+    let pixel = startX;
+    startX <= pixel && pixel <= endX;
+    pixel = getNextPixelValue(pixel)
+  ) {
+    const index = getGraphDataIndex(pixel)
 
-  const firstPoint = getGraphPoint(points[0])
-  path.moveTo(firstPoint.x, firstPoint.y)
+    // Draw first point only on the very first pixel
+    if (index === 0 && pixel !== startX) continue
+    // Draw last point only on the very last pixel
 
-  points.forEach((point, i) => {
-    if (i === 0) {
-      return
+    if (index === graphData.length - 1 && pixel !== endX) continue
+
+    if (index !== 0 && index !== graphData.length - 1) {
+      // Only draw point, when the point is exact
+      const exactPointX =
+        getXInRange(drawingWidth, graphData[index]!.date, range.x) +
+        horizontalPadding
+
+      const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
+        .fill(0)
+        .some((_value, additionalPixel) => {
+          return pixel + additionalPixel === exactPointX
+        })
+
+      if (!isExactPointInsidePixelRatio) continue
     }
 
-    if (point.date < range.x.min || point.date > range.x.max) return
+    const value = graphData[index]!.value
+    const y =
+      drawingHeight -
+      getYInRange(drawingHeight, value, range.y) +
+      verticalPadding
+
+    points.push({ x: pixel, y: y })
+  }
+
+  for (let i = 0; i < points.length; i++) {
+    const point = points[i]!
+
+    // first point needs to start the path
+    if (i === 0) path.moveTo(point.x, point.y)
 
     const prev = points[i - 1]
+    const prevPrev = points[i - 2]
 
-    if (prev == null) return
-    const prevPrev = points[i - 2] ?? prev
-    const next = points[i + 1] ?? point
+    if (prev == null) continue
 
-    const currentPoint = getGraphPoint(point)
-    const prevPoint = getGraphPoint(prev)
-    const prevPrevPoint = getGraphPoint(prevPrev)
-    const nextPoint = getGraphPoint(next)
+    const p0 = prevPrev ?? prev
+    const p1 = prev
+    const cp1x = (2 * p0.x + p1.x) / 3
+    const cp1y = (2 * p0.y + p1.y) / 3
+    const cp2x = (p0.x + 2 * p1.x) / 3
+    const cp2y = (p0.y + 2 * p1.y) / 3
+    const cp3x = (p0.x + 4 * p1.x + point.x) / 6
+    const cp3y = (p0.y + 4 * p1.y + point.y) / 6
 
-    const cps = controlPoint(
-      false,
-      smoothing,
-      prevPoint,
-      prevPrevPoint,
-      currentPoint
-    )
-    const cpe = controlPoint(
-      true,
-      smoothing,
-      currentPoint,
-      prevPoint,
-      nextPoint
-    )
+    path.cubicTo(cp1x, cp1y, cp2x, cp2y, cp3x, cp3y)
 
-    const splineFunction = createSplineFunction(
-      prevPoint,
-      cps,
-      cpe,
-      currentPoint
-    )
-
-    // Calculates how many points between two points must be
-    // calculated and drawn onto the canvas
-    const spanX = range.x.max.getTime() - range.x.min.getTime()
-    const deltaX = point.date.getTime() - prev.date.getTime()
-    const drawingFactor = deltaX / spanX
-    const drawingPixels = actualWidth * drawingFactor + horizontalPadding
-    const numberOfDrawingPoints = Math.floor(drawingPixels)
-
-    for (let i2 = 0; i2 <= numberOfDrawingPoints; i2++) {
-      const p = splineFunction(i2 / numberOfDrawingPoints)
-
-      if (p == null) return
-      path.cubicTo(p.x, p.y, p.x, p.y, p.x, p.y)
+    if (i === points.length - 1) {
+      path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y)
     }
-  })
+  }
 
   if (!shouldFillGradient) return path
 
   const gradientPath = path.copy()
 
-  const lastPointX = pixelFactorX(
-    points[points.length - 1]!.date,
-    range.x.min,
-    range.x.max
-  )
-
-  gradientPath.lineTo(
-    actualWidth * lastPointX + horizontalPadding,
-    height + verticalPadding
-  )
+  gradientPath.lineTo(endX, height + verticalPadding)
   gradientPath.lineTo(0 + horizontalPadding, height + verticalPadding)
 
   return { path: path, gradientPath: gradientPath }

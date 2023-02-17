@@ -5,12 +5,13 @@ import { View, StyleSheet, LayoutChangeEvent } from 'react-native'
 import {
   createGraphPath,
   getGraphPathRange,
+  getPointsInRange,
   GraphPathRange,
 } from './CreateGraphPath'
 import type { StaticLineGraphProps } from './LineGraphProps'
 
 export function StaticLineGraph({
-  points,
+  points: allPoints,
   range,
   color,
   smoothing = 0.2,
@@ -31,14 +32,19 @@ export function StaticLineGraph({
   )
 
   const pathRange: GraphPathRange = useMemo(
-    () => getGraphPathRange(points, range),
-    [points, range]
+    () => getGraphPathRange(allPoints, range),
+    [allPoints, range]
+  )
+
+  const pointsInRange = useMemo(
+    () => getPointsInRange(allPoints, pathRange),
+    [allPoints, pathRange]
   )
 
   const path = useMemo(
     () =>
       createGraphPath({
-        points: points,
+        pointsInRange: pointsInRange,
         range: pathRange,
         smoothing: smoothing,
         canvasHeight: height,
@@ -46,7 +52,7 @@ export function StaticLineGraph({
         horizontalPadding: lineThickness,
         verticalPadding: lineThickness,
       }),
-    [height, lineThickness, pathRange, points, smoothing, width]
+    [height, lineThickness, pathRange, pointsInRange, smoothing, width]
   )
 
   const gradientColors = useMemo(
