@@ -1,9 +1,4 @@
-import {
-  SkPath,
-  Skia,
-  cartesian2Polar,
-  SkPoint,
-} from '@shopify/react-native-skia'
+import { SkPath, Skia, SkPoint } from '@shopify/react-native-skia'
 import type { GraphPoint, GraphRange } from './LineGraphProps'
 
 const PIXEL_RATIO = 2
@@ -45,10 +40,6 @@ type GraphPathConfig = {
    */
   canvasWidth: number
   /**
-   * Smoothing of the graph path (usually between 0.2 and 0.5)
-   */
-  smoothing: number
-  /**
    * Range of the graph's x and y-axis
    */
   range: GraphPathRange
@@ -59,29 +50,6 @@ type GraphPathConfigWithGradient = GraphPathConfig & {
 }
 type GraphPathConfigWithoutGradient = GraphPathConfig & {
   shouldFillGradient: false
-}
-
-export const controlPoint = (
-  reverse: boolean,
-  smoothing: number,
-  current: SkPoint,
-  previous: SkPoint,
-  next: SkPoint
-): SkPoint => {
-  const p = previous
-  const n = next
-  // Properties of the opposed-line
-  const lengthX = n.x - p.x
-  const lengthY = n.y - p.y
-
-  const o = cartesian2Polar({ x: lengthX, y: lengthY })
-  // If is end-control-point, add PI to the angle to go backward
-  const angle = o.theta + (reverse ? Math.PI : 0)
-  const length = o.radius * smoothing
-  // The control point position is relative to the current point
-  const x = current.x + Math.cos(angle) * length
-  const y = current.y + Math.sin(angle) * length
-  return { x, y }
 }
 
 export function getGraphPathRange(
@@ -166,7 +134,6 @@ function createGraphPathBase(props: GraphPathConfigWithoutGradient): SkPath
 
 function createGraphPathBase({
   pointsInRange: graphData,
-  smoothing: _smoothing,
   range,
   horizontalPadding,
   verticalPadding,

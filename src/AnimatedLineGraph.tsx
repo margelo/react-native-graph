@@ -54,7 +54,6 @@ const INDICATOR_PULSE_BLUR_RADIUS_BIG =
 export function AnimatedLineGraph({
   points: allPoints,
   color,
-  smoothing = 0.2,
   gradientFillColors,
   lineThickness = 3,
   range,
@@ -193,7 +192,6 @@ export function AnimatedLineGraph({
     const createGraphPathProps = {
       pointsInRange: pointsInRange,
       range: pathRange,
-      smoothing: smoothing,
       horizontalPadding: horizontalPadding,
       verticalPadding: verticalPadding,
       canvasHeight: height,

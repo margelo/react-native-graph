@@ -34,10 +34,6 @@ interface BaseLineGraphProps extends ViewProps {
    */
   color: string
   /**
-   * Smoothing value of the graph (Radius of the edge points)
-   */
-  smoothing?: number
-  /**
    * (Optional) Colors for the fill gradient below the graph line
    */
   gradientFillColors?: Color[]
