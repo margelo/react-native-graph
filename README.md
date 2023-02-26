@@ -37,7 +37,15 @@ yarn add <b>react-native-graph</b>
 ## Usage
 
 ```jsx
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { LineGraph } from 'react-native-graph'
+
+// wrap your entry point with <GestureHandlerRootView>
 function App() {
+  return <GestureHandlerRootView style={{ flex: 1 }}>{/* content */}}</GestureHandlerRootView>
+}
+
+function ExampleComponent() {
   const priceHistory = usePriceHistory('ethereum')
 
   return <LineGraph points={priceHistory} color="#4484B2" />
