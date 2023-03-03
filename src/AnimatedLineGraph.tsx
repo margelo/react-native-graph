@@ -17,7 +17,7 @@ import {
   Circle,
   Shadow,
 } from '@shopify/react-native-skia'
-import type { AnimatedLineGraphProps } from './LineGraphProps'
+import type { AnimatedLineGraphProps, BaseGraphPoint, GraphPoint } from './LineGraphProps'
 import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
 import {
   createGraphPath,
@@ -50,7 +50,7 @@ const INDICATOR_PULSE_BLUR_RADIUS_SMALL =
 const INDICATOR_PULSE_BLUR_RADIUS_BIG =
   INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER + 20
 
-export function AnimatedLineGraph({
+export function AnimatedLineGraph<T extends BaseGraphPoint = GraphPoint>({
   points,
   color,
   gradientFillColors,
@@ -71,7 +71,7 @@ export function AnimatedLineGraph({
   TopAxisLabel,
   BottomAxisLabel,
   ...props
-}: AnimatedLineGraphProps): React.ReactElement {
+}: AnimatedLineGraphProps<T>): React.ReactElement {
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
   const interpolateProgress = useValue(0)
@@ -134,7 +134,7 @@ export function AnimatedLineGraph({
   const pointSelectedIndex = useRef<number>()
 
   const pathRange: GraphPathRange = useMemo(
-    () => getGraphPathRange(points, range),
+    () => getGraphPathRange<T>(points, range),
     [points, range]
   )
 
@@ -198,12 +198,12 @@ export function AnimatedLineGraph({
 
     if (shouldFillGradient) {
       const { path: pathNew, gradientPath: gradientPathNew } =
-        createGraphPathWithGradient(createGraphPathProps)
+        createGraphPathWithGradient<T>(createGraphPathProps)
 
       path = pathNew
       gradientPath = gradientPathNew
     } else {
-      path = createGraphPath(createGraphPathProps)
+      path = createGraphPath<T>(createGraphPathProps)
     }
 
     commands.current = path.toCmds()

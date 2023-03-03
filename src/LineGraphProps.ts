@@ -4,9 +4,12 @@ import type { GraphPathRange } from './CreateGraphPath'
 import type { SharedValue } from 'react-native-reanimated'
 import type { Color, SkiaMutableValue } from '@shopify/react-native-skia'
 
-export interface GraphPoint {
-  value: number
+export interface BaseGraphPoint {
   date: Date
+}
+
+export interface GraphPoint extends BaseGraphPoint {
+  value: number
 }
 
 export type GraphRange = Partial<GraphPathRange>
@@ -19,11 +22,11 @@ export interface SelectionDotProps {
   circleY: SkiaMutableValue<number>
 }
 
-interface BaseLineGraphProps extends ViewProps {
+interface BaseLineGraphProps<T = GraphPoint> extends ViewProps {
   /**
    * All points to be marked in the graph. Coordinate system will adjust to scale automatically.
    */
-  points: GraphPoint[]
+  points: T[]
   /**
    * Range of the graph's x and y-axis. The range must be greater
    * than the range given by the points.
@@ -52,7 +55,7 @@ interface BaseLineGraphProps extends ViewProps {
 export type StaticLineGraphProps = BaseLineGraphProps & {
   /* any static-only line graph props? */
 }
-export type AnimatedLineGraphProps = BaseLineGraphProps & {
+export type AnimatedLineGraphProps<T = GraphPoint> = BaseLineGraphProps<T> & {
   /**
    * Whether to enable Graph scrubbing/pan gesture.
    */
@@ -81,7 +84,7 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
   /**
    * Called for each point while the user is scrubbing/panning through the graph
    */
-  onPointSelected?: (point: GraphPoint) => void
+  onPointSelected?: (point: T) => void
   /**
    * Called once the user starts scrubbing/panning through the graph
    */

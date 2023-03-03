@@ -22,11 +22,11 @@ export interface GraphPathRange {
   y: GraphYRange
 }
 
-type GraphPathConfig = {
+type GraphPathConfig<T = GraphPoint> = {
   /**
    * Graph Points to use for the Path. Will be normalized and centered.
    */
-  points: GraphPoint[]
+  points: T[]
   /**
    * Optional Padding (left, right) for the Graph to correctly round the Path.
    */
@@ -53,10 +53,10 @@ type GraphPathConfig = {
   range: GraphPathRange
 }
 
-type GraphPathConfigWithGradient = GraphPathConfig & {
+type GraphPathConfigWithGradient<T = GraphPoint> = GraphPathConfig<T> & {
   shouldFillGradient: true
 }
-type GraphPathConfigWithoutGradient = GraphPathConfig & {
+type GraphPathConfigWithoutGradient<T = GraphPoint> = GraphPathConfig<T> & {
   shouldFillGradient: false
 }
 
@@ -83,8 +83,8 @@ export const controlPoint = (
   return { x, y }
 }
 
-export function getGraphPathRange(
-  points: GraphPoint[],
+export function getGraphPathRange<T = GraphPoint>(
+  points: T[],
   range?: GraphRange
 ): GraphPathRange {
   const minValueX = range?.x?.min ?? points[0]?.date ?? new Date()
@@ -139,12 +139,14 @@ const PIXEL_RATIO = 2
 
 type GraphPathWithGradient = { path: SkPath; gradientPath: SkPath }
 
-function createGraphPathBase(
-  props: GraphPathConfigWithGradient
+function createGraphPathBase<T = GraphPoint>(
+  props: GraphPathConfigWithGradient<T>
 ): GraphPathWithGradient
-function createGraphPathBase(props: GraphPathConfigWithoutGradient): SkPath
+function createGraphPathBase<T = GraphPoint>(
+  props: GraphPathConfigWithoutGradient<T>
+): SkPath
 
-function createGraphPathBase({
+function createGraphPathBase<T = GraphPoint>({
   points,
   smoothing = 0.2,
   range,
@@ -153,7 +155,7 @@ function createGraphPathBase({
   canvasHeight: height,
   canvasWidth: width,
   shouldFillGradient,
-}: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
+}: GraphPathConfigWithGradient<T> | GraphPathConfigWithoutGradient<T>):
   | SkPath
   | GraphPathWithGradient {
   const path = Skia.Path.Make()
@@ -161,7 +163,7 @@ function createGraphPathBase({
   const actualWidth = width - 2 * horizontalPadding
   const actualHeight = height - 2 * verticalPadding
 
-  const getGraphPoint = (point: GraphPoint): Vector => {
+  const getGraphPoint = (point: T): Vector => {
     const x =
       actualWidth * pixelFactorX(point.date, range.x.min, range.x.max) +
       horizontalPadding
@@ -255,12 +257,14 @@ function createGraphPathBase({
   return { path: path, gradientPath: gradientPath }
 }
 
-export function createGraphPath(props: GraphPathConfig): SkPath {
-  return createGraphPathBase({ ...props, shouldFillGradient: false })
+export function createGraphPath<T = GraphPoint>(
+  props: GraphPathConfig<T>
+): SkPath {
+  return createGraphPathBase<T>({ ...props, shouldFillGradient: false })
 }
 
-export function createGraphPathWithGradient(
-  props: GraphPathConfig
+export function createGraphPathWithGradient<T = GraphPoint>(
+  props: GraphPathConfig<T>
 ): GraphPathWithGradient {
   return createGraphPathBase({
     ...props,
