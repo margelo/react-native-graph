@@ -4,17 +4,23 @@ import { PathVerb, vec } from '@shopify/react-native-skia'
 // code from William Candillon
 
 const round = (value: number, precision = 0): number => {
+  'worklet'
+
   const p = Math.pow(10, precision)
   return Math.round(value * p) / p
 }
 
 // https://stackoverflow.com/questions/27176423/function-to-solve-cubic-equation-analytically
 const cuberoot = (x: number): number => {
+  'worklet'
+
   const y = Math.pow(Math.abs(x), 1 / 3)
   return x < 0 ? -y : y
 }
 
 const solveCubic = (a: number, b: number, c: number, d: number): number[] => {
+  'worklet'
+
   if (Math.abs(a) < 1e-8) {
     // Quadratic case, ax^2+bx+c=0
     a = b
@@ -33,7 +39,7 @@ const solveCubic = (a: number, b: number, c: number, d: number): number[] => {
 
     const D = b * b - 4 * a * c
     if (Math.abs(D) < 1e-8) return [-b / (2 * a)]
-    else if (D > 0)
+    if (D > 0)
       return [(-b + Math.sqrt(D)) / (2 * a), (-b - Math.sqrt(D)) / (2 * a)]
 
     return []
@@ -74,6 +80,23 @@ const solveCubic = (a: number, b: number, c: number, d: number): number[] => {
   return roots
 }
 
+const cubicBezier = (
+  t: number,
+  from: number,
+  c1: number,
+  c2: number,
+  to: number
+): number => {
+  'worklet'
+
+  const term = 1 - t
+  const a = 1 * term ** 3 * t ** 0 * from
+  const b = 3 * term ** 2 * t ** 1 * c1
+  const c = 3 * term ** 1 * t ** 2 * c2
+  const d = 1 * term ** 0 * t ** 3 * to
+  return a + b + c + d
+}
+
 export const cubicBezierYForX = (
   x: number,
   a: Vector,
@@ -82,6 +105,8 @@ export const cubicBezierYForX = (
   d: Vector,
   precision = 2
 ): number => {
+  'worklet'
+
   const pa = -a.x + 3 * b.x - 3 * c.x + d.x
   const pb = 3 * a.x - 6 * b.x + 3 * c.x
   const pc = -3 * a.x + 3 * b.x
@@ -92,21 +117,6 @@ export const cubicBezierYForX = (
   const t = ts[0]
   if (t == null) return 0
   return cubicBezier(t, a.y, b.y, c.y, d.y)
-}
-
-const cubicBezier = (
-  t: number,
-  from: number,
-  c1: number,
-  c2: number,
-  to: number
-): number => {
-  const term = 1 - t
-  const a = 1 * term ** 3 * t ** 0 * from
-  const b = 3 * term ** 2 * t ** 1 * c1
-  const c = 3 * term ** 1 * t ** 2 * c2
-  const d = 1 * term ** 0 * t ** 3 * to
-  return a + b + c + d
 }
 
 interface Cubic {
@@ -120,6 +130,8 @@ export const selectCurve = (
   cmds: PathCommand[],
   x: number
 ): Cubic | undefined => {
+  'worklet'
+
   let from: Vector = vec(0, 0)
   for (let i = 0; i < cmds.length; i++) {
     const cmd = cmds[i]
@@ -149,6 +161,8 @@ export const getYForX = (
   x: number,
   precision = 2
 ): number | undefined => {
+  'worklet'
+
   const c = selectCurve(cmds, x)
   if (c == null) return undefined
 

@@ -63,23 +63,7 @@ export function StaticLineGraph({
   return (
     <View {...props} style={style} onLayout={onLayout}>
       {/* Fix for react-native-skia's incorrect type declarations */}
-      <Canvas
-        style={styles.svg}
-        onPointerEnter={undefined}
-        onPointerEnterCapture={undefined}
-        onPointerLeave={undefined}
-        onPointerLeaveCapture={undefined}
-        onPointerMove={undefined}
-        onPointerMoveCapture={undefined}
-        onPointerCancel={undefined}
-        onPointerCancelCapture={undefined}
-        onPointerDown={undefined}
-        onPointerDownCapture={undefined}
-        onPointerUp={undefined}
-        onPointerUpCapture={undefined}
-        accessibilityLabelledBy={undefined}
-        accessibilityLanguage={undefined}
-      >
+      <Canvas style={styles.svg}>
         <Path
           path={path}
           strokeWidth={lineThickness}
