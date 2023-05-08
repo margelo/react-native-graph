@@ -28,6 +28,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+example/ios/.xcode.env.local
 
 # Android/IJ
 #
@@ -43,6 +44,9 @@ android.iml
 # Cocoapods
 #
 example/ios/Pods
+example/vendor/bundle/
+# Temporary files created by Metro to check the health of the file watcher
+example/.metro-health-check*
 
 # node.js
 #
