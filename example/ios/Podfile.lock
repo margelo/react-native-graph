@@ -211,32 +211,7 @@ PODS:
     - glog
   - react-native-segmented-control (2.4.0):
     - React-Core
-  - react-native-skia (0.1.136):
-    - React
-    - React-callinvoker
-    - React-Core
-    - react-native-skia/Api (= 0.1.136)
-    - react-native-skia/Jsi (= 0.1.136)
-    - react-native-skia/RNSkia (= 0.1.136)
-    - react-native-skia/SkiaHeaders (= 0.1.136)
-    - react-native-skia/Utils (= 0.1.136)
-  - react-native-skia/Api (0.1.136):
-    - React
-    - React-callinvoker
-    - React-Core
-  - react-native-skia/Jsi (0.1.136):
-    - React
-    - React-callinvoker
-    - React-Core
-  - react-native-skia/RNSkia (0.1.136):
-    - React
-    - React-callinvoker
-    - React-Core
-  - react-native-skia/SkiaHeaders (0.1.136):
-    - React
-    - React-callinvoker
-    - React-Core
-  - react-native-skia/Utils (0.1.136):
+  - react-native-skia (0.1.188):
     - React
     - React-callinvoker
     - React-Core
@@ -309,7 +284,7 @@ PODS:
     - React-Core
   - RNReactNativeHapticFeedback (1.13.1):
     - React-Core
-  - RNReanimated (2.9.1):
+  - RNReanimated (3.1.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -478,7 +453,7 @@ SPEC CHECKSUMS:
   React-jsinspector: f4775ea9118cbe1f72b834f0f842baa7a99508d8
   React-logger: a1f028f6d8639a3f364ef80419e5e862e1115250
   react-native-segmented-control: 06607462630512ff8eef652ec560e6235a30cc3e
-  react-native-skia: 7f1c17bb3ed15c951305d6c924df917899d21613
+  react-native-skia: 8c68c437707fd47b25420ca4c8563fe3cfc52ada
   React-perflogger: 0afaf2f01a47fd0fc368a93bfbb5bd3b26db6e7f
   React-RCTActionSheet: 59f35c4029e0b532fc42114241a06e170b7431a2
   React-RCTAnimation: aae4f4bed122e78bdab72f7118d291d70a932ce2
@@ -493,7 +468,7 @@ SPEC CHECKSUMS:
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
   RNReactNativeHapticFeedback: 4085973f5a38b40d3c6793a3ee5724773eae045e
-  RNReanimated: b5b17149593e7c05e4ec5c0efea1f21e05829510
+  RNReanimated: e1b1e61fc545c45a4a8ea2285a9cebdcc8726843
   RNStaticSafeAreaInsets: 6103cf09647fa427186d30f67b0f5163c1ae8252
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
 
