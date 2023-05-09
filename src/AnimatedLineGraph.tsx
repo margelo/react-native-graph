@@ -12,7 +12,6 @@ import {
   vec,
   Group,
   PathCommand,
-  useSharedValueEffect,
   mix,
   Circle,
   Shadow,
@@ -445,22 +444,23 @@ export function AnimatedLineGraph({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indicatorPulsating])
 
-  useSharedValueEffect(
-    () => {
-      if (pulseTrigger.value === 0) {
-        indicatorPulseRadius.current = mix(
-          indicatorPulseAnimation.value,
-          INDICATOR_PULSE_BLUR_RADIUS_SMALL,
-          INDICATOR_PULSE_BLUR_RADIUS_BIG
-        )
-        indicatorPulseOpacity.current = mix(indicatorPulseAnimation.value, 1, 0)
-      } else {
-        indicatorPulseRadius.current = 0
-      }
-    },
+  useEffect(() => {
+    if (pulseTrigger.value === 0) {
+      indicatorPulseRadius.current = mix(
+        indicatorPulseAnimation.value,
+        INDICATOR_PULSE_BLUR_RADIUS_SMALL,
+        INDICATOR_PULSE_BLUR_RADIUS_BIG
+      )
+      indicatorPulseOpacity.current = mix(indicatorPulseAnimation.value, 1, 0)
+    } else {
+      indicatorPulseRadius.current = 0
+    }
+  }, [
     indicatorPulseAnimation,
-    pulseTrigger
-  )
+    pulseTrigger,
+    indicatorPulseOpacity,
+    indicatorPulseRadius,
+  ])
 
   const axisLabelContainerStyle = {
     paddingTop: TopAxisLabel != null ? 20 : 0,
