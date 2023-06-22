@@ -181,20 +181,22 @@ function createGraphPathBase({
 
     if (index === graphData.length - 1 && pixel !== endX) continue
 
-    if (index !== 0 && index !== graphData.length - 1) {
-      // Only draw point, when the point is exact
-      const exactPointX =
-        getXInRange(drawingWidth, graphData[index]!.date, range.x) +
-        horizontalPadding
+    // Currently breaking interpolation
 
-      const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
-        .fill(0)
-        .some((_value, additionalPixel) => {
-          return pixel + additionalPixel === exactPointX
-        })
+    // if (index !== 0 && index !== graphData.length - 1) {
+    //   // Only draw point, when the point is exact
+    //   const exactPointX =
+    //     getXInRange(drawingWidth, graphData[index]!.date, range.x) +
+    //     horizontalPadding
 
-      if (!isExactPointInsidePixelRatio) continue
-    }
+    //   const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
+    //     .fill(0)
+    //     .some((_value, additionalPixel) => {
+    //       return pixel + additionalPixel === exactPointX
+    //     })
+
+    //   if (!isExactPointInsidePixelRatio) continue
+    // }
 
     const value = graphData[index]!.value
     const y =
