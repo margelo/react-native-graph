@@ -154,11 +154,9 @@ function createGraphPathBase({
 
   const points: SkPoint[] = []
 
-  const startX =
-    getXInRange(drawingWidth, graphData[0]!.date, range.x) + horizontalPadding
-  const endX =
-    getXInRange(drawingWidth, graphData[graphData.length - 1]!.date, range.x) +
-    horizontalPadding
+  const startX = horizontalPadding
+  const endX = getXInRange(drawingWidth, graphData[graphData.length - 1]!.date, range.x) + horizontalPadding
+  const ratio = (endX - startX) / (graphData.length ?? 1)
 
   const getGraphDataIndex = (pixel: number) =>
     Math.round(((pixel - startX) / (endX - startX)) * (graphData.length - 1))
@@ -167,6 +165,8 @@ function createGraphPathBase({
     if (pixel === endX || pixel + PIXEL_RATIO < endX) return pixel + PIXEL_RATIO
     return endX
   }
+
+  const drawn: any = [];
 
   for (
     let pixel = startX;
@@ -183,33 +183,33 @@ function createGraphPathBase({
 
     if (index !== 0 && index !== graphData.length - 1) {
       // Only draw point, when the point is exact
-      const exactPointX =
-        getXInRange(drawingWidth, graphData[index]!.date, range.x) +
-        horizontalPadding
+      const exactPointX = ratio * Number(graphData[index]!.time)
 
-      const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
-        .fill(0)
-        .some((_value, additionalPixel) => {
-          return pixel + additionalPixel === exactPointX
-        })
-
-      if (!isExactPointInsidePixelRatio) continue
+      if (drawn.includes(exactPointX)) continue;
+      drawn.push(exactPointX);
     }
 
     const value = graphData[index]!.value
-    const y =
+    const y = 
       drawingHeight -
       getYInRange(drawingHeight, value, range.y) +
       verticalPadding
 
-    points.push({ x: pixel, y: y })
+    // console.log(pixel, startX, endX, ratio, graphData[index], graphData.length, ratio * Number(graphData[index]!.time));
+
+    const posX = ratio * Number(graphData[index]!.time) + horizontalPadding
+
+    points.push({ x: posX, y: y })
   }
 
   for (let i = 0; i < points.length; i++) {
     const point = points[i]!
 
     // first point needs to start the path
-    if (i === 0) path.moveTo(point.x, point.y)
+    if (i === 0) {
+      path.moveTo(point.x, point.y)
+      // path.addCircle(point.x, point.y, 2)
+    }
 
     const prev = points[i - 1]
     const prevPrev = points[i - 2]
