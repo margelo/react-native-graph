@@ -184,7 +184,34 @@ Example:
 ```
 
 See this [example `<SelectionDot />` component](./example/src/components/CustomSelectionDot.tsx).
+### `events`
+  An array of events to be marked in the graph. The position is calculated based on the `date` property of each event relatively to `points` of the graph.
 
+### `EventComponent`
+  A component that is used to render an event.
+
+### `EventTooltipComponent`
+  An additional event component that is rendered if the `SelectionDot` overlaps an `Event`.
+
+### `onEventHover`
+  Callback called when an `Event` is hovered on.
+
+>  Events related props require `animated` and `enablePanGesture` to be `true`.
+
+Example:
+
+<img src="./img/events.png" align="right" height="200" />
+
+```jsx
+<LineGraph
+  points={priceHistory}
+  color="#4484B2"
+  animated={true}
+  enablePanGesture={true}
+  events={transactionEvents}
+  EventComponent={DefaultEventComponent}
+/>
+```
 ## Sponsor
 
 <img src="./img/pinkpanda.png" align="right" height="50">

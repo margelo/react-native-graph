@@ -6,14 +6,17 @@ import type { GraphRange } from '../../../src/LineGraphProps'
 import { SelectionDot } from '../components/CustomSelectionDot'
 import { Toggle } from '../components/Toggle'
 import {
-  generateRandomGraphData,
+  generateRandomGraphEvents,
+  generateRandomGraphPoints,
   generateSinusGraphData,
 } from '../data/GraphData'
 import { useColors } from '../hooks/useColors'
 import { hapticFeedback } from '../utils/HapticFeedback'
 
 const POINT_COUNT = 70
-const POINTS = generateRandomGraphData(POINT_COUNT)
+const POINTS = generateRandomGraphPoints(POINT_COUNT)
+const EVENT_COUNT = 10
+const EVENTS = generateRandomGraphEvents(EVENT_COUNT, POINTS)
 const COLOR = '#6a7ee7'
 const GRADIENT_FILL_COLORS = ['#7476df5D', '#7476df4D', '#7476df00']
 const SMALL_POINTS = generateSinusGraphData(9)
@@ -30,11 +33,16 @@ export function GraphPage() {
   const [enableRange, setEnableRange] = useState(false)
   const [enableIndicator, setEnableIndicator] = useState(false)
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
+  const [enableEvents, setEnableEvents] = useState(false)
 
   const [points, setPoints] = useState(POINTS)
+  const [events, setEvents] = useState(EVENTS)
 
   const refreshData = useCallback(() => {
-    setPoints(generateRandomGraphData(POINT_COUNT))
+    const freshPoints = generateRandomGraphPoints(POINT_COUNT)
+    const freshEvents = generateRandomGraphEvents(EVENT_COUNT, freshPoints)
+    setPoints(freshPoints)
+    setEvents(freshEvents)
     hapticFeedback('impactLight')
   }, [])
 
@@ -100,6 +108,7 @@ export function GraphPage() {
         enableIndicator={enableIndicator}
         horizontalPadding={enableIndicator ? 15 : 0}
         indicatorPulsating={indicatorPulsating}
+        events={enableEvents ? events : []}
       />
 
       <Button title="Refresh" onPress={refreshData} />
@@ -147,6 +156,11 @@ export function GraphPage() {
           title="Indicator pulsating:"
           isEnabled={indicatorPulsating}
           setIsEnabled={setIndicatorPulsating}
+        />
+        <Toggle
+          title="Enable events:"
+          isEnabled={enableEvents}
+          setIsEnabled={setEnableEvents}
         />
       </ScrollView>
 
