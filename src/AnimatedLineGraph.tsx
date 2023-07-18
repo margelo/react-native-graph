@@ -48,7 +48,6 @@ import { getSixDigitHex } from './utils/getSixDigitHex'
 import { usePanGesture } from './hooks/usePanGesture'
 import { getYForX } from './GetYForX'
 import { hexToRgba } from './utils/hexToRgba'
-import { DefaultGraphEvent } from './DefaultGraphEvent'
 import { useEventTooltipProps } from './hooks/useEventTooltipProps'
 
 const INDICATOR_RADIUS = 7
@@ -80,8 +79,8 @@ export function AnimatedLineGraph<TEventPayload extends object>({
   TopAxisLabel,
   BottomAxisLabel,
   events,
-  EventComponent = DefaultGraphEvent,
-  EventTooltipComponent,
+  EventComponent = null,
+  EventTooltipComponent = null,
   onEventHover,
   ...props
 }: AnimatedLineGraphProps<TEventPayload>): React.ReactElement {

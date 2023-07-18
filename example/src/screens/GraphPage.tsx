@@ -4,6 +4,8 @@ import { LineGraph } from 'react-native-graph'
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
 import type { GraphRange } from '../../../src/LineGraphProps'
 import { SelectionDot } from '../components/CustomSelectionDot'
+import { GraphEvent } from '../components/GraphEvent'
+import { GraphEventTooltip } from '../components/GraphEventTooltip'
 import { Toggle } from '../components/Toggle'
 import {
   generateRandomGraphEvents,
@@ -34,6 +36,7 @@ export function GraphPage() {
   const [enableIndicator, setEnableIndicator] = useState(false)
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
   const [enableEvents, setEnableEvents] = useState(false)
+  const [enableEventTooltip, setEnableEventTooltip] = useState(false)
 
   const [points, setPoints] = useState(POINTS)
   const [events, setEvents] = useState(EVENTS)
@@ -109,6 +112,8 @@ export function GraphPage() {
         horizontalPadding={enableIndicator ? 15 : 0}
         indicatorPulsating={indicatorPulsating}
         events={enableEvents ? events : []}
+        EventComponent={enableEvents ? GraphEvent : null}
+        EventTooltipComponent={enableEventTooltip ? GraphEventTooltip : null}
       />
 
       <Button title="Refresh" onPress={refreshData} />
@@ -161,6 +166,11 @@ export function GraphPage() {
           title="Enable events:"
           isEnabled={enableEvents}
           setIsEnabled={setEnableEvents}
+        />
+        <Toggle
+          title="Enable event tooltip:"
+          isEnabled={enableEventTooltip}
+          setIsEnabled={setEnableEventTooltip}
         />
       </ScrollView>
 

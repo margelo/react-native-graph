@@ -190,18 +190,15 @@ See this [example `<SelectionDot />` component](./example/src/components/CustomS
 ### `EventComponent`
   A component that is used to render an event.
 
+ See this [example `<GraphEvent/>` component](./example/src/components/GraphEvent.tsx).
+
 ### `EventTooltipComponent`
   An additional event component that is rendered if the `SelectionDot` overlaps an `Event`.
-
+  See this [example `<GraphEventTooltip/>` component](./example/src/components/GraphEventTooltip.tsx).
 ### `onEventHover`
   Callback called when an `Event` is hovered on.
 
->  Events related props require `animated` and `enablePanGesture` to be `true`.
-
 Example:
-
-<img src="./img/events.png" align="right" height="200" />
-
 ```jsx
 <LineGraph
   points={priceHistory}
@@ -212,6 +209,10 @@ Example:
   EventComponent={DefaultEventComponent}
 />
 ```
+>  Events related props require `animated` and `enablePanGesture` to be `true`.
+
+<img src="./img/events.gif" align="right" height="250" />
+
 ## Sponsor
 
 <img src="./img/pinkpanda.png" align="right" height="50">

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import {
   EventTooltipComponentProps,
@@ -13,18 +13,18 @@ export const useEventTooltipProps = <TEventPayload extends object>(
   onEventHover?: () => void
 ) => {
   const [activeEventIndex, setActiveEventIndex] = useState<number | null>(null)
-  const handleDisplayEventTooltip = (
-    eventIndex: number,
-    isDisplayed: boolean
-  ) => {
-    if (activeEventIndex === eventIndex && !isDisplayed)
-      setActiveEventIndex(null)
+  const handleDisplayEventTooltip = useCallback(
+    (eventIndex: number, isDisplayed: boolean) => {
+      if (activeEventIndex === eventIndex && !isDisplayed)
+        setActiveEventIndex(null)
 
-    if (activeEventIndex === null && isDisplayed) {
-      onEventHover?.()
-      setActiveEventIndex(eventIndex)
-    }
-  }
+      if (activeEventIndex === null && isDisplayed) {
+        onEventHover?.()
+        setActiveEventIndex(eventIndex)
+      }
+    },
+    [activeEventIndex, onEventHover]
+  )
   const activeEvent =
     eventsWithCords && typeof activeEventIndex === 'number'
       ? eventsWithCords[activeEventIndex]
