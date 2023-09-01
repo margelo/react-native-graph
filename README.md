@@ -193,6 +193,10 @@ See this [example `<SelectionDot />` component](./example/src/components/CustomS
 
 Download the Pink Panda mobile app to see react-native-graph in action!
 
+## Community Discord
+
+[Join the Margelo Community Discord](https://discord.gg/6CSHz2qAvA) to chat about react-native-graph or other Margelo libraries.
+
 ## Adopting at scale
 
 react-native-graph was built at Margelo, an elite app development agency. For enterprise support or other business inquiries, contact us at <a href="mailto:hello@margelo.io?subject=Adopting react-native-graph at scale">hello@margelo.io</a>!
