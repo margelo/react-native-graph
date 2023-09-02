@@ -31,7 +31,10 @@ import {
   Shadow,
 } from '@shopify/react-native-skia'
 
-import type { AnimatedLineGraphProps } from './LineGraphProps'
+import type {
+  AnimatedLineGraphProps,
+  GraphEventWithCords,
+} from './LineGraphProps'
 import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
 import {
   createGraphPath,
@@ -45,6 +48,7 @@ import { getSixDigitHex } from './utils/getSixDigitHex'
 import { usePanGesture } from './hooks/usePanGesture'
 import { getYForX } from './GetYForX'
 import { hexToRgba } from './utils/hexToRgba'
+import { useEventTooltipProps } from './hooks/useEventTooltipProps'
 
 const INDICATOR_RADIUS = 7
 const INDICATOR_BORDER_MULTIPLIER = 1.3
@@ -53,7 +57,7 @@ const INDICATOR_PULSE_BLUR_RADIUS_SMALL =
 const INDICATOR_PULSE_BLUR_RADIUS_BIG =
   INDICATOR_RADIUS * INDICATOR_BORDER_MULTIPLIER + 20
 
-export function AnimatedLineGraph({
+export function AnimatedLineGraph<TEventPayload extends object>({
   points: allPoints,
   color,
   gradientFillColors,
@@ -74,11 +78,23 @@ export function AnimatedLineGraph({
   verticalPadding = lineThickness,
   TopAxisLabel,
   BottomAxisLabel,
+  events,
+  EventComponent = null,
+  EventTooltipComponent = null,
+  onEventHover,
   ...props
-}: AnimatedLineGraphProps): React.ReactElement {
+}: AnimatedLineGraphProps<TEventPayload>): React.ReactElement {
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
   const interpolateProgress = useValue(0)
+
+  const [eventsWithCords, setEventsWithCords] = useState<
+    GraphEventWithCords<TEventPayload>[] | null
+  >(null)
+  const { eventTooltipProps, handleDisplayEventTooltip } = useEventTooltipProps(
+    eventsWithCords,
+    onEventHover
+  )
 
   const { gesture, isActive, x } = usePanGesture({
     enabled: enablePanGesture,
@@ -252,6 +268,7 @@ export function AnimatedLineGraph({
     }
 
     setCommandsChanged(commandsChanged + 1)
+    setEventsWithCords(null)
 
     runSpring(
       interpolateProgress,
@@ -261,6 +278,19 @@ export function AnimatedLineGraph({
         stiffness: 500,
         damping: 400,
         velocity: 0,
+      },
+      () => {
+        // Calculate graph event coordinates when the interpolation ends.
+        if (events) {
+          const extendedEvents: GraphEventWithCords<TEventPayload>[] = []
+          events.forEach((e) => {
+            const eventX =
+              getXInRange(drawingWidth, e.date, pathRange.x) + horizontalPadding
+            const eventY = getYForX(commands.value, eventX) ?? 0
+            extendedEvents.push({ ...e, x: eventX, y: eventY })
+          })
+          setEventsWithCords(extendedEvents)
+        }
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -277,6 +307,7 @@ export function AnimatedLineGraph({
     straightLine,
     verticalPadding,
     width,
+    events,
   ])
 
   const gradientColors = useMemo(() => {
@@ -515,6 +546,25 @@ export function AnimatedLineGraph({
                 />
               )}
 
+              {/* Render Event Component for every event. */}
+              {EventComponent != null && eventsWithCords && (
+                <Group>
+                  {eventsWithCords?.map((event, index) => (
+                    <EventComponent
+                      key={event.date.getTime()}
+                      index={index}
+                      isGraphActive={isActive}
+                      fingerX={circleX}
+                      eventX={event.x}
+                      eventY={event.y}
+                      color={color}
+                      onEventHover={handleDisplayEventTooltip}
+                      {...event.payload}
+                    />
+                  ))}
+                </Group>
+              )}
+
               {indicatorVisible && (
                 <Group>
                   {indicatorPulsating && (
@@ -555,6 +605,11 @@ export function AnimatedLineGraph({
           )}
         </Reanimated.View>
       </GestureDetector>
+
+      {/* Tooltip displayed on hover on EventComponent. */}
+      {EventTooltipComponent && eventTooltipProps && (
+        <EventTooltipComponent {...eventTooltipProps} />
+      )}
     </View>
   )
 }
