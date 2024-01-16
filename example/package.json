@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@react-native-segmented-control/segmented-control": "^2.4.0",
-    "@shopify/react-native-skia": "^0.1.185",
+    "@shopify/react-native-skia": "^0.1.233",
     "@types/gaussian": "^1.2.0",
     "gaussian": "^1.2.0",
     "react": "^18.2.0",
