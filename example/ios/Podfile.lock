@@ -450,8 +450,8 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNStaticSafeAreaInsets (2.1.1):
-    - React
+  - RNStaticSafeAreaInsets (2.2.0):
+    - React-Core
   - SocketRocket (0.6.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -676,11 +676,11 @@ SPEC CHECKSUMS:
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNReactNativeHapticFeedback: 4085973f5a38b40d3c6793a3ee5724773eae045e
   RNReanimated: b1220a0e5168745283ff5d53bfc7d2144b2cee1b
-  RNStaticSafeAreaInsets: 6103cf09647fa427186d30f67b0f5163c1ae8252
+  RNStaticSafeAreaInsets: 055ddbf5e476321720457cdaeec0ff2ba40ec1b8
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: d56980c8914db0b51692f55533409e844b66133c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 69e7f1fd189d8c9d5c72fa8e8c8692596d21099b
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3
