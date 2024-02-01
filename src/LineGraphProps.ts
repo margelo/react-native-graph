@@ -58,6 +58,11 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    */
   enablePanGesture?: boolean
   /**
+   * The position value of the selection dot on the x-axis.
+   * The value must be within the range of the points' length.
+   */
+  selectionDotPositionX?: number
+  /**
    * The color of the selection dot when the user is panning the graph.
    */
   selectionDotShadowColor?: string

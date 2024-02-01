@@ -29,6 +29,7 @@ export function GraphPage() {
   const [enableGradient, setEnableGradient] = useState(false)
   const [enableRange, setEnableRange] = useState(false)
   const [enableIndicator, setEnableIndicator] = useState(false)
+  const [enableFixedDotPosition, setEnableFixedDotPosition] = useState(false)
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
 
   const [points, setPoints] = useState(POINTS)
@@ -97,6 +98,9 @@ export function GraphPage() {
         onGestureStart={() => hapticFeedback('impactLight')}
         SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
         range={range}
+        selectionDotPositionX={
+          enableFixedDotPosition ? points.length / 2 : undefined
+        }
         enableIndicator={enableIndicator}
         horizontalPadding={enableIndicator ? 15 : 0}
         indicatorPulsating={indicatorPulsating}
@@ -138,6 +142,13 @@ export function GraphPage() {
           isEnabled={enableRange}
           setIsEnabled={setEnableRange}
         />
+        {isAnimated ? (
+          <Toggle
+            title="Enable fixed dot position:"
+            isEnabled={enableFixedDotPosition}
+            setIsEnabled={setEnableFixedDotPosition}
+          />
+        ) : null}
         <Toggle
           title="Enable Indicator:"
           isEnabled={enableIndicator}

@@ -56,6 +56,7 @@ const INDICATOR_PULSE_BLUR_RADIUS_BIG =
 export function AnimatedLineGraph({
   points: allPoints,
   color,
+  selectionDotPositionX,
   gradientFillColors,
   lineThickness = 3,
   range,
@@ -111,14 +112,6 @@ export function AnimatedLineGraph({
     return 0
   })
 
-  const positions = useDerivedValue(() => [
-    0,
-    Math.min(0.15, pathEnd.value),
-    pathEnd.value,
-    pathEnd.value,
-    1,
-  ])
-
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       setWidth(Math.round(layout.width))
@@ -161,12 +154,13 @@ export function AnimatedLineGraph({
   )
 
   const lineWidth = useMemo(() => {
-    const lastPoint = pointsInRange[pointsInRange.length - 1]
+    const index = selectionDotPositionX ?? pointsInRange.length - 1
+    const lastPoint = pointsInRange[index]
 
     if (lastPoint == null) return drawingWidth
 
     return Math.max(getXInRange(drawingWidth, lastPoint.date, pathRange.x), 0)
-  }, [drawingWidth, pathRange.x, pointsInRange])
+  }, [selectionDotPositionX, drawingWidth, pathRange.x, pointsInRange])
 
   const indicatorX = useDerivedValue(
     () => Math.floor(lineWidth) + horizontalPadding
@@ -174,6 +168,15 @@ export function AnimatedLineGraph({
   const indicatorY = useDerivedValue(
     () => getYForX(commands.value, indicatorX.value) || 0
   )
+
+  const positions = useDerivedValue(() => {
+    if (selectionDotPositionX && !isActive.value) {
+      const pEnd = indicatorX.value / width
+      return [0, Math.min(0.15, pEnd), pEnd, pEnd, 1]
+    }
+
+    return [0, Math.min(0.15, pathEnd.value), pathEnd.value, pathEnd.value, 1]
+  })
 
   const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color])
 
