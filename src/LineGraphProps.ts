@@ -58,10 +58,15 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    */
   enablePanGesture?: boolean
   /**
-   * The position value of the selection dot on the x-axis.
+   * The x-axis value of the selection dot.
    * The value must be within the range of the points' length.
    */
-  selectionDotPositionX?: number
+  selectionDotValueX?: number
+  /**
+   * The x-axis value of the fade-out starting point.
+   * If set, the fade-out is fixed when the user plays with the graph.
+   */
+  fadeoutValueX?: number
   /**
    * The color of the selection dot when the user is panning the graph.
    */

@@ -29,7 +29,8 @@ export function GraphPage() {
   const [enableGradient, setEnableGradient] = useState(false)
   const [enableRange, setEnableRange] = useState(false)
   const [enableIndicator, setEnableIndicator] = useState(false)
-  const [enableFixedDotPosition, setEnableFixedDotPosition] = useState(false)
+  const [enableDotValueX, setEnableDotValueX] = useState(true)
+  const [enableFadeoutValueX, setEnableFadeoutValueX] = useState(false)
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
 
   const [points, setPoints] = useState(POINTS)
@@ -98,12 +99,12 @@ export function GraphPage() {
         onGestureStart={() => hapticFeedback('impactLight')}
         SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
         range={range}
-        selectionDotPositionX={
-          enableFixedDotPosition ? points.length / 2 : undefined
-        }
+        selectionDotValueX={enableDotValueX ? points.length / 2 : undefined}
+        fadeoutValueX={enableFadeoutValueX ? points.length / 2 : undefined}
         enableIndicator={enableIndicator}
         horizontalPadding={enableIndicator ? 15 : 0}
         indicatorPulsating={indicatorPulsating}
+        panGestureDelay={0}
       />
 
       <Button title="Refresh" onPress={refreshData} />
@@ -142,13 +143,16 @@ export function GraphPage() {
           isEnabled={enableRange}
           setIsEnabled={setEnableRange}
         />
-        {isAnimated ? (
-          <Toggle
-            title="Enable fixed dot position:"
-            isEnabled={enableFixedDotPosition}
-            setIsEnabled={setEnableFixedDotPosition}
-          />
-        ) : null}
+        <Toggle
+          title="Enable dot x-axis value:"
+          isEnabled={enableDotValueX}
+          setIsEnabled={setEnableDotValueX}
+        />
+        <Toggle
+          title="Enable fadeout x-axis value:"
+          isEnabled={enableFadeoutValueX}
+          setIsEnabled={setEnableFadeoutValueX}
+        />
         <Toggle
           title="Enable Indicator:"
           isEnabled={enableIndicator}

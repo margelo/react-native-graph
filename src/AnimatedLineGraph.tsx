@@ -56,7 +56,8 @@ const INDICATOR_PULSE_BLUR_RADIUS_BIG =
 export function AnimatedLineGraph({
   points: allPoints,
   color,
-  selectionDotPositionX,
+  selectionDotValueX,
+  fadeoutValueX,
   gradientFillColors,
   lineThickness = 3,
   range,
@@ -154,13 +155,20 @@ export function AnimatedLineGraph({
   )
 
   const lineWidth = useMemo(() => {
-    const index = selectionDotPositionX ?? pointsInRange.length - 1
+    const index =
+      fadeoutValueX ?? selectionDotValueX ?? pointsInRange.length - 1
     const lastPoint = pointsInRange[index]
 
     if (lastPoint == null) return drawingWidth
 
     return Math.max(getXInRange(drawingWidth, lastPoint.date, pathRange.x), 0)
-  }, [selectionDotPositionX, drawingWidth, pathRange.x, pointsInRange])
+  }, [
+    fadeoutValueX,
+    selectionDotValueX,
+    drawingWidth,
+    pathRange.x,
+    pointsInRange,
+  ])
 
   const indicatorX = useDerivedValue(
     () => Math.floor(lineWidth) + horizontalPadding
@@ -170,7 +178,7 @@ export function AnimatedLineGraph({
   )
 
   const positions = useDerivedValue(() => {
-    if (selectionDotPositionX && !isActive.value) {
+    if ((fadeoutValueX ?? selectionDotValueX) && !isActive.value) {
       const pEnd = indicatorX.value / width
       return [0, Math.min(0.15, pEnd), pEnd, pEnd, 1]
     }
@@ -388,11 +396,25 @@ export function AnimatedLineGraph({
         circleY.value = y
       }
 
-      if (isActive.value) pathEnd.value = fingerX / width
+      if (fadeoutValueX && isActive.value) {
+        pathEnd.value = indicatorX.value / width
+      } else if (isActive.value) {
+        pathEnd.value = fingerX / width
+      }
     },
     // pathRange.x must be extra included in deps otherwise onPointSelected doesn't work, IDK why
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [circleX, circleY, isActive, pathEnd, pathRange.x, width, commands]
+    [
+      circleX,
+      circleY,
+      fadeoutValueX,
+      indicatorX,
+      isActive,
+      pathEnd,
+      pathRange.x,
+      width,
+      commands,
+    ]
   )
 
   const setIsActive = useCallback(
@@ -444,8 +466,9 @@ export function AnimatedLineGraph({
   )
 
   useEffect(() => {
-    if (pointsInRange.length !== 0 && commands.value.length !== 0)
+    if (pointsInRange.length !== 0 && commands.value.length !== 0) {
       pathEnd.value = 1
+    }
   }, [commands, pathEnd, pointsInRange.length])
 
   useEffect(() => {

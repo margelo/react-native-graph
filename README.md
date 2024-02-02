@@ -102,6 +102,49 @@ Example:
 
 ---
 
+### `selectionDotValueX`
+
+<img src="./img/fixed-selection-dot.gif" align="right" height="250" />
+
+Fixed starting point for the graph. The value is a number within the range of the data points' length.
+
+>  Requires `animated` to be `true`.
+
+Example:
+
+```jsx
+<LineGraph
+  points={priceHistory}
+  animated={true}
+  color="#4484B2"
+  selectionDotValueX={priceHistory.length / 2}
+/>
+```
+
+---
+
+### `fadeoutValueX`
+
+<img src="./img/fadeout.gif" align="right" height="250" />
+
+Fixed starting point for the graph's fade out. The value is a number within the range of the data points' length.
+
+>  Requires `animated` to be `true`.
+
+Example:
+
+```jsx
+<LineGraph
+  points={priceHistory}
+  animated={true}
+  color="#4484B2"
+  selectionDotValueX={priceHistory.length / 2}
+  fadeoutValueX={priceHistory.length / 2}
+/>
+```
+
+---
+
 ### `TopAxisLabel` / `BottomAxisLabel`
 
 <img src="./img/label.png" align="right" height="250" />
@@ -123,6 +166,8 @@ Example:
   BottomAxisLabel={() => <AxisLabel x={min.x} value={min.value} />}
 />
 ```
+
+---
 
 ### `Range`
 
