@@ -158,8 +158,13 @@ export const selectCurve = (
 }
 
 const linearInterpolation = (x: number, from: Vector, to: Vector): number => {
-  'worklet'
-  if (from.x === to.x) return from.y
+  // Handles vertical lines or when 'from' and 'to' have the same x-coordinate
+  if (from.x === to.x) return from.y // Return the y-value of 'from' (or 'to') if the line is vertical
+
+  // Calculate the y-coordinate for the given x using linear interpolation
+  // (y - y1) / (x - x1) = (y2 - y1) / (x2 - x1)
+  // This equation comes from the slope formula m = (y2 - y1) / (x2 - x1),
+  // rearranged to find 'y' given 'x'.
   return from.y + ((to.y - from.y) * (x - from.x)) / (to.x - from.x)
 }
 
@@ -170,28 +175,38 @@ export const selectSegment = (
 ): Cubic | { from: Vector; to: Vector } | undefined => {
   'worklet'
 
+  // Starting point for path segments
   let from: Vector = vec(0, 0)
+
   for (let i = 0; i < cmds.length; i++) {
     const cmd = cmds[i]
+    // Skip null commands, ensuring robustness
     if (cmd == null) continue
 
     switch (cmd[0]) {
       case PathVerb.Move:
+        // Set the starting point for the next segment
         from = vec(cmd[1], cmd[2])
         break
       case PathVerb.Line:
+        // Handle direct line segments
         const lineTo = vec(cmd[1], cmd[2])
+        // Check if 'x' is within the horizontal span of the line segment
         if (
           x >= Math.min(from.x, lineTo.x) &&
           x <= Math.max(from.x, lineTo.x)
         ) {
+          // Return the segment as a simple line
           return { from, to: lineTo }
         }
+        // Update 'from' to the endpoint of the line for the next segment
         from = lineTo
         break
       case PathVerb.Cubic:
+        // Handle cubic bezier curves
         const cubicTo = vec(cmd[5], cmd[6])
         if (disableSmoothing) {
+          // Treat the cubic curve as a straight line if smoothing is disabled
           if (
             x >= Math.min(from.x, cubicTo.x) &&
             x <= Math.max(from.x, cubicTo.x)
@@ -199,6 +214,7 @@ export const selectSegment = (
             return { from, to: cubicTo }
           }
         } else {
+          // Construct the cubic curve segment if smoothing is enabled
           const c1 = vec(cmd[1], cmd[2])
           const c2 = vec(cmd[3], cmd[4])
           if (
@@ -208,11 +224,13 @@ export const selectSegment = (
             return { from, c1, c2, to: cubicTo }
           }
         }
+        // Move 'from' to the end of the cubic curve
         from = cubicTo
         break
     }
   }
 
+  // Return undefined if no segment matches the given 'x'
   return undefined
 }
 
