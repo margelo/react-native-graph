@@ -48,6 +48,9 @@ example/vendor/bundle/
 # Temporary files created by Metro to check the health of the file watcher
 example/.metro-health-check*
 
+# testing
+example/coverage
+
 # node.js
 #
 node_modules/
