@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Gesture, PanGesture } from 'react-native-gesture-handler'
-import Reanimated, { useSharedValue } from 'react-native-reanimated'
+import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 interface Config {
   enabled: boolean
@@ -8,9 +8,9 @@ interface Config {
 }
 
 interface Result {
-  x: Reanimated.SharedValue<number>
-  y: Reanimated.SharedValue<number>
-  isActive: Reanimated.SharedValue<boolean>
+  x: SharedValue<number>
+  y: SharedValue<number>
+  isActive: SharedValue<boolean>
   gesture: PanGesture
 }
 
