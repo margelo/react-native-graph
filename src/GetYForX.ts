@@ -1,8 +1,9 @@
 import type { Vector, PathCommand } from '@shopify/react-native-skia'
 import { PathVerb, vec } from '@shopify/react-native-skia'
 
-// code from William Candillon
+const GET_Y_FOR_X_PRECISION = 2
 
+// code from William Candillon
 const round = (value: number, precision = 0): number => {
   'worklet'
 
@@ -156,15 +157,85 @@ export const selectCurve = (
   return undefined
 }
 
+const linearInterpolation = (x: number, from: Vector, to: Vector): number => {
+  'worklet'
+  if (from.x === to.x) return from.y
+  return from.y + ((to.y - from.y) * (x - from.x)) / (to.x - from.x)
+}
+
+export const selectSegment = (
+  cmds: PathCommand[],
+  x: number,
+  disableSmoothing: boolean
+): Cubic | { from: Vector; to: Vector } | undefined => {
+  'worklet'
+
+  let from: Vector = vec(0, 0)
+  for (let i = 0; i < cmds.length; i++) {
+    const cmd = cmds[i]
+    if (cmd == null) continue
+
+    switch (cmd[0]) {
+      case PathVerb.Move:
+        from = vec(cmd[1], cmd[2])
+        break
+      case PathVerb.Line:
+        const lineTo = vec(cmd[1], cmd[2])
+        if (
+          x >= Math.min(from.x, lineTo.x) &&
+          x <= Math.max(from.x, lineTo.x)
+        ) {
+          return { from, to: lineTo }
+        }
+        from = lineTo
+        break
+      case PathVerb.Cubic:
+        const cubicTo = vec(cmd[5], cmd[6])
+        if (disableSmoothing) {
+          if (
+            x >= Math.min(from.x, cubicTo.x) &&
+            x <= Math.max(from.x, cubicTo.x)
+          ) {
+            return { from, to: cubicTo }
+          }
+        } else {
+          const c1 = vec(cmd[1], cmd[2])
+          const c2 = vec(cmd[3], cmd[4])
+          if (
+            x >= Math.min(from.x, cubicTo.x) &&
+            x <= Math.max(from.x, cubicTo.x)
+          ) {
+            return { from, c1, c2, to: cubicTo }
+          }
+        }
+        from = cubicTo
+        break
+    }
+  }
+
+  return undefined
+}
+
 export const getYForX = (
   cmds: PathCommand[],
   x: number,
-  precision = 2
+  disableSmoothing: boolean
 ): number | undefined => {
   'worklet'
 
-  const c = selectCurve(cmds, x)
-  if (c == null) return undefined
+  const segment = selectSegment(cmds, x, disableSmoothing)
+  if (!segment) return undefined
 
-  return cubicBezierYForX(x, c.from, c.c1, c.c2, c.to, precision)
+  if ('c1' in segment) {
+    return cubicBezierYForX(
+      x,
+      segment.from,
+      segment.c1,
+      segment.c2,
+      segment.to,
+      GET_Y_FOR_X_PRECISION
+    )
+  } else {
+    return linearInterpolation(x, segment.from, segment.to)
+  }
 }
