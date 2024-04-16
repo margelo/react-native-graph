@@ -127,36 +127,6 @@ interface Cubic {
   to: Vector
 }
 
-export const selectCurve = (
-  cmds: PathCommand[],
-  x: number
-): Cubic | undefined => {
-  'worklet'
-
-  let from: Vector = vec(0, 0)
-  for (let i = 0; i < cmds.length; i++) {
-    const cmd = cmds[i]
-    if (cmd == null) return undefined
-    if (cmd[0] === PathVerb.Move) {
-      from = vec(cmd[1], cmd[2])
-    } else if (cmd[0] === PathVerb.Cubic) {
-      const c1 = vec(cmd[1], cmd[2])
-      const c2 = vec(cmd[3], cmd[4])
-      const to = vec(cmd[5], cmd[6])
-      if (x >= from.x && x <= to.x) {
-        return {
-          from,
-          c1,
-          c2,
-          to,
-        }
-      }
-      from = to
-    }
-  }
-  return undefined
-}
-
 const linearInterpolation = (x: number, from: Vector, to: Vector): number => {
   // Handles vertical lines or when 'from' and 'to' have the same x-coordinate
   if (from.x === to.x) return from.y // Return the y-value of 'from' (or 'to') if the line is vertical
