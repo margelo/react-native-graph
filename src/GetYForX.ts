@@ -237,11 +237,11 @@ export const selectSegment = (
 export const getYForX = (
   cmds: PathCommand[],
   x: number,
-  disableSmoothing: boolean
+  enableSmoothing: boolean
 ): number | undefined => {
   'worklet'
 
-  const segment = selectSegment(cmds, x, disableSmoothing)
+  const segment = selectSegment(cmds, x, enableSmoothing)
   if (!segment) return undefined
 
   if ('c1' in segment) {
