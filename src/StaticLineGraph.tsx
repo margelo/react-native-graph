@@ -16,6 +16,7 @@ export function StaticLineGraph({
   color,
   lineThickness = 3,
   enableFadeInMask,
+  enableSmoothing = true,
   style,
   ...props
 }: StaticLineGraphProps): React.ReactElement {
@@ -49,8 +50,9 @@ export function StaticLineGraph({
         canvasWidth: width,
         horizontalPadding: lineThickness,
         verticalPadding: lineThickness,
+        enableSmoothing,
       }),
-    [height, lineThickness, pathRange, pointsInRange, width]
+    [enableSmoothing, height, lineThickness, pathRange, pointsInRange, width]
   )
 
   const gradientColors = useMemo(

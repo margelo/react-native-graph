@@ -71,6 +71,7 @@ export function AnimatedLineGraph({
   verticalPadding = lineThickness,
   TopAxisLabel,
   BottomAxisLabel,
+  enableSmoothing = true,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -169,7 +170,7 @@ export function AnimatedLineGraph({
     () => Math.floor(lineWidth) + horizontalPadding
   )
   const indicatorY = useDerivedValue(
-    () => getYForX(commands.value, indicatorX.value) || 0
+    () => getYForX(commands.value, indicatorX.value, enableSmoothing) || 0
   )
 
   const indicatorPulseColor = useMemo(() => hexToRgba(color, 0.4), [color])
@@ -196,6 +197,7 @@ export function AnimatedLineGraph({
       verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
+      enableSmoothing,
     }
 
     if (shouldFillGradient) {
@@ -370,7 +372,7 @@ export function AnimatedLineGraph({
     (fingerX: number) => {
       'worklet'
 
-      const y = getYForX(commands.value, fingerX)
+      const y = getYForX(commands.value, fingerX, enableSmoothing)
 
       if (y != null) {
         circleX.value = fingerX

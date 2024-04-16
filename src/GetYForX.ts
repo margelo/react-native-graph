@@ -1,8 +1,9 @@
 import type { Vector, PathCommand } from '@shopify/react-native-skia'
 import { PathVerb, vec } from '@shopify/react-native-skia'
 
-// code from William Candillon
+const GET_Y_FOR_X_PRECISION = 2
 
+// code from William Candillon
 const round = (value: number, precision = 0): number => {
   'worklet'
 
@@ -126,45 +127,103 @@ interface Cubic {
   to: Vector
 }
 
-export const selectCurve = (
+const linearInterpolation = (x: number, from: Vector, to: Vector): number => {
+  // Handles vertical lines or when 'from' and 'to' have the same x-coordinate
+  if (from.x === to.x) return from.y // Return the y-value of 'from' (or 'to') if the line is vertical
+
+  // Calculate the y-coordinate for the given x using linear interpolation
+  // (y - y1) / (x - x1) = (y2 - y1) / (x2 - x1)
+  // This equation comes from the slope formula m = (y2 - y1) / (x2 - x1),
+  // rearranged to find 'y' given 'x'.
+  return from.y + ((to.y - from.y) * (x - from.x)) / (to.x - from.x)
+}
+
+export const selectSegment = (
   cmds: PathCommand[],
-  x: number
-): Cubic | undefined => {
+  x: number,
+  enableSmoothing: boolean
+): Cubic | { from: Vector; to: Vector } | undefined => {
   'worklet'
 
+  // Starting point for path segments
   let from: Vector = vec(0, 0)
+
   for (let i = 0; i < cmds.length; i++) {
     const cmd = cmds[i]
-    if (cmd == null) return undefined
-    if (cmd[0] === PathVerb.Move) {
-      from = vec(cmd[1], cmd[2])
-    } else if (cmd[0] === PathVerb.Cubic) {
-      const c1 = vec(cmd[1], cmd[2])
-      const c2 = vec(cmd[3], cmd[4])
-      const to = vec(cmd[5], cmd[6])
-      if (x >= from.x && x <= to.x) {
-        return {
-          from,
-          c1,
-          c2,
-          to,
+    // Skip null commands, ensuring robustness
+    if (cmd == null) continue
+
+    switch (cmd[0]) {
+      case PathVerb.Move:
+        // Set the starting point for the next segment
+        from = vec(cmd[1], cmd[2])
+        break
+      case PathVerb.Line:
+        // Handle direct line segments
+        const lineTo = vec(cmd[1], cmd[2])
+        // Check if 'x' is within the horizontal span of the line segment
+        if (
+          x >= Math.min(from.x, lineTo.x) &&
+          x <= Math.max(from.x, lineTo.x)
+        ) {
+          // Return the segment as a simple line
+          return { from, to: lineTo }
         }
-      }
-      from = to
+        // Update 'from' to the endpoint of the line for the next segment
+        from = lineTo
+        break
+      case PathVerb.Cubic:
+        // Handle cubic bezier curves
+        const cubicTo = vec(cmd[5], cmd[6])
+        if (enableSmoothing) {
+          // Construct the cubic curve segment if smoothing is enabled
+          const c1 = vec(cmd[1], cmd[2])
+          const c2 = vec(cmd[3], cmd[4])
+          if (
+            x >= Math.min(from.x, cubicTo.x) &&
+            x <= Math.max(from.x, cubicTo.x)
+          ) {
+            return { from, c1, c2, to: cubicTo }
+          }
+        } else {
+          // Treat the cubic curve as a straight line if smoothing is disabled
+          if (
+            x >= Math.min(from.x, cubicTo.x) &&
+            x <= Math.max(from.x, cubicTo.x)
+          ) {
+            return { from, to: cubicTo }
+          }
+        }
+        // Move 'from' to the end of the cubic curve
+        from = cubicTo
+        break
     }
   }
+
+  // Return undefined if no segment matches the given 'x'
   return undefined
 }
 
 export const getYForX = (
   cmds: PathCommand[],
   x: number,
-  precision = 2
+  enableSmoothing: boolean
 ): number | undefined => {
   'worklet'
 
-  const c = selectCurve(cmds, x)
-  if (c == null) return undefined
+  const segment = selectSegment(cmds, x, enableSmoothing)
+  if (!segment) return undefined
 
-  return cubicBezierYForX(x, c.from, c.c1, c.c2, c.to, precision)
+  if ('c1' in segment) {
+    return cubicBezierYForX(
+      x,
+      segment.from,
+      segment.c1,
+      segment.c2,
+      segment.to,
+      GET_Y_FOR_X_PRECISION
+    )
+  } else {
+    return linearInterpolation(x, segment.from, segment.to)
+  }
 }

@@ -47,6 +47,11 @@ interface BaseLineGraphProps extends ViewProps {
    * Enable the Fade-In Gradient Effect at the beginning of the Graph
    */
   enableFadeInMask?: boolean
+  /**
+   * Enables smoothing of the graph line using a cubic bezier curve.
+   * When disabled, the graph will be more accurate according to the dataset
+   */
+  enableSmoothing?: boolean
 }
 
 export type StaticLineGraphProps = BaseLineGraphProps & {

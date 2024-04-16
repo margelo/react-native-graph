@@ -43,6 +43,11 @@ type GraphPathConfig = {
    * Range of the graph's x and y-axis
    */
   range: GraphPathRange
+  /**
+   * Enables smoothing of the graph line using a cubic bezier curve.
+   * When disabled, the graph will be more accurate according to the dataset
+   */
+  enableSmoothing: boolean
 }
 
 type GraphPathConfigWithGradient = GraphPathConfig & {
@@ -140,6 +145,7 @@ function createGraphPathBase({
   canvasHeight: height,
   canvasWidth: width,
   shouldFillGradient,
+  enableSmoothing,
 }: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
   | SkPath
   | GraphPathWithGradient {
@@ -208,27 +214,35 @@ function createGraphPathBase({
   for (let i = 0; i < points.length; i++) {
     const point = points[i]!
 
-    // first point needs to start the path
-    if (i === 0) path.moveTo(point.x, point.y)
+    // Start the path or add a line directly to the next point
+    if (i === 0) {
+      path.moveTo(point.x, point.y)
+    } else {
+      if (enableSmoothing) {
+        // Continue using smoothing
+        const prev = points[i - 1]
+        const prevPrev = points[i - 2]
 
-    const prev = points[i - 1]
-    const prevPrev = points[i - 2]
+        if (prev == null) continue
 
-    if (prev == null) continue
+        const p0 = prevPrev ?? prev
+        const p1 = prev
+        const cp1x = (2 * p0.x + p1.x) / 3
+        const cp1y = (2 * p0.y + p1.y) / 3
+        const cp2x = (p0.x + 2 * p1.x) / 3
+        const cp2y = (p0.y + 2 * p1.y) / 3
+        const cp3x = (p0.x + 4 * p1.x + point.x) / 6
+        const cp3y = (p0.y + 4 * p1.y + point.y) / 6
 
-    const p0 = prevPrev ?? prev
-    const p1 = prev
-    const cp1x = (2 * p0.x + p1.x) / 3
-    const cp1y = (2 * p0.y + p1.y) / 3
-    const cp2x = (p0.x + 2 * p1.x) / 3
-    const cp2y = (p0.y + 2 * p1.y) / 3
-    const cp3x = (p0.x + 4 * p1.x + point.x) / 6
-    const cp3y = (p0.y + 4 * p1.y + point.y) / 6
+        path.cubicTo(cp1x, cp1y, cp2x, cp2y, cp3x, cp3y)
 
-    path.cubicTo(cp1x, cp1y, cp2x, cp2y, cp3x, cp3y)
-
-    if (i === points.length - 1) {
-      path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y)
+        if (i === points.length - 1) {
+          path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y)
+        }
+      } else {
+        // Direct line to the next point for no smoothing
+        path.lineTo(point.x, point.y)
+      }
     }
   }
 
