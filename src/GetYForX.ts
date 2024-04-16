@@ -171,7 +171,7 @@ const linearInterpolation = (x: number, from: Vector, to: Vector): number => {
 export const selectSegment = (
   cmds: PathCommand[],
   x: number,
-  disableSmoothing: boolean
+  enableSmoothing: boolean
 ): Cubic | { from: Vector; to: Vector } | undefined => {
   'worklet'
 
@@ -205,15 +205,7 @@ export const selectSegment = (
       case PathVerb.Cubic:
         // Handle cubic bezier curves
         const cubicTo = vec(cmd[5], cmd[6])
-        if (disableSmoothing) {
-          // Treat the cubic curve as a straight line if smoothing is disabled
-          if (
-            x >= Math.min(from.x, cubicTo.x) &&
-            x <= Math.max(from.x, cubicTo.x)
-          ) {
-            return { from, to: cubicTo }
-          }
-        } else {
+        if (enableSmoothing) {
           // Construct the cubic curve segment if smoothing is enabled
           const c1 = vec(cmd[1], cmd[2])
           const c2 = vec(cmd[3], cmd[4])
@@ -222,6 +214,14 @@ export const selectSegment = (
             x <= Math.max(from.x, cubicTo.x)
           ) {
             return { from, c1, c2, to: cubicTo }
+          }
+        } else {
+          // Treat the cubic curve as a straight line if smoothing is disabled
+          if (
+            x >= Math.min(from.x, cubicTo.x) &&
+            x <= Math.max(from.x, cubicTo.x)
+          ) {
+            return { from, to: cubicTo }
           }
         }
         // Move 'from' to the end of the cubic curve

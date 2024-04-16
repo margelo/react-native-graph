@@ -48,9 +48,10 @@ interface BaseLineGraphProps extends ViewProps {
    */
   enableFadeInMask?: boolean
   /**
-   * Disables smoothing of the graph line to increase accuracy of graph according to the dataset
+   * Enables smoothing of the graph line using a cubic bezier curve.
+   * When disabled, the graph will be more accurate according to the dataset
    */
-  disableSmoothing?: boolean
+  enableSmoothing?: boolean
 }
 
 export type StaticLineGraphProps = BaseLineGraphProps & {

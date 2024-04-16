@@ -44,9 +44,10 @@ type GraphPathConfig = {
    */
   range: GraphPathRange
   /**
-   * Disables smoothing of the graph line to increase accuracy of graph according to the dataset
+   * Enables smoothing of the graph line using a cubic bezier curve.
+   * When disabled, the graph will be more accurate according to the dataset
    */
-  disableSmoothing: boolean
+  enableSmoothing: boolean
 }
 
 type GraphPathConfigWithGradient = GraphPathConfig & {
@@ -144,7 +145,7 @@ function createGraphPathBase({
   canvasHeight: height,
   canvasWidth: width,
   shouldFillGradient,
-  disableSmoothing,
+  enableSmoothing,
 }: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
   | SkPath
   | GraphPathWithGradient {
@@ -217,10 +218,7 @@ function createGraphPathBase({
     if (i === 0) {
       path.moveTo(point.x, point.y)
     } else {
-      if (disableSmoothing) {
-        // Direct line to the next point for no smoothing
-        path.lineTo(point.x, point.y)
-      } else {
+      if (enableSmoothing) {
         // Continue using smoothing
         const prev = points[i - 1]
         const prevPrev = points[i - 2]
@@ -241,6 +239,9 @@ function createGraphPathBase({
         if (i === points.length - 1) {
           path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y)
         }
+      } else {
+        // Direct line to the next point for no smoothing
+        path.lineTo(point.x, point.y)
       }
     }
   }
