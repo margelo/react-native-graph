@@ -28,7 +28,7 @@ import {
   Shadow,
 } from '@shopify/react-native-skia'
 
-import type { AnimatedLineGraphProps } from './LineGraphProps'
+import type { AnimatedLineGraphProps, GraphPoint } from './LineGraphProps'
 import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
 import {
   createGraphPath,
@@ -71,6 +71,7 @@ export function AnimatedLineGraph({
   verticalPadding = lineThickness,
   TopAxisLabel,
   BottomAxisLabel,
+  selectedDate,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -335,7 +336,7 @@ export function AnimatedLineGraph({
 
   const setFingerPoint = useCallback(
     (fingerX: number) => {
-      const fingerXInRange = Math.max(fingerX - horizontalPadding, 0)
+      const fingerXInRange = Math.max(Math.min(fingerX, width - horizontalPadding), 0 + horizontalPadding);
 
       const index = Math.round(
         (fingerXInRange /
@@ -350,8 +351,14 @@ export function AnimatedLineGraph({
 
       if (pointSelectedIndex.current !== pointIndex) {
         const dataPoint = pointsInRange[pointIndex]
-        pointSelectedIndex.current = pointIndex
+        
+        if (!pointSelectedIndex.current) {
+          circleX.value = fingerXInRange
+          circleY.value = getYForX(commands.value, fingerX) || commands.value[fingerXInRange === horizontalPadding ? 0 : commands.value.length - 1][2]
+        }
 
+        pointSelectedIndex.current = pointIndex
+        
         if (dataPoint != null) {
           onPointSelected?.(dataPoint)
         }
@@ -399,6 +406,7 @@ export function AnimatedLineGraph({
       } else {
         onGestureEnd?.()
         pointSelectedIndex.current = undefined
+        onPointSelected?.(undefined)
         pathEnd.value = 1
         startPulsating()
       }
@@ -415,8 +423,8 @@ export function AnimatedLineGraph({
 
   useAnimatedReaction(
     () => x.value,
-    (fingerX) => {
-      if (isActive.value || fingerX) {
+    (fingerX : number) => {
+      if (isActive.value && fingerX) {
         setFingerX(fingerX)
         runOnJS(setFingerPoint)(fingerX)
       }
@@ -426,11 +434,45 @@ export function AnimatedLineGraph({
 
   useAnimatedReaction(
     () => isActive.value,
-    (active) => {
+    (active : Boolean) => {
       runOnJS(setIsActive)(active)
     },
     [isActive, setIsActive]
   )
+
+  useEffect(() => { 
+    if (!width) return;
+    const getOnlyDate = (date: Date) => {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    }
+
+    if (selectedDate != null) {
+      const selectedDateOnly = getOnlyDate(selectedDate)
+      const lastDate = getOnlyDate(pointsInRange[pointsInRange.length - 1]!.date)
+
+      if (selectedDateOnly.getTime() !== lastDate.getTime()) {
+        isActive.value = true
+        const index = pointsInRange.findIndex(
+          (point: GraphPoint) => getOnlyDate(point.date).getTime() === selectedDateOnly.getTime()
+        )
+
+        if (index !== -1) {
+          const dataPoint = pointsInRange[index]
+          onPointSelected?.(dataPoint)
+          x.value = getXInRange(drawingWidth, dataPoint.date, pathRange.x)
+        }
+      }
+    } else {
+      onPointSelected?.(undefined);
+      x.value = getXInRange(drawingWidth, pointsInRange[pointsInRange.length -1].date, pathRange.x)
+      isActive.value = false;
+    }
+
+  }
+    , [
+    width,
+    selectedDate
+  ])
 
   useEffect(() => {
     if (pointsInRange.length !== 0 && commands.value.length !== 0)

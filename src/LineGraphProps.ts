@@ -54,6 +54,10 @@ export type StaticLineGraphProps = BaseLineGraphProps & {
 }
 export type AnimatedLineGraphProps = BaseLineGraphProps & {
   /**
+   * The default date for the selection dot.
+   */
+  selectedDate?: Date
+  /**
    * Whether to enable Graph scrubbing/pan gesture.
    */
   enablePanGesture?: boolean
@@ -85,7 +89,7 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
   /**
    * Called for each point while the user is scrubbing/panning through the graph
    */
-  onPointSelected?: (point: GraphPoint) => void
+  onPointSelected?: (point?: GraphPoint) => void
   /**
    * Called once the user starts scrubbing/panning through the graph
    */
