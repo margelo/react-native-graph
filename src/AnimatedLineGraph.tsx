@@ -71,6 +71,7 @@ export function AnimatedLineGraph({
   verticalPadding = lineThickness,
   TopAxisLabel,
   BottomAxisLabel,
+  checkExactPoints = true,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -196,6 +197,7 @@ export function AnimatedLineGraph({
       verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
+      checkExactPoints,
     }
 
     if (shouldFillGradient) {
