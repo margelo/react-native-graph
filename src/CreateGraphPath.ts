@@ -43,6 +43,12 @@ type GraphPathConfig = {
    * Range of the graph's x and y-axis
    */
   range: GraphPathRange
+  /**
+   * Boolean flag to check if the point is exact.
+   * If true, only exact points will be drawn. If false, all points will be drawn.
+   * Default is true.
+   */
+  checkExactPoints: boolean
 }
 
 type GraphPathConfigWithGradient = GraphPathConfig & {
@@ -140,6 +146,7 @@ function createGraphPathBase({
   canvasHeight: height,
   canvasWidth: width,
   shouldFillGradient,
+  checkExactPoints,
 }: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
   | SkPath
   | GraphPathWithGradient {
@@ -181,7 +188,7 @@ function createGraphPathBase({
 
     if (index === graphData.length - 1 && pixel !== endX) continue
 
-    if (index !== 0 && index !== graphData.length - 1) {
+    if (checkExactPoints && index !== 0 && index !== graphData.length - 1) {
       // Only draw point, when the point is exact
       const exactPointX =
         getXInRange(drawingWidth, graphData[index]!.date, range.x) +

@@ -47,6 +47,12 @@ interface BaseLineGraphProps extends ViewProps {
    * Enable the Fade-In Gradient Effect at the beginning of the Graph
    */
   enableFadeInMask?: boolean
+  /**
+   * Boolean flag to check if the point is exact.
+   * If true, only exact points will be drawn. If false, all points will be drawn.
+   * Default is true.
+   */
+  checkExactPoints?: boolean
 }
 
 export type StaticLineGraphProps = BaseLineGraphProps & {
