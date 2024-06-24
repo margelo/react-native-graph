@@ -101,6 +101,11 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
   SelectionDot?: React.ComponentType<SelectionDotProps> | null
 
   /**
+   * Whether to show a vertical dashed line at the selection point
+   */
+  showDashedLine?: boolean
+
+  /**
    * The element that gets rendered above the Graph (usually the "max" point/value of the Graph)
    */
   TopAxisLabel?: () => React.ReactElement | null
