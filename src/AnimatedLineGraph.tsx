@@ -11,6 +11,7 @@ import Reanimated, {
   withTiming,
   withDelay,
   withSpring,
+  useAnimatedStyle,
 } from 'react-native-reanimated'
 import { GestureDetector } from 'react-native-gesture-handler'
 
@@ -61,6 +62,7 @@ export function AnimatedLineGraph({
   onPointSelected,
   onGestureStart,
   onGestureEnd,
+  showDashedLine = false,
   panGestureDelay = 300,
   SelectionDot = DefaultSelectionDot,
   enableIndicator = false,
@@ -123,6 +125,22 @@ export function AnimatedLineGraph({
     },
     []
   )
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: 0,
+    backgroundColor: 'transparent',
+    borderColor: isActive.value ? color : 'transparent',
+    borderWidth: isActive.value ? 1 : 0,
+    opacity: withTiming(isActive.value ? 0.8 : 0, {
+      duration: 300,
+    }),
+    borderStyle: 'dashed',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    left: circleX.value - 1,
+  }))
 
   const straightLine = useMemo(() => {
     const path = Skia.Path.Make()
@@ -465,6 +483,7 @@ export function AnimatedLineGraph({
           {/* Actual Skia Graph */}
           <View style={styles.container} onLayout={onLayout}>
             {/* Fix for react-native-skia's incorrect type declarations */}
+            {showDashedLine && <Reanimated.View style={animatedStyle} />}
             <Canvas style={styles.svg}>
               <Group>
                 <Path
@@ -496,7 +515,6 @@ export function AnimatedLineGraph({
                   </Path>
                 )}
               </Group>
-
               {SelectionDot != null && (
                 <SelectionDot
                   isActive={isActive}
