@@ -130,18 +130,15 @@ export function AnimatedLineGraph({
   )
 
   const animatedStyle = useAnimatedStyle(() => ({
-    width: 0,
-    backgroundColor: 'transparent',
-    borderColor: isActive.value ? color : 'transparent',
-    borderWidth: isActive.value ? 1 : 0,
     opacity: withTiming(isActive.value ? 0.8 : 0, {
       duration: 300,
     }),
-    borderStyle: 'dashed',
     position: 'absolute',
     right: 0,
-    top: 0,
     bottom: 0,
+    top: -2,
+    overflow: 'hidden',
+    height: isActive.value ? '100%' : '0%',
     left: circleX.value - 1,
   }))
 
@@ -491,7 +488,15 @@ export function AnimatedLineGraph({
           {/* Actual Skia Graph */}
           <View style={styles.container} onLayout={onLayout}>
             {/* Fix for react-native-skia's incorrect type declarations */}
-            {showDashedLine && <Reanimated.View style={animatedStyle} />}
+            {showDashedLine && (
+              <Reanimated.View style={animatedStyle}>
+                {Array(100)
+                  .fill(0)
+                  .map((_, i) => (
+                    <View key={i} style={getDashLineStyles(color).dashedLine} />
+                  ))}
+              </Reanimated.View>
+            )}
             <Canvas style={styles.svg}>
               <Group>
                 <Path
@@ -588,3 +593,14 @@ const styles = StyleSheet.create({
     height: 17,
   },
 })
+
+const getDashLineStyles = (color: string) => {
+  return StyleSheet.create({
+    dashedLine: {
+      width: 2,
+      height: 5,
+      marginVertical: 2,
+      backgroundColor: color,
+    },
+  })
+}
