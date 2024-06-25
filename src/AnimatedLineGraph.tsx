@@ -65,6 +65,7 @@ export function AnimatedLineGraph({
   showDashedLine = false,
   panGestureDelay = 300,
   SelectionDot = DefaultSelectionDot,
+  showSelectionDotShadow = true,
   enableIndicator = false,
   indicatorPulsating = false,
   horizontalPadding = enableIndicator
@@ -127,7 +128,7 @@ export function AnimatedLineGraph({
   )
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isActive.value ? 0.8 : 0, {
+    opacity: withTiming(isActive.value ? 1 : 0, {
       duration: 300,
     }),
     position: 'absolute',
@@ -527,6 +528,7 @@ export function AnimatedLineGraph({
                   lineThickness={lineThickness}
                   circleX={circleX}
                   circleY={circleY}
+                  showShadow={showSelectionDotShadow}
                 />
               )}
 

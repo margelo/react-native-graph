@@ -17,6 +17,7 @@ export interface SelectionDotProps {
   lineThickness: BaseLineGraphProps['lineThickness']
   circleX: SharedValue<number>
   circleY: SharedValue<number>
+  showShadow: boolean
 }
 
 interface BaseLineGraphProps extends ViewProps {
@@ -99,6 +100,13 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
    * The element that renders the selection dot
    */
   SelectionDot?: React.ComponentType<SelectionDotProps> | null
+
+  /**
+   * Whether to show the selection dot shadow
+   * @default true
+   * This only applies if `SelectionDot` is set to the default
+   */
+  showSelectionDotShadow?: boolean
 
   /**
    * Whether to show a vertical dashed line at the selection point
