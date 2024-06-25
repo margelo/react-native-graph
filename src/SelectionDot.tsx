@@ -18,6 +18,7 @@ export function SelectionDot({
   color,
   circleX,
   circleY,
+  showShadow,
 }: SelectionDotProps): React.ReactElement {
   const circleRadius = useValue(0)
   const circleStrokeRadius = useComputedValue(
@@ -47,13 +48,15 @@ export function SelectionDot({
 
   return (
     <Group>
-      <Circle
-        opacity={0.05}
-        cx={circleX}
-        cy={circleY}
-        r={circleStrokeRadius}
-        color="#333333"
-      />
+      {showShadow && (
+        <Circle
+          opacity={0.05}
+          cx={circleX}
+          cy={circleY}
+          r={circleStrokeRadius}
+          color="#333333"
+        />
+      )}
       <Circle cx={circleX} cy={circleY} r={circleRadius} color={color}>
         <Shadow dx={0} dy={0} color="rgba(0,0,0,0.5)" blur={4} />
       </Circle>
