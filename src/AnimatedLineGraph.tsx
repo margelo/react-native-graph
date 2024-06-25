@@ -598,8 +598,10 @@ const getDashLineStyles = (color: string) => {
   return StyleSheet.create({
     dashedLine: {
       width: 2,
-      height: 5,
+      height: 8,
       marginVertical: 2,
+      overflow: 'hidden',
+      borderRadius: 1,
       backgroundColor: color,
     },
   })
