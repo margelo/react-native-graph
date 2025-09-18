@@ -140,7 +140,7 @@ export function AnimatedLineGraph({
   const gradientPaths = useSharedValue<{ from?: SkPath; to?: SkPath }>({})
   const commands = useSharedValue<PathCommand[]>([])
   const [commandsChanged, setCommandsChanged] = useState(0)
-  const pointSelectedIndex = useRef<number>()
+  const pointSelectedIndex = useRef<number | undefined>(undefined)
 
   const pathRange: GraphPathRange = useMemo(
     () => getGraphPathRange(allPoints, range),
@@ -352,7 +352,7 @@ export function AnimatedLineGraph({
         const dataPoint = pointsInRange[pointIndex]
         pointSelectedIndex.current = pointIndex
 
-        if (dataPoint != null) {
+        if (dataPoint != null && isActive.value) {
           onPointSelected?.(dataPoint)
         }
       }
@@ -363,6 +363,7 @@ export function AnimatedLineGraph({
       onPointSelected,
       pathRange.x,
       pointsInRange,
+      isActive,
     ]
   )
 
