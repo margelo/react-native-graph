@@ -1,12 +1,7 @@
 import { useColors } from '../hooks/useColors'
 import React, { useCallback, useState } from 'react'
-import {
-  LayoutChangeEvent,
-  StyleSheet,
-  View,
-  ViewProps,
-  Text,
-} from 'react-native'
+import { StyleSheet, View, Text } from 'react-native'
+import type { LayoutChangeEvent, ViewProps } from 'react-native'
 import { PressableScale } from 'react-native-pressable-scale'
 import Reanimated, {
   Easing,
@@ -14,11 +9,8 @@ import Reanimated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated'
-import {
-  GraphDisplayMode,
-  GRAPH_DISPLAY_MODES,
-  SCREEN_WIDTH,
-} from '../Constants'
+import { GRAPH_DISPLAY_MODES, SCREEN_WIDTH } from '../Constants'
+import type { GraphDisplayMode } from '../Constants'
 
 interface Props extends ViewProps {
   graphDisplayMode: GraphDisplayMode

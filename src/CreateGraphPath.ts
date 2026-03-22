@@ -1,4 +1,5 @@
-import { SkPath, Skia, SkPoint } from '@shopify/react-native-skia'
+import { Skia } from '@shopify/react-native-skia'
+import type { SkPath, SkPoint } from '@shopify/react-native-skia'
 import type { GraphPoint, GraphRange } from './LineGraphProps'
 
 const PIXEL_RATIO = 2

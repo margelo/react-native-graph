@@ -1,13 +1,10 @@
 import { Canvas, LinearGradient, Path, vec } from '@shopify/react-native-skia'
 import { getSixDigitHex } from './utils/getSixDigitHex'
 import React, { useCallback, useMemo, useState } from 'react'
-import { View, StyleSheet, LayoutChangeEvent } from 'react-native'
-import {
-  createGraphPath,
-  getGraphPathRange,
-  getPointsInRange,
-  GraphPathRange,
-} from './CreateGraphPath'
+import { View, StyleSheet } from 'react-native'
+import type { LayoutChangeEvent } from 'react-native'
+import { createGraphPath, getGraphPathRange, getPointsInRange } from './CreateGraphPath'
+import type { GraphPathRange } from './CreateGraphPath'
 import type { StaticLineGraphProps } from './LineGraphProps'
 
 export function StaticLineGraph({
@@ -62,7 +59,6 @@ export function StaticLineGraph({
 
   return (
     <View {...props} style={style} onLayout={onLayout}>
-      {/* Fix for react-native-skia's incorrect type declarations */}
       <Canvas style={styles.svg}>
         <Path
           path={path}

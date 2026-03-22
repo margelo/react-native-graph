@@ -1,15 +1,6 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "paths": {
-      "react-native-graph": ["../src/index"]
-    },
-  },
-  "include": [
-    "src",
-    "index.js"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    // Avoid expo-cli auto-generating a tsconfig
+  }
 }

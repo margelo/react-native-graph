@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { View, StyleSheet, Text, Button, ScrollView } from 'react-native'
 import { LineGraph } from 'react-native-graph'
-import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
+// import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
 import type { GraphRange } from '../../../src/LineGraphProps'
 import { SelectionDot } from '../components/CustomSelectionDot'
 import { Toggle } from '../components/Toggle'
@@ -9,6 +9,7 @@ import {
   generateRandomGraphData,
   generateSinusGraphData,
 } from '../data/GraphData'
+import { HapticFeedbackTypes } from 'react-native-haptic-feedback'
 import { useColors } from '../hooks/useColors'
 import { hapticFeedback } from '../utils/HapticFeedback'
 
@@ -35,7 +36,7 @@ export function GraphPage() {
 
   const refreshData = useCallback(() => {
     setPoints(generateRandomGraphData(POINT_COUNT))
-    hapticFeedback('impactLight')
+    hapticFeedback(HapticFeedbackTypes.impactLight)
   }, [])
 
   const highestDate = useMemo(
@@ -94,7 +95,7 @@ export function GraphPage() {
         gradientFillColors={enableGradient ? GRADIENT_FILL_COLORS : undefined}
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
-        onGestureStart={() => hapticFeedback('impactLight')}
+        onGestureStart={() => hapticFeedback(HapticFeedbackTypes.impactLight)}
         SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
         range={range}
         enableIndicator={enableIndicator}
@@ -158,8 +159,8 @@ export function GraphPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StaticSafeAreaInsets.safeAreaInsetsTop + 15,
-    paddingBottom: StaticSafeAreaInsets.safeAreaInsetsBottom + 15,
+    paddingTop: 42 + 15,
+    paddingBottom: 42 + 15,
   },
   spacer: {
     flexGrow: 1,

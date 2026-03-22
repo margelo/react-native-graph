@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, StyleSheet, LayoutChangeEvent } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import type { LayoutChangeEvent } from 'react-native'
 import Reanimated, {
   runOnJS,
   useAnimatedReaction,
@@ -16,17 +17,16 @@ import { GestureDetector } from 'react-native-gesture-handler'
 
 import {
   Canvas,
-  SkPath,
   LinearGradient,
   Path,
   Skia,
   vec,
   Group,
-  PathCommand,
   mix,
   Circle,
   Shadow,
 } from '@shopify/react-native-skia'
+import type { SkPath, PathCommand } from '@shopify/react-native-skia'
 
 import type { AnimatedLineGraphProps } from './LineGraphProps'
 import { SelectionDot as DefaultSelectionDot } from './SelectionDot'
@@ -34,10 +34,10 @@ import {
   createGraphPath,
   createGraphPathWithGradient,
   getGraphPathRange,
-  GraphPathRange,
   getXInRange,
   getPointsInRange,
 } from './CreateGraphPath'
+import type { GraphPathRange } from './CreateGraphPath'
 import { getSixDigitHex } from './utils/getSixDigitHex'
 import { usePanGesture } from './hooks/usePanGesture'
 import { getYForX } from './GetYForX'
@@ -140,7 +140,7 @@ export function AnimatedLineGraph({
   const gradientPaths = useSharedValue<{ from?: SkPath; to?: SkPath }>({})
   const commands = useSharedValue<PathCommand[]>([])
   const [commandsChanged, setCommandsChanged] = useState(0)
-  const pointSelectedIndex = useRef<number>()
+  const pointSelectedIndex = useRef<number | undefined>(undefined)
 
   const pathRange: GraphPathRange = useMemo(
     () => getGraphPathRange(allPoints, range),
@@ -247,8 +247,12 @@ export function AnimatedLineGraph({
       }
     }
 
-    setCommandsChanged(commandsChanged + 1)
+    setCommandsChanged((c) => c + 1)
 
+    // Replay morph on every path update: progress must go 0 → 1. If we only
+    // withSpring(1) while already at 1, Reanimated/Skia show no transition.
+    cancelAnimation(interpolateProgress)
+    interpolateProgress.value = 0
     interpolateProgress.value = withSpring(1, {
       mass: 1,
       stiffness: 500,
@@ -295,7 +299,11 @@ export function AnimatedLineGraph({
       const from = paths.value.from ?? straightLine
       const to = paths.value.to ?? straightLine
 
-      return to.interpolate(from, interpolateProgress.value)
+      return (
+        to.interpolate(from, interpolateProgress.value) ??
+        to ??
+        from
+      )
     },
     // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
     [interpolateProgress]
@@ -306,7 +314,11 @@ export function AnimatedLineGraph({
       const from = gradientPaths.value.from ?? straightLine
       const to = gradientPaths.value.to ?? straightLine
 
-      return to.interpolate(from, interpolateProgress.value)
+      return (
+        to.interpolate(from, interpolateProgress.value) ??
+        to ??
+        from
+      )
     },
     // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
     [interpolateProgress]
@@ -352,7 +364,7 @@ export function AnimatedLineGraph({
         const dataPoint = pointsInRange[pointIndex]
         pointSelectedIndex.current = pointIndex
 
-        if (dataPoint != null) {
+        if (dataPoint != null && isActive.value) {
           onPointSelected?.(dataPoint)
         }
       }
@@ -360,6 +372,7 @@ export function AnimatedLineGraph({
     [
       drawingWidth,
       horizontalPadding,
+      isActive,
       onPointSelected,
       pathRange.x,
       pointsInRange,
@@ -464,11 +477,9 @@ export function AnimatedLineGraph({
 
           {/* Actual Skia Graph */}
           <View style={styles.container} onLayout={onLayout}>
-            {/* Fix for react-native-skia's incorrect type declarations */}
             <Canvas style={styles.svg}>
               <Group>
                 <Path
-                  // @ts-expect-error
                   path={path}
                   strokeWidth={lineThickness}
                   style="stroke"
@@ -485,7 +496,6 @@ export function AnimatedLineGraph({
 
                 {shouldFillGradient && (
                   <Path
-                    // @ts-expect-error
                     path={gradientPath}
                   >
                     <LinearGradient

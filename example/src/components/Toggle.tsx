@@ -1,5 +1,4 @@
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
-import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { useColors } from '../hooks/useColors'
 

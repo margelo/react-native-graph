@@ -75,7 +75,10 @@ const solveCubic = (a: number, b: number, c: number, d: number): number[] => {
   }
 
   // Convert back from depressed cubic
-  for (let i = 0; i < roots.length; i++) roots[i] -= b / (3 * a)
+  for (let i = 0; i < roots.length; i++) {
+    const root = roots[i]
+    if (root !== undefined) roots[i] = root - b / (3 * a)
+  }
 
   return roots
 }
