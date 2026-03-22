@@ -1,11 +1,15 @@
-import { Canvas, LinearGradient, Path, vec } from '@shopify/react-native-skia'
-import { getSixDigitHex } from './utils/getSixDigitHex'
-import React, { useCallback, useMemo, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
-import type { LayoutChangeEvent } from 'react-native'
-import { createGraphPath, getGraphPathRange, getPointsInRange } from './CreateGraphPath'
-import type { GraphPathRange } from './CreateGraphPath'
-import type { StaticLineGraphProps } from './LineGraphProps'
+import { Canvas, LinearGradient, Path, vec } from '@shopify/react-native-skia';
+import { getSixDigitHex } from './utils/getSixDigitHex';
+import React, { useCallback, useMemo, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import type { LayoutChangeEvent } from 'react-native';
+import {
+  createGraphPath,
+  getGraphPathRange,
+  getPointsInRange,
+} from './CreateGraphPath';
+import type { GraphPathRange } from './CreateGraphPath';
+import type { StaticLineGraphProps } from './LineGraphProps';
 
 export function StaticLineGraph({
   points: allPoints,
@@ -16,26 +20,26 @@ export function StaticLineGraph({
   style,
   ...props
 }: StaticLineGraphProps): React.ReactElement {
-  const [width, setWidth] = useState(0)
-  const [height, setHeight] = useState(0)
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
 
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-      setWidth(Math.round(layout.width))
-      setHeight(Math.round(layout.height))
+      setWidth(Math.round(layout.width));
+      setHeight(Math.round(layout.height));
     },
     []
-  )
+  );
 
   const pathRange: GraphPathRange = useMemo(
     () => getGraphPathRange(allPoints, range),
     [allPoints, range]
-  )
+  );
 
   const pointsInRange = useMemo(
     () => getPointsInRange(allPoints, pathRange),
     [allPoints, pathRange]
-  )
+  );
 
   const path = useMemo(
     () =>
@@ -48,14 +52,14 @@ export function StaticLineGraph({
         verticalPadding: lineThickness,
       }),
     [height, lineThickness, pathRange, pointsInRange, width]
-  )
+  );
 
   const gradientColors = useMemo(
     () => [`${getSixDigitHex(color)}00`, `${getSixDigitHex(color)}ff`],
     [color]
-  )
-  const gradientFrom = useMemo(() => vec(0, 0), [])
-  const gradientTo = useMemo(() => vec(width * 0.15, 0), [width])
+  );
+  const gradientFrom = useMemo(() => vec(0, 0), []);
+  const gradientTo = useMemo(() => vec(width * 0.15, 0), [width]);
 
   return (
     <View {...props} style={style} onLayout={onLayout}>
@@ -78,11 +82,11 @@ export function StaticLineGraph({
         </Path>
       </Canvas>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   svg: {
     flex: 1,
   },
-})
+});

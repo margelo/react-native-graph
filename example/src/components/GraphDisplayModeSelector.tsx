@@ -1,25 +1,25 @@
-import { useColors } from '../hooks/useColors'
-import React, { useCallback, useState } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
-import type { LayoutChangeEvent, ViewProps } from 'react-native'
-import { PressableScale } from 'react-native-pressable-scale'
+import { useColors } from '../hooks/useColors';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import type { LayoutChangeEvent, ViewProps } from 'react-native';
+import { PressableScale } from 'react-native-pressable-scale';
 import Reanimated, {
   Easing,
   useAnimatedStyle,
   withSpring,
   withTiming,
-} from 'react-native-reanimated'
-import { GRAPH_DISPLAY_MODES, SCREEN_WIDTH } from '../Constants'
-import type { GraphDisplayMode } from '../Constants'
+} from 'react-native-reanimated';
+import { GRAPH_DISPLAY_MODES, SCREEN_WIDTH } from '../Constants';
+import type { GraphDisplayMode } from '../Constants';
 
 interface Props extends ViewProps {
-  graphDisplayMode: GraphDisplayMode
-  setGraphDisplayMode: (graphDisplayMode: GraphDisplayMode) => void
+  graphDisplayMode: GraphDisplayMode;
+  setGraphDisplayMode: (graphDisplayMode: GraphDisplayMode) => void;
 }
 
-export const SPACING = 5
+export const SPACING = 5;
 export const ESTIMATED_BUTTON_WIDTH =
-  (SCREEN_WIDTH - 50) / GRAPH_DISPLAY_MODES.length
+  (SCREEN_WIDTH - 50) / GRAPH_DISPLAY_MODES.length;
 
 export function GraphDisplayModeSelector({
   graphDisplayMode,
@@ -27,20 +27,20 @@ export function GraphDisplayModeSelector({
   style,
   ...props
 }: Props): React.ReactElement {
-  const colors = useColors()
+  const colors = useColors();
 
-  const [width, setWidth] = useState(ESTIMATED_BUTTON_WIDTH)
+  const [width, setWidth] = useState(ESTIMATED_BUTTON_WIDTH);
 
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-      setWidth(Math.round(layout.width))
+      setWidth(Math.round(layout.width));
     },
     []
-  )
+  );
 
-  const buttonWidth = width / GRAPH_DISPLAY_MODES.length - 2 * SPACING
+  const buttonWidth = width / GRAPH_DISPLAY_MODES.length - 2 * SPACING;
 
-  const selectedModeIndex = GRAPH_DISPLAY_MODES.indexOf(graphDisplayMode)
+  const selectedModeIndex = GRAPH_DISPLAY_MODES.indexOf(graphDisplayMode);
   const selectionBackgroundStyle = useAnimatedStyle(() => {
     return {
       width: buttonWidth,
@@ -60,8 +60,8 @@ export function GraphDisplayModeSelector({
           ),
         },
       ],
-    }
-  }, [buttonWidth, selectedModeIndex])
+    };
+  }, [buttonWidth, selectedModeIndex]);
 
   return (
     <View {...props} onLayout={onLayout} style={[styles.container, style]}>
@@ -85,7 +85,7 @@ export function GraphDisplayModeSelector({
         </View>
       ))}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING,
     paddingVertical: 2.5,
   },
-})
+});

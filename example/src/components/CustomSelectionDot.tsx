@@ -15,15 +15,15 @@
  * This example has removed the outer ring and light
  * shadow from the default one to make it more flat.
  */
-import React, { useCallback } from 'react'
+import React, { useCallback } from 'react';
 import {
   runOnJS,
   useAnimatedReaction,
   withSpring,
   useSharedValue,
-} from 'react-native-reanimated'
-import { Circle } from '@shopify/react-native-skia'
-import type { SelectionDotProps } from 'react-native-graph'
+} from 'react-native-reanimated';
+import { Circle } from '@shopify/react-native-skia';
+import type { SelectionDotProps } from 'react-native-graph';
 
 export function SelectionDot({
   isActive,
@@ -31,7 +31,7 @@ export function SelectionDot({
   circleX,
   circleY,
 }: SelectionDotProps): React.ReactElement {
-  const circleRadius = useSharedValue(0)
+  const circleRadius = useSharedValue(0);
 
   const setIsActive = useCallback(
     (active: boolean) => {
@@ -40,18 +40,18 @@ export function SelectionDot({
         stiffness: 1000,
         damping: 50,
         velocity: 0,
-      })
+      });
     },
     [circleRadius]
-  )
+  );
 
   useAnimatedReaction(
     () => isActive.value,
     (active) => {
-      runOnJS(setIsActive)(active)
+      runOnJS(setIsActive)(active);
     },
     [isActive, setIsActive]
-  )
+  );
 
-  return <Circle cx={circleX} cy={circleY} r={circleRadius} color={color} />
+  return <Circle cx={circleX} cy={circleY} r={circleRadius} color={color} />;
 }

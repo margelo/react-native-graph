@@ -1,25 +1,25 @@
-import { useMemo } from 'react'
-import { Gesture } from 'react-native-gesture-handler'
-import type { PanGesture } from 'react-native-gesture-handler'
-import { useSharedValue } from 'react-native-reanimated'
-import type { SharedValue } from 'react-native-reanimated'
+import { useMemo } from 'react';
+import { Gesture } from 'react-native-gesture-handler';
+import type { PanGesture } from 'react-native-gesture-handler';
+import { useSharedValue } from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
 
 interface Config {
-  enabled: boolean
-  holdDuration: number
+  enabled: boolean;
+  holdDuration: number;
 }
 
 interface Result {
-  x: SharedValue<number>
-  y: SharedValue<number>
-  isActive: SharedValue<boolean>
-  gesture: PanGesture
+  x: SharedValue<number>;
+  y: SharedValue<number>;
+  isActive: SharedValue<boolean>;
+  gesture: PanGesture;
 }
 
 export function usePanGesture({ enabled, holdDuration = 300 }: Config): Result {
-  const x = useSharedValue(0)
-  const y = useSharedValue(0)
-  const isPanGestureActive = useSharedValue(false)
+  const x = useSharedValue(0);
+  const y = useSharedValue(0);
+  const isPanGestureActive = useSharedValue(false);
 
   const panGesture = useMemo(
     () =>
@@ -27,17 +27,17 @@ export function usePanGesture({ enabled, holdDuration = 300 }: Config): Result {
         .enabled(enabled)
         .activateAfterLongPress(holdDuration)
         .onChange((e) => {
-          x.value = e.x
-          y.value = e.y
+          x.value = e.x;
+          y.value = e.y;
         })
         .onStart(() => {
-          isPanGestureActive.value = true
+          isPanGestureActive.value = true;
         })
         .onEnd(() => {
-          isPanGestureActive.value = false
+          isPanGestureActive.value = false;
         }),
     [enabled, holdDuration, isPanGestureActive, x, y]
-  )
+  );
 
   return useMemo(
     () => ({
@@ -47,5 +47,5 @@ export function usePanGesture({ enabled, holdDuration = 300 }: Config): Result {
       y: y,
     }),
     [isPanGestureActive, panGesture, x, y]
-  )
+  );
 }

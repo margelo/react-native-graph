@@ -1,6 +1,6 @@
 import HapticFeedback, {
   HapticFeedbackTypes,
-} from 'react-native-haptic-feedback'
+} from 'react-native-haptic-feedback';
 
 export function hapticFeedback(
   type: HapticFeedbackTypes = HapticFeedbackTypes.impactLight,
@@ -9,5 +9,5 @@ export function hapticFeedback(
   HapticFeedback.trigger(type, {
     enableVibrateFallback: force,
     ignoreAndroidSystemSettings: force,
-  })
+  });
 }
