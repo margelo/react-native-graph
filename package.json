@@ -1,6 +1,6 @@
 {
   "name": "react-native-graph",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "📈 Beautiful, high-performance Graphs and Charts for React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
