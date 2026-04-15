@@ -1,31 +1,34 @@
 {
   "name": "react-native-graph-example",
-  "description": "Example app for react-native-graph",
-  "version": "0.0.1",
-  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
   },
   "dependencies": {
-    "@react-native-segmented-control/segmented-control": "^2.4.0",
-    "@shopify/react-native-skia": "^0.1.233",
-    "@types/gaussian": "^1.2.0",
-    "gaussian": "^1.2.0",
-    "react": "^18.2.0",
-    "react-native": "^0.71.7",
-    "react-native-gesture-handler": "^2.9.0",
-    "react-native-haptic-feedback": "^1.13.1",
-    "react-native-pressable-scale": "^1.0.6",
-    "react-native-reanimated": "^3.1.0",
-    "react-native-static-safe-area-insets": "^2.2.0"
+    "@expo/metro-runtime": "~55.0.6",
+    "@react-native-segmented-control/segmented-control": "^2.5.7",
+    "@shopify/react-native-skia": "^2.5.3",
+    "@types/gaussian": "^1.2.2",
+    "expo": "~55.0.8",
+    "expo-status-bar": "~55.0.4",
+    "gaussian": "^1.3.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.2",
+    "react-native-gesture-handler": "^2.30.0",
+    "react-native-haptic-feedback": "^2.3.4",
+    "react-native-pressable-scale": "^2.1.0",
+    "react-native-reanimated": "^4.2.3",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "^0.7.4"
   },
+  "private": true,
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/runtime": "^7.20.0",
-    "@types/react": "^18.0.24",
-    "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.73.9"
+    "react-native-builder-bob": "^0.40.18",
+    "react-native-monorepo-config": "^0.3.3"
   }
 }
