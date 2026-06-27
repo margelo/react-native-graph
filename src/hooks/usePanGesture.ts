@@ -35,6 +35,13 @@ export function usePanGesture({ enabled, holdDuration = 300 }: Config): Result {
         })
         .onEnd(() => {
           isPanGestureActive.value = false;
+        })
+        // `onEnd` does not fire when the gesture is cancelled or interrupted
+        // (e.g. a parent ScrollView/FlatList takes over the pan). `onFinalize`
+        // always runs, so reset here too — otherwise `isActive` stays `true` and
+        // the selection dot / scrub stays stuck visible after the finger lifts.
+        .onFinalize(() => {
+          isPanGestureActive.value = false;
         }),
     [enabled, holdDuration, isPanGestureActive, x, y]
   );
