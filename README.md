@@ -57,6 +57,8 @@ function App() {
 
 Whether to animate between data changes.
 
+Defaults to `false` when omitted.
+
 Animations are ran using the [Skia animation system](https://shopify.github.io/react-native-skia/docs/animations/animations) and are fully natively interpolated to ensure best possible performance.
 
 If `animated` is `false`, a light-weight implementation of the graph renderer will be used, which is optimal for displaying a lot of graphs in large lists.
