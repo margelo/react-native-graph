@@ -55,7 +55,7 @@ function App() {
 
 <img src="./img/change.gif" align="right" height="250" />
 
-Whether to animate between data changes.
+Whether to animate between data changes. Defaults to `false` when omitted.
 
 Animations are ran using the [Skia animation system](https://shopify.github.io/react-native-skia/docs/animations/animations) and are fully natively interpolated to ensure best possible performance.
 
