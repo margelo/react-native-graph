@@ -104,8 +104,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-reanimated": "*",
-    "react-native-worklets": "*"
+    "react-native-reanimated": "*"
   },
   "workspaces": [
     "example"

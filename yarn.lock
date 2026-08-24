@@ -10758,7 +10758,6 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-reanimated: "*"
-    react-native-worklets: "*"
   languageName: unknown
   linkType: soft
 
