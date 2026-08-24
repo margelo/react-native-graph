@@ -162,7 +162,11 @@ function createGraphPathBase({
     horizontalPadding;
 
   const getGraphDataIndex = (pixel: number) =>
-    Math.round(((pixel - startX) / (endX - startX)) * (graphData.length - 1));
+    endX === startX
+      ? 0
+      : Math.round(
+          ((pixel - startX) / (endX - startX)) * (graphData.length - 1)
+        );
 
   const getNextPixelValue = (pixel: number) => {
     if (pixel === endX || pixel + PIXEL_RATIO < endX)
