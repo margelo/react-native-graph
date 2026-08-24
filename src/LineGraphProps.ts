@@ -113,4 +113,4 @@ export type AnimatedLineGraphProps = BaseLineGraphProps & {
 
 export type LineGraphProps =
   | ({ animated: true } & AnimatedLineGraphProps)
-  | ({ animated: false } & StaticLineGraphProps);
+  | ({ animated?: false } & StaticLineGraphProps);

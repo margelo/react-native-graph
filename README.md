@@ -64,7 +64,7 @@ function App() {
 
 | Prop                      | Type                                       | Default                                            | Availability      | Description                                                                                                                            |
 | ------------------------- | ------------------------------------------ | -------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `animated`                | `boolean`                                  | None. Required.                                    | Always            | Uses the animated renderer when `true` and the lightweight static renderer when `false`.                                               |
+| `animated`                | `boolean`                                  | `false`                                            | Always            | Uses the animated renderer when `true` and the lightweight static renderer when `false`.                                               |
 | `points`                  | `GraphPoint[]`                             | None. Required.                                    | Always            | The points to draw. Each point contains a numeric `value` and a `Date`. The graph scales to fit them unless `range` overrides an axis. |
 | `color`                   | `string`                                   | None. Required.                                    | Always            | The graph line color.                                                                                                                  |
 | `range`                   | `GraphRange`                               | `undefined`. Both axes are inferred from `points`. | Always            | Overrides all or part of the visible x-axis and y-axis ranges.                                                                         |
@@ -107,7 +107,7 @@ You can provide either axis in `range` and let the graph infer the other one fro
 
 <img src="./img/change.gif" align="right" height="250" />
 
-Whether to animate between data changes. The prop is required and has no default.
+Whether to animate between data changes. Defaults to `false` when omitted.
 
 Animations run using the [Skia animation system](https://shopify.github.io/react-native-skia/docs/animations/animations), with path interpolation handled on the UI thread.
 
