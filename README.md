@@ -34,7 +34,6 @@
 
 <pre>
 yarn add <a href="https://github.com/software-mansion/react-native-reanimated">react-native-reanimated</a>
-yarn add <a href="https://github.com/software-mansion/react-native-worklets">react-native-worklets</a>
 yarn add <a href="https://github.com/software-mansion/react-native-gesture-handler">react-native-gesture-handler</a>
 yarn add <a href="https://github.com/Shopify/react-native-skia">@shopify/react-native-skia</a>
 yarn add <b>react-native-graph</b>
