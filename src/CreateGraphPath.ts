@@ -87,6 +87,10 @@ export const getXPositionInRange = (
   const diff = xRange.max.getTime() - xRange.min.getTime();
   const x = date.getTime();
 
+  if (diff === 0) {
+    return x === xRange.min.getTime() ? 0.5 : Number.NaN;
+  }
+
   return (x - xRange.min.getTime()) / diff;
 };
 
@@ -174,41 +178,54 @@ function createGraphPathBase({
     return endX;
   };
 
-  for (
-    let pixel = startX;
-    startX <= pixel && pixel <= endX;
-    pixel = getNextPixelValue(pixel)
-  ) {
-    const index = getGraphDataIndex(pixel);
-
-    // Draw first point only on the very first pixel
-    if (index === 0 && pixel !== startX) continue;
-    // Draw last point only on the very last pixel
-
-    if (index === graphData.length - 1 && pixel !== endX) continue;
-
-    if (index !== 0 && index !== graphData.length - 1) {
-      // Only draw point, when the point is exact
-      const exactPointX =
-        getXInRange(drawingWidth, graphData[index]!.date, range.x) +
-        horizontalPadding;
-
-      const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
-        .fill(0)
-        .some((_value, additionalPixel) => {
-          return pixel + additionalPixel === exactPointX;
-        });
-
-      if (!isExactPointInsidePixelRatio) continue;
-    }
-
+  const addPoint = (index: number, x: number) => {
     const value = graphData[index]!.value;
     const y =
       drawingHeight -
       getYInRange(drawingHeight, value, range.y) +
       verticalPadding;
 
-    points.push({ x: pixel, y: y });
+    points.push({ x, y });
+  };
+
+  const firstPointTime = graphData[0]!.date.getTime();
+  const allPointsShareDate = graphData.every(
+    (point) => point.date.getTime() === firstPointTime
+  );
+
+  if (endX === startX && allPointsShareDate) {
+    graphData.forEach((_point, index) => addPoint(index, startX));
+  } else {
+    for (
+      let pixel = startX;
+      startX <= pixel && pixel <= endX;
+      pixel = getNextPixelValue(pixel)
+    ) {
+      const index = getGraphDataIndex(pixel);
+
+      // Draw first point only on the very first pixel
+      if (index === 0 && pixel !== startX) continue;
+      // Draw last point only on the very last pixel
+
+      if (index === graphData.length - 1 && pixel !== endX) continue;
+
+      if (index !== 0 && index !== graphData.length - 1) {
+        // Only draw point, when the point is exact
+        const exactPointX =
+          getXInRange(drawingWidth, graphData[index]!.date, range.x) +
+          horizontalPadding;
+
+        const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
+          .fill(0)
+          .some((_value, additionalPixel) => {
+            return pixel + additionalPixel === exactPointX;
+          });
+
+        if (!isExactPointInsidePixelRatio) continue;
+      }
+
+      addPoint(index, pixel);
+    }
   }
 
   for (let i = 0; i < points.length; i++) {
