@@ -43,3 +43,28 @@ it('creates a finite path when every graph point maps to the same pixel', () => 
   expect(mockPath.moveTo).toHaveBeenCalledTimes(1);
   expect(mockPath.moveTo.mock.calls[0]?.every(Number.isFinite)).toBe(true);
 });
+
+it('connects measured samples directly when curve is linear', () => {
+  const result = createGraphPath({
+    pointsInRange: [
+      { date: new Date(0), value: 10 },
+      { date: new Date(1_000), value: 20 },
+      { date: new Date(10_000), value: 15 },
+    ],
+    range: {
+      x: { min: new Date(0), max: new Date(10_000) },
+      y: { min: 10, max: 20 },
+    },
+    curve: 'linear',
+    horizontalPadding: 0,
+    verticalPadding: 0,
+    canvasHeight: 100,
+    canvasWidth: 100,
+  });
+
+  expect(result).toBe(mockPath);
+  expect(mockPath.moveTo).toHaveBeenCalledWith(0, 100);
+  expect(mockPath.lineTo).toHaveBeenNthCalledWith(1, 10, 0);
+  expect(mockPath.lineTo).toHaveBeenNthCalledWith(2, 100, 50);
+  expect(mockPath.cubicTo).not.toHaveBeenCalled();
+});

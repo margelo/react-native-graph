@@ -14,6 +14,7 @@ import type { StaticLineGraphProps } from './LineGraphProps';
 export function StaticLineGraph({
   points: allPoints,
   range,
+  curve = 'bezier',
   color,
   lineThickness = 3,
   enableFadeInMask,
@@ -46,12 +47,13 @@ export function StaticLineGraph({
       createGraphPath({
         pointsInRange: pointsInRange,
         range: pathRange,
+        curve,
         canvasHeight: height,
         canvasWidth: width,
         horizontalPadding: lineThickness,
         verticalPadding: lineThickness,
       }),
-    [height, lineThickness, pathRange, pointsInRange, width]
+    [curve, height, lineThickness, pathRange, pointsInRange, width]
   );
 
   const gradientColors = useMemo(
