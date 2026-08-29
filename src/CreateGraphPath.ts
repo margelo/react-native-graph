@@ -1,6 +1,6 @@
 import { Skia } from '@shopify/react-native-skia';
 import type { SkPath, SkPoint } from '@shopify/react-native-skia';
-import type { GraphPoint, GraphRange } from './LineGraphProps';
+import type { GraphCurve, GraphPoint, GraphRange } from './LineGraphProps';
 
 const PIXEL_RATIO = 2;
 
@@ -44,6 +44,10 @@ type GraphPathConfig = {
    * Range of the graph's x and y-axis
    */
   range: GraphPathRange;
+  /**
+   * Path used to connect adjacent graph points.
+   */
+  curve?: GraphCurve;
 };
 
 type GraphPathConfigWithGradient = GraphPathConfig & {
@@ -140,6 +144,7 @@ function createGraphPathBase({
   verticalPadding,
   canvasHeight: height,
   canvasWidth: width,
+  curve = 'bezier',
   shouldFillGradient,
 }: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
   | SkPath
@@ -153,13 +158,35 @@ function createGraphPathBase({
 
   if (graphData[0] == null) return path;
 
-  const points: SkPoint[] = [];
-
   const startX =
     getXInRange(drawingWidth, graphData[0]!.date, range.x) + horizontalPadding;
   const endX =
     getXInRange(drawingWidth, graphData[graphData.length - 1]!.date, range.x) +
     horizontalPadding;
+
+  if (curve === 'linear') {
+    for (let index = 0; index < graphData.length; index++) {
+      const point = graphData[index]!;
+      const x =
+        getXInRange(drawingWidth, point.date, range.x) + horizontalPadding;
+      const y =
+        drawingHeight -
+        getYInRange(drawingHeight, point.value, range.y) +
+        verticalPadding;
+
+      if (index === 0) path.moveTo(x, y);
+      else path.lineTo(x, y);
+    }
+
+    if (!shouldFillGradient) return path;
+
+    const gradientPath = path.copy();
+    gradientPath.lineTo(endX, height + verticalPadding);
+    gradientPath.lineTo(0 + horizontalPadding, height + verticalPadding);
+    return { path, gradientPath };
+  }
+
+  const points: SkPoint[] = [];
 
   const getGraphDataIndex = (pixel: number) =>
     endX === startX
