@@ -80,6 +80,7 @@ export function GraphPage() {
         <LineGraph
           style={styles.miniGraph}
           animated={false}
+          curve="linear"
           color={colors.foreground}
           points={SMALL_POINTS}
         />

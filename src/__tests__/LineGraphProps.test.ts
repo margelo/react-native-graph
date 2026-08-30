@@ -26,4 +26,17 @@ describe('LineGraphProps', () => {
 
     expect(props.animated).toBe(true);
   });
+
+  it('accepts linear interpolation for the static renderer', () => {
+    const props = acceptLineGraphProps({
+      points,
+      color: '#4484B2',
+      curve: 'linear',
+    });
+
+    if (props.animated === true) {
+      throw new Error('Expected the static graph variant');
+    }
+    expect(props.curve).toBe('linear');
+  });
 });
