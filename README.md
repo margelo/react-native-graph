@@ -163,18 +163,28 @@ Renders labels above or below the graph. Both props default to `undefined`, so n
 
 > Requires `animated` to be `true`.
 
-These labels usually show the maximum and minimum values. You can derive those values and their positions from the graph points.
+These labels usually show the maximum and minimum values. `AxisLabel` is not a component exported by this package: both props are callbacks that receive no arguments and render any React Native element you provide. The graph reserves a row above or below the canvas; positioning and styling inside that row belong to your label component.
 
 Example:
 
-```jsx
-<LineGraph
-  points={priceHistory}
-  animated={true}
-  color="#4484B2"
-  TopAxisLabel={() => <AxisLabel x={max.x} value={max.value} />}
-  BottomAxisLabel={() => <AxisLabel x={min.x} value={min.value} />}
-/>
+```tsx
+import { Text } from 'react-native';
+
+function PriceGraph() {
+  const values = priceHistory.map((point) => point.value);
+  const maxValue = Math.max(...values);
+  const minValue = Math.min(...values);
+
+  return (
+    <LineGraph
+      points={priceHistory}
+      animated={true}
+      color="#4484B2"
+      TopAxisLabel={() => <Text>{`Max: ${maxValue.toFixed(2)}`}</Text>}
+      BottomAxisLabel={() => <Text>{`Min: ${minValue.toFixed(2)}`}</Text>}
+    />
+  );
+}
 ```
 
 ### `range`
