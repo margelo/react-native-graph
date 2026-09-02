@@ -1,5 +1,5 @@
-import type { Vector, PathCommand } from '@shopify/react-native-skia';
-import { PathVerb, vec } from '@shopify/react-native-skia';
+import type { Vector, PathCommand } from './backend/types';
+import { CUBIC, MOVE, vec } from './backend/types';
 
 // code from William Candillon
 
@@ -139,9 +139,9 @@ export const selectCurve = (
   for (let i = 0; i < cmds.length; i++) {
     const cmd = cmds[i];
     if (cmd == null) return undefined;
-    if (cmd[0] === PathVerb.Move) {
+    if (cmd[0] === MOVE) {
       from = vec(cmd[1], cmd[2]);
-    } else if (cmd[0] === PathVerb.Cubic) {
+    } else if (cmd[0] === CUBIC) {
       const c1 = vec(cmd[1], cmd[2]);
       const c2 = vec(cmd[3], cmd[4]);
       const to = vec(cmd[5], cmd[6]);

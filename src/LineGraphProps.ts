@@ -2,7 +2,7 @@ import type React from 'react';
 import type { ViewProps } from 'react-native';
 import type { GraphPathRange } from './CreateGraphPath';
 import type { SharedValue } from 'react-native-reanimated';
-import type { Color } from '@shopify/react-native-skia';
+import type { Color } from './backend/types';
 
 export interface GraphPoint {
   value: number;

@@ -1,4 +1,11 @@
-import { Canvas, LinearGradient, Path, vec } from '@shopify/react-native-skia';
+import {
+  Canvas,
+  LinearGradient,
+  Path,
+  makePath,
+  toPathProp,
+  vec,
+} from './backend';
 import { getSixDigitHex } from './utils/getSixDigitHex';
 import React, { useCallback, useMemo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
@@ -43,14 +50,18 @@ export function StaticLineGraph({
 
   const path = useMemo(
     () =>
-      createGraphPath({
-        pointsInRange: pointsInRange,
-        range: pathRange,
-        canvasHeight: height,
-        canvasWidth: width,
-        horizontalPadding: lineThickness,
-        verticalPadding: lineThickness,
-      }),
+      toPathProp(
+        makePath(
+          createGraphPath({
+            pointsInRange: pointsInRange,
+            range: pathRange,
+            canvasHeight: height,
+            canvasWidth: width,
+            horizontalPadding: lineThickness,
+            verticalPadding: lineThickness,
+          })
+        )
+      ),
     [height, lineThickness, pathRange, pointsInRange, width]
   );
 

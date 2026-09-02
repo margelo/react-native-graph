@@ -23,16 +23,22 @@ import { GestureDetector } from 'react-native-gesture-handler';
 
 import {
   Canvas,
-  LinearGradient,
-  Path,
-  Skia,
-  vec,
-  Group,
-  mix,
   Circle,
+  CUBIC,
+  Group,
+  LinearGradient,
+  MOVE,
+  Path,
   Shadow,
-} from '@shopify/react-native-skia';
-import type { SkPath, PathCommand } from '@shopify/react-native-skia';
+  USE_TGFX,
+  canLerp,
+  lerpPath,
+  lerpPathProp,
+  makePath,
+  mix,
+  vec,
+} from './backend';
+import type { NativePath, PathCommand } from './backend';
 
 import type { AnimatedLineGraphProps } from './LineGraphProps';
 import { SelectionDot as DefaultSelectionDot } from './SelectionDot';
@@ -123,6 +129,13 @@ export function AnimatedLineGraph({
     pathEnd.value,
     1,
   ]);
+  const fadeInEnd = useDerivedValue(() => Math.min(0.15, pathEnd.value));
+  // Skia animates the stop list as one value; tgfx gives each stop its own slot.
+  const perStopPositions = useMemo(
+    () => [0, fadeInEnd, pathEnd, pathEnd, 1],
+    [fadeInEnd, pathEnd]
+  );
+  const gradientPositions = USE_TGFX ? perStopPositions : positions;
 
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -133,19 +146,20 @@ export function AnimatedLineGraph({
   );
 
   const straightLine = useMemo(() => {
-    const path = Skia.Path.Make();
-    path.moveTo(0, height / 2);
+    const cmds: PathCommand[] = [[MOVE, 0, height / 2]];
     for (let i = 0; i < width - 1; i += 2) {
       const x = i;
       const y = height / 2;
-      path.cubicTo(x, y, x, y, x, y);
+      cmds.push([CUBIC, x, y, x, y, x, y]);
     }
 
-    return path;
+    return makePath(cmds);
   }, [height, width]);
 
-  const paths = useSharedValue<{ from?: SkPath; to?: SkPath }>({});
-  const gradientPaths = useSharedValue<{ from?: SkPath; to?: SkPath }>({});
+  const paths = useSharedValue<{ from?: NativePath; to?: NativePath }>({});
+  const gradientPaths = useSharedValue<{ from?: NativePath; to?: NativePath }>(
+    {}
+  );
   const commands = useSharedValue<PathCommand[]>([]);
   const [commandsChanged, setCommandsChanged] = useState(0);
   const pointSelectedIndex = useRef<number | undefined>(undefined);
@@ -216,42 +230,43 @@ export function AnimatedLineGraph({
       path = createGraphPath(createGraphPathProps);
     }
 
-    commands.value = path.toCmds();
+    commands.value = path;
 
     if (gradientPath != null) {
+      const nextGradientPath = makePath(gradientPath);
       const previous = gradientPaths.value;
-      let from: SkPath = previous.to ?? straightLine;
+      let from: NativePath = previous.to ?? straightLine;
       if (previous.from != null && interpolateProgress.value < 1)
-        from =
-          from.interpolate(previous.from, interpolateProgress.value) ?? from;
+        from = lerpPath(from, previous.from, interpolateProgress.value);
 
-      if (gradientPath.isInterpolatable(from)) {
+      if (canLerp(nextGradientPath, from)) {
         gradientPaths.value = {
           from,
-          to: gradientPath,
+          to: nextGradientPath,
         };
       } else {
         gradientPaths.value = {
-          from: gradientPath,
-          to: gradientPath,
+          from: nextGradientPath,
+          to: nextGradientPath,
         };
       }
     }
 
+    const nextPath = makePath(path);
     const previous = paths.value;
-    let from: SkPath = previous.to ?? straightLine;
+    let from: NativePath = previous.to ?? straightLine;
     if (previous.from != null && interpolateProgress.value < 1)
-      from = from.interpolate(previous.from, interpolateProgress.value) ?? from;
+      from = lerpPath(from, previous.from, interpolateProgress.value);
 
-    if (path.isInterpolatable(from)) {
+    if (canLerp(nextPath, from)) {
       paths.value = {
         from,
-        to: path,
+        to: nextPath,
       };
     } else {
       paths.value = {
-        from: path,
-        to: path,
+        from: nextPath,
+        to: nextPath,
       };
     }
 
@@ -307,9 +322,9 @@ export function AnimatedLineGraph({
       const from = paths.value.from ?? straightLine;
       const to = paths.value.to ?? straightLine;
 
-      return to.interpolate(from, interpolateProgress.value) ?? to ?? from;
+      return lerpPathProp(to, from, interpolateProgress.value);
     },
-    // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
+    // These are the shared values the derived value listens to, not react values.
     [interpolateProgress]
   );
 
@@ -318,9 +333,9 @@ export function AnimatedLineGraph({
       const from = gradientPaths.value.from ?? straightLine;
       const to = gradientPaths.value.to ?? straightLine;
 
-      return to.interpolate(from, interpolateProgress.value) ?? to ?? from;
+      return lerpPathProp(to, from, interpolateProgress.value);
     },
-    // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
+    // These are the shared values the derived value listens to, not react values.
     [interpolateProgress]
   );
 
@@ -490,7 +505,7 @@ export function AnimatedLineGraph({
                     start={vec(0, 0)}
                     end={vec(width, 0)}
                     colors={gradientColors}
-                    positions={positions}
+                    positions={gradientPositions}
                   />
                 </Path>
 

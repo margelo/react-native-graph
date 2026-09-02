@@ -10719,8 +10719,10 @@ __metadata:
     react-native-gesture-handler: "npm:^2.30.0"
     react-native-haptic-feedback: "npm:^2.3.4"
     react-native-monorepo-config: "npm:^0.3.3"
+    react-native-nitro-modules: "npm:^0.37.1"
     react-native-pressable-scale: "npm:^2.1.0"
     react-native-reanimated: "npm:^4.2.3"
+    react-native-tgfx: "npm:^0.0.2-alpha.10"
     react-native-web: "npm:~0.21.0"
     react-native-worklets: "npm:^0.7.4"
   languageName: unknown
@@ -10790,6 +10792,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-nitro-modules@npm:^0.37.1":
+  version: 0.37.1
+  resolution: "react-native-nitro-modules@npm:0.37.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/5178f2ee891cb746b084fdf382b6020e366d8e4a81922a3f1d60a453d34fca6ebb1b00c4c28785c36385bc182ab76a30cba70441c39abbc25d3ad54db612e46e
+  languageName: node
+  linkType: hard
+
 "react-native-pressable-scale@npm:^2.1.0":
   version: 2.1.0
   resolution: "react-native-pressable-scale@npm:2.1.0"
@@ -10841,6 +10853,26 @@ __metadata:
   version: 144.3.0
   resolution: "react-native-skia-apple-tvos@npm:144.3.0"
   checksum: 10c0/f131d41d91d3cdf864ce54384e39523f3991590fce8963201b4f50e6ee16b4a9e790da88bcf9e43293ad6156455dae34880d01ae27283d4c756e72fb4aac0d01
+  languageName: node
+  linkType: hard
+
+"react-native-tgfx@npm:^0.0.2-alpha.10":
+  version: 0.0.2-alpha.10
+  resolution: "react-native-tgfx@npm:0.0.2-alpha.10"
+  dependencies:
+    react-reconciler: "npm:0.33.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-nitro-modules: ">=0.36.5"
+    react-native-reanimated: "*"
+    react-native-worklets: "*"
+  peerDependenciesMeta:
+    react-native-reanimated:
+      optional: true
+    react-native-worklets:
+      optional: true
+  checksum: 10c0/fc9251957531baaccf55465c28e5aea0fca7c56e7f3a7488215f7ee90168fce8a48e03ddc448db4cce8ffe7c5ca43fd61927bcbd4478d5fbea035dd95f6c2eb4
   languageName: node
   linkType: hard
 
@@ -10945,6 +10977,17 @@ __metadata:
   peerDependencies:
     react: ^19.0.0
   checksum: 10c0/97920e1866c7206e200c3920c133c2e85f62a3c54fd9bc4b83c10c558d83d98eb378caab4fe37498e0cc1b1b2665d898627f2ae2537b29c8ab295ec8abc0c580
+  languageName: node
+  linkType: hard
+
+"react-reconciler@npm:0.33.0":
+  version: 0.33.0
+  resolution: "react-reconciler@npm:0.33.0"
+  dependencies:
+    scheduler: "npm:^0.27.0"
+  peerDependencies:
+    react: ^19.2.0
+  checksum: 10c0/3f7b27ea8d0ff4c8bf0e402a285e1af9b7d0e6f4c1a70a28f4384938bc1130bc82a90a31df0b79ef5e380e2e55e2598bd90b4dbf802b1203d735ba0355817d3a
   languageName: node
   linkType: hard
 

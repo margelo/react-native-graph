@@ -6,7 +6,7 @@ import {
   withSpring,
   useDerivedValue,
 } from 'react-native-reanimated';
-import { Circle, Group, Shadow } from '@shopify/react-native-skia';
+import { Circle, Group, Shadow } from './backend';
 import type { SelectionDotProps } from './LineGraphProps';
 
 export const CIRCLE_RADIUS = 5;

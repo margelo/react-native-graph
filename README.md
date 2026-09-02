@@ -39,6 +39,53 @@ yarn add <a href="https://github.com/Shopify/react-native-skia">@shopify/react-n
 yarn add <b>react-native-graph</b>
 </pre>
 
+## Renderer backend
+
+The graph renders through Skia by default. It can also render through
+[react-native-tgfx](https://github.com/riteshshukla04/react-native-tgfx), a GPU
+canvas backed by Tencent's tgfx, without any change to the props, the callbacks
+or the component tree.
+
+Install the renderer you want, then pick it with an environment variable at
+build time:
+
+```bash
+EXPO_PUBLIC_RN_GRAPH_BACKEND=tgfx
+```
+
+<pre>
+yarn add <a href="https://github.com/riteshshukla04/react-native-tgfx">react-native-tgfx</a> react-native-nitro-modules
+</pre>
+
+Only one renderer has to be installed. Metro treats both as optional, so an app
+that ships tgfx alone still bundles, and an app that never sets the variable
+never loads tgfx.
+
+The variable has to be inlined into the bundle, because React Native has no
+runtime environment. Expo does that for any name starting with `EXPO_PUBLIC_`.
+On bare React Native, add
+[babel-plugin-transform-inline-environment-variables](https://babeljs.io/docs/babel-plugin-transform-inline-environment-variables)
+to `babel.config.js` and use `RN_GRAPH_BACKEND` instead. Rebuild the bundle
+after changing it, and clear the Metro cache.
+
+Check which renderer a build resolved to:
+
+```js
+import { GRAPH_BACKEND } from 'react-native-graph';
+
+console.log(GRAPH_BACKEND); // 'skia' | 'tgfx'
+```
+
+If `tgfx` is requested but not installed, the graph warns once and falls back to
+Skia rather than crashing.
+
+One caveat: a custom [`SelectionDot`](#selectiondot) draws its own shapes, so it
+has to import them from the renderer the build is using. The bundled
+`SelectionDot` already follows the flag.
+
+The example app has both renderers installed, so
+`EXPO_PUBLIC_RN_GRAPH_BACKEND=tgfx yarn example android` runs it on tgfx.
+
 ## Usage
 
 ```tsx
