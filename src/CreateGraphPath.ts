@@ -160,60 +160,33 @@ function createGraphPathBase({
 
   const points: Vector[] = [];
 
-  const startX =
-    getXInRange(drawingWidth, graphData[0]!.date, range.x) + horizontalPadding;
   const endX =
     getXInRange(drawingWidth, graphData[graphData.length - 1]!.date, range.x) +
     horizontalPadding;
 
-  const getGraphDataIndex = (pixel: number) =>
-    endX === startX
-      ? 0
-      : Math.round(
-          ((pixel - startX) / (endX - startX)) * (graphData.length - 1)
-        );
+  let lastDrawnX: number | undefined;
 
-  const getNextPixelValue = (pixel: number) => {
-    if (pixel === endX || pixel + PIXEL_RATIO < endX)
-      return pixel + PIXEL_RATIO;
-    return endX;
-  };
+  for (let index = 0; index < graphData.length; index++) {
+    const graphPoint = graphData[index]!;
+    const x =
+      getXInRange(drawingWidth, graphPoint.date, range.x) + horizontalPadding;
+    const isBoundaryPoint = index === 0 || index === graphData.length - 1;
 
-  for (
-    let pixel = startX;
-    startX <= pixel && pixel <= endX;
-    pixel = getNextPixelValue(pixel)
-  ) {
-    const index = getGraphDataIndex(pixel);
-
-    // Draw first point only on the very first pixel
-    if (index === 0 && pixel !== startX) continue;
-    // Draw last point only on the very last pixel
-
-    if (index === graphData.length - 1 && pixel !== endX) continue;
-
-    if (index !== 0 && index !== graphData.length - 1) {
-      // Only draw point, when the point is exact
-      const exactPointX =
-        getXInRange(drawingWidth, graphData[index]!.date, range.x) +
-        horizontalPadding;
-
-      const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
-        .fill(0)
-        .some((_value, additionalPixel) => {
-          return pixel + additionalPixel === exactPointX;
-        });
-
-      if (!isExactPointInsidePixelRatio) continue;
+    if (
+      !isBoundaryPoint &&
+      lastDrawnX != null &&
+      x - lastDrawnX < PIXEL_RATIO
+    ) {
+      continue;
     }
 
-    const value = graphData[index]!.value;
     const y =
       drawingHeight -
-      getYInRange(drawingHeight, value, range.y) +
+      getYInRange(drawingHeight, graphPoint.value, range.y) +
       verticalPadding;
 
-    points.push({ x: pixel, y: y });
+    points.push({ x, y });
+    lastDrawnX = x;
   }
 
   for (let i = 0; i < points.length; i++) {
