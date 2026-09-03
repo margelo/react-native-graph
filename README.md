@@ -89,11 +89,15 @@ The example app has both renderers installed, so
 ## Usage
 
 ```tsx
-import { LineGraph } from 'react-native-graph';
+import { LineGraph, type GraphPoint } from 'react-native-graph';
+
+const priceHistory: GraphPoint[] = [
+  { date: new Date('2026-08-27T00:00:00Z'), value: 3.44 },
+  { date: new Date('2026-08-28T00:00:00Z'), value: 3.51 },
+  { date: new Date('2026-08-29T00:00:00Z'), value: 3.49 },
+];
 
 function App() {
-  const priceHistory = usePriceHistory('ethereum');
-
   return (
     <LineGraph
       style={{ height: 200 }}
@@ -104,6 +108,8 @@ function App() {
   );
 }
 ```
+
+`react-native-graph` does not fetch data or provide a `usePriceHistory` hook. Create the `GraphPoint[]` from your own API, state, or local data. Each point uses a `Date` for its horizontal position and a `number` for its vertical value; keep the points ordered from oldest to newest. Categorical string values are not supported on the x-axis.
 
 ## Configuration
 
