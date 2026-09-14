@@ -11,19 +11,21 @@ import type { GraphPoint } from 'react-native-graph';
 
 const WARMUP_MS = 2500;
 const MEASURE_MS = 8000;
-const PUSH_MS = 100;
 
 interface Scenario {
   name: string;
   points: number;
-  live: boolean;
+  pushMs: number;
   pulsating: boolean;
 }
 
 const SCENARIOS: Scenario[] = [
-  { name: 'live-70', points: 70, live: true, pulsating: false },
-  { name: 'live-300', points: 300, live: true, pulsating: false },
-  { name: 'pulse-static', points: 70, live: false, pulsating: true },
+  { name: 'live-70@10hz', points: 70, pushMs: 100, pulsating: false },
+  { name: 'live-300@10hz', points: 300, pushMs: 100, pulsating: false },
+  { name: 'live-1000@10hz', points: 1000, pushMs: 100, pulsating: false },
+  { name: 'live-300@30hz', points: 300, pushMs: 33, pulsating: false },
+  { name: 'live-1000@30hz', points: 1000, pushMs: 33, pulsating: false },
+  { name: 'pulse-static', points: 70, pushMs: 0, pulsating: true },
 ];
 
 const GRADIENT_FILL_COLORS = ['#7476df5D', '#7476df4D', '#7476df00'];
@@ -63,17 +65,27 @@ function makeGenerator(seed: number): () => number {
   return () => {
     state = (state * 1664525 + 1013904223) % 4294967296;
     value += (state / 4294967296) * 20 - 10;
-    return value;
+    return value % 400;
   };
 }
 
-function makePoints(count: number, next: () => number): GraphPoint[] {
+/**
+ * A fixed date grid. Values scroll through it, the x-axis never moves, so every
+ * update produces a path with identical verbs. That is what makes the two
+ * renderers actually interpolate rather than snap, which is the work being
+ * compared.
+ */
+function makeDates(count: number): Date[] {
   const now = Date.now();
-  const out: GraphPoint[] = [];
+  const out: Date[] = [];
   for (let i = 0; i < count; i++) {
-    out.push({ date: new Date(now - (count - i) * 1000), value: next() });
+    out.push(new Date(now - (count - i) * 1000));
   }
   return out;
+}
+
+function toPoints(dates: Date[], values: number[]): GraphPoint[] {
+  return dates.map((date, i) => ({ date, value: values[i] ?? 0 }));
 }
 
 interface Result {
@@ -139,16 +151,18 @@ export function BenchPage(): React.ReactElement {
     if (scenario == null) return;
 
     const next = makeGenerator(12345);
-    let live = makePoints(scenario.points, next);
-    setPoints(live);
+    const dates = makeDates(scenario.points);
+    let values = dates.map(() => next());
+    setPoints(toPoints(dates, values));
     setStatus(`${scenario.name}: warmup`);
 
-    const push = scenario.live
-      ? setInterval(() => {
-          live = [...live.slice(1), { date: new Date(), value: next() }];
-          setPoints(live);
-        }, PUSH_MS)
-      : undefined;
+    const push =
+      scenario.pushMs > 0
+        ? setInterval(() => {
+            values = [...values.slice(1), next()];
+            setPoints(toPoints(dates, values));
+          }, scenario.pushMs)
+        : undefined;
 
     let raf = 0;
     const tick = () => {
@@ -167,6 +181,7 @@ export function BenchPage(): React.ReactElement {
       active.value = true;
       raf = requestAnimationFrame(tick);
       setStatus(`${scenario.name}: measuring`);
+      console.log(`BENCH ${GRAPH_BACKEND} START ${scenario.name}`);
     }, WARMUP_MS);
 
     const name = scenario.name;

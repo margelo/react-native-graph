@@ -1,0 +1,149 @@
+[
+  {
+    "scenario": "live-70@10hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 59.3,
+    "backend": "thor",
+    "cpu": 60.6,
+    "cpuThreads": {
+      "graph.example": 23.8,
+      "mqt_v_js": 18.6,
+      "GLThread 61": 11.6,
+      "mali-cmar-backe": 4.2,
+      "binder:31258_4": 1.1,
+      "HeapTaskDaemon": 0.6
+    },
+    "pssMb": 214.7,
+    "presentedFps": {
+      "SurfaceView[graph.example/graph.example.MainActivity](BLAST)#2387": 62.5
+    }
+  },
+  {
+    "scenario": "live-300@10hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 54.8,
+    "backend": "thor",
+    "cpu": 71.1,
+    "cpuThreads": {
+      "graph.example": 27.5,
+      "mqt_v_js": 24.6,
+      "GLThread 61": 12.8,
+      "mali-cmar-backe": 4.1,
+      "binder:31258_4": 1.4
+    },
+    "pssMb": 278.1,
+    "presentedFps": {
+      "SurfaceView[graph.example/graph.example.MainActivity](BLAST)#2387": 62.5
+    }
+  },
+  {
+    "scenario": "live-1000@10hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 52.1,
+    "backend": "thor",
+    "cpu": 78.1,
+    "cpuThreads": {
+      "graph.example": 28.5,
+      "mqt_v_js": 28.4,
+      "GLThread 61": 12.8,
+      "mali-cmar-backe": 4.3,
+      "hades": 2.4,
+      "binder:31258_2": 1.1
+    },
+    "pssMb": 302.8,
+    "presentedFps": {
+      "SurfaceView[graph.example/graph.example.MainActivity](BLAST)#2387": 62.5
+    }
+  },
+  {
+    "scenario": "live-300@30hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 47.6,
+    "backend": "thor",
+    "cpu": 115.0,
+    "cpuThreads": {
+      "mqt_v_js": 62.5,
+      "graph.example": 28.8,
+      "GLThread 61": 13.3,
+      "mali-cmar-backe": 4.5,
+      "hades": 3.4,
+      "binder:31258_2": 1.4
+    },
+    "pssMb": 277.7,
+    "presentedFps": {
+      "SurfaceView[graph.example/graph.example.MainActivity](BLAST)#2387": 62.2
+    }
+  },
+  {
+    "scenario": "live-1000@30hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0.3,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 41.3,
+    "backend": "thor",
+    "cpu": 122.1,
+    "cpuThreads": {
+      "mqt_v_js": 70.1,
+      "graph.example": 29.4,
+      "GLThread 61": 13.6,
+      "mali-cmar-backe": 4.4,
+      "hades": 2.3,
+      "binder:31258_1": 1.3
+    },
+    "pssMb": 287.2,
+    "presentedFps": {
+      "SurfaceView[graph.example/graph.example.MainActivity](BLAST)#2387": 62.5
+    }
+  },
+  {
+    "scenario": "pulse-static",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 60,
+    "backend": "thor",
+    "cpu": 11.7,
+    "cpuThreads": {
+      "graph.example": 4.7,
+      "GLThread 61": 4.3,
+      "mali-cmar-backe": 1.5,
+      "mqt_v_js": 0.6
+    },
+    "pssMb": 279.4,
+    "presentedFps": {
+      "SurfaceView[graph.example/graph.example.MainActivity](BLAST)#2387": 30.3
+    }
+  }
+]

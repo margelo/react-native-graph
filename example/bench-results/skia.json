@@ -1,0 +1,150 @@
+[
+  {
+    "scenario": "live-70@10hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 59.4,
+    "backend": "skia",
+    "cpu": 90.0,
+    "cpuThreads": {
+      "graph.example": 31.0,
+      "mqt_v_js": 22.4,
+      "mali-cmar-backe": 16.4,
+      "hades": 9.4,
+      "RenderThread": 7.9,
+      "binder:29489_2": 1.6
+    },
+    "pssMb": 313.8,
+    "presentedFps": {
+      "graph.example/graph.example.MainActivity#2211": 62.4
+    }
+  },
+  {
+    "scenario": "live-300@10hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 58.8,
+    "backend": "skia",
+    "cpu": 88.1,
+    "cpuThreads": {
+      "graph.example": 34.1,
+      "mqt_v_js": 23.4,
+      "mali-cmar-backe": 16.2,
+      "RenderThread": 7.8,
+      "hades": 4.1,
+      "binder:29489_4": 1.6
+    },
+    "pssMb": 375.3,
+    "presentedFps": {
+      "graph.example/graph.example.MainActivity#2211": 62.4
+    }
+  },
+  {
+    "scenario": "live-1000@10hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 58.4,
+    "backend": "skia",
+    "cpu": 96.3,
+    "cpuThreads": {
+      "graph.example": 33.5,
+      "mqt_v_js": 25.8,
+      "mali-cmar-backe": 16.3,
+      "hades": 9.8,
+      "RenderThread": 8.3,
+      "binder:29489_2": 1.3
+    },
+    "pssMb": 452.1,
+    "presentedFps": {
+      "graph.example/graph.example.MainActivity#2211": 62.2
+    }
+  },
+  {
+    "scenario": "live-300@30hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 58.1,
+    "backend": "skia",
+    "cpu": 167.8,
+    "cpuThreads": {
+      "mqt_v_js": 56.4,
+      "graph.example": 41.8,
+      "hades": 36.0,
+      "mali-cmar-backe": 22.3,
+      "RenderThread": 8.8,
+      "binder:29489_2": 1.6
+    },
+    "pssMb": 535.8,
+    "presentedFps": {
+      "graph.example/graph.example.MainActivity#2211": 62.4
+    }
+  },
+  {
+    "scenario": "live-1000@30hz",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 58,
+    "backend": "skia",
+    "cpu": 186.2,
+    "cpuThreads": {
+      "mqt_v_js": 59.9,
+      "hades": 47.4,
+      "graph.example": 43.4,
+      "mali-cmar-backe": 22.8,
+      "RenderThread": 9.6,
+      "binder:29489_2": 1.1
+    },
+    "pssMb": 566.8,
+    "presentedFps": {
+      "graph.example/graph.example.MainActivity#2211": 62.4
+    }
+  },
+  {
+    "scenario": "pulse-static",
+    "uiFps": 60,
+    "meanMs": 16.66,
+    "worstMs": 17,
+    "over16": 0,
+    "over20": 0,
+    "over33": 0,
+    "over50": 0,
+    "jsFps": 60,
+    "backend": "skia",
+    "cpu": 18.1,
+    "cpuThreads": {
+      "graph.example": 9.3,
+      "mali-cmar-backe": 4.2,
+      "RenderThread": 3.0,
+      "mqt_v_js": 0.8
+    },
+    "pssMb": 551.0,
+    "presentedFps": {
+      "graph.example/graph.example.MainActivity#2211": 30.6
+    }
+  }
+]
