@@ -1,5 +1,6 @@
 import * as skia from './skia';
 import * as tgfx from './tgfx';
+import * as thor from './thor';
 import type { GraphBackend } from './types';
 
 // Declared locally so the member expression survives for build-time inlining
@@ -17,21 +18,30 @@ function requested(): string | undefined {
   }
 }
 
-const wantsTgfx = requested() === 'tgfx';
+const wanted = requested();
+const wantsTgfx = wanted === 'tgfx';
+const wantsThor = wanted === 'thor';
 
-if (wantsTgfx && !tgfx.available) {
+if ((wantsTgfx && !tgfx.available) || (wantsThor && !thor.available)) {
   console.warn(
-    '[react-native-graph] backend "tgfx" was requested but react-native-tgfx is not installed. Falling back to Skia.'
+    `[react-native-graph] backend "${wanted}" was requested but its renderer is not installed. Falling back to Skia.`
   );
 }
 
 /** Whether the graph is rendering through react-native-tgfx. */
 export const USE_TGFX = wantsTgfx && tgfx.available;
 
-/** Which renderer the graph resolved to. Useful for checking the flag took effect. */
-export const GRAPH_BACKEND: 'skia' | 'tgfx' = USE_TGFX ? 'tgfx' : 'skia';
+/** Whether the graph is rendering through react-native-nitro-thor. */
+export const USE_THOR = wantsThor && thor.available;
 
-const impl: GraphBackend = USE_TGFX ? tgfx : skia;
+/** Which renderer the graph resolved to. Useful for checking the flag took effect. */
+export const GRAPH_BACKEND: 'skia' | 'tgfx' | 'thor' = USE_TGFX
+  ? 'tgfx'
+  : USE_THOR
+  ? 'thor'
+  : 'skia';
+
+const impl: GraphBackend = USE_TGFX ? tgfx : USE_THOR ? thor : skia;
 
 export const Canvas = impl.Canvas;
 export const Group = impl.Group;

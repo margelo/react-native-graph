@@ -43,23 +43,31 @@ yarn add <b>react-native-graph</b>
 
 The graph renders through Skia by default. It can also render through
 [react-native-tgfx](https://github.com/riteshshukla04/react-native-tgfx), a GPU
-canvas backed by Tencent's tgfx, without any change to the props, the callbacks
-or the component tree.
+canvas backed by Tencent's tgfx, or through
+[react-native-nitro-thor](https://github.com/margelo/react-native-nitro-thor), a
+ThorVG canvas driven from the UI thread, without any change to the props, the
+callbacks or the component tree.
 
 Install the renderer you want, then pick it with an environment variable at
 build time:
 
 ```bash
-EXPO_PUBLIC_RN_GRAPH_BACKEND=tgfx
+EXPO_PUBLIC_RN_GRAPH_BACKEND=tgfx # or thor
 ```
 
 <pre>
 yarn add <a href="https://github.com/riteshshukla04/react-native-tgfx">react-native-tgfx</a> react-native-nitro-modules
+yarn add <a href="https://github.com/margelo/react-native-nitro-thor">react-native-nitro-thor</a> react-native-nitro-modules
 </pre>
 
-Only one renderer has to be installed. Metro treats both as optional, so an app
-that ships tgfx alone still bundles, and an app that never sets the variable
-never loads tgfx.
+Only one renderer has to be installed. Metro treats all of them as optional, so
+an app that ships tgfx alone still bundles, and an app that never sets the
+variable never loads tgfx or thor.
+
+Thor draws straight segments in solid colours: the graph flattens its curves to
+polylines, gradients collapse to their middle stop and shadows are skipped. It
+rasterizes on the CPU; set `EXPO_PUBLIC_RN_GRAPH_THOR_GPU=1` for its GL engine
+on Android.
 
 The variable has to be inlined into the bundle, because React Native has no
 runtime environment. Expo does that for any name starting with `EXPO_PUBLIC_`.
@@ -73,18 +81,19 @@ Check which renderer a build resolved to:
 ```js
 import { GRAPH_BACKEND } from 'react-native-graph';
 
-console.log(GRAPH_BACKEND); // 'skia' | 'tgfx'
+console.log(GRAPH_BACKEND); // 'skia' | 'tgfx' | 'thor'
 ```
 
-If `tgfx` is requested but not installed, the graph warns once and falls back to
-Skia rather than crashing.
+If the requested renderer is not installed, the graph warns once and falls back
+to Skia rather than crashing.
 
 One caveat: a custom [`SelectionDot`](#selectiondot) draws its own shapes, so it
 has to import them from the renderer the build is using. The bundled
 `SelectionDot` already follows the flag.
 
-The example app has both renderers installed, so
-`EXPO_PUBLIC_RN_GRAPH_BACKEND=tgfx yarn example android` runs it on tgfx.
+The example app has all three renderers installed, so
+`EXPO_PUBLIC_RN_GRAPH_BACKEND=tgfx yarn example android` runs it on tgfx and
+`EXPO_PUBLIC_RN_GRAPH_BACKEND=thor yarn example android` on thor.
 
 ## Usage
 

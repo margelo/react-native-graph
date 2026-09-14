@@ -22,6 +22,7 @@
     "react-native-gesture-handler": "^2.30.0",
     "react-native-haptic-feedback": "^2.3.4",
     "react-native-nitro-modules": "^0.37.1",
+    "react-native-nitro-thor": "0.0.2-alpha.2",
     "react-native-pressable-scale": "^2.1.0",
     "react-native-reanimated": "^4.2.3",
     "react-native-tgfx": "^0.0.2-alpha.10",
