@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "react-native-graph",
@@ -29,11 +30,6 @@
         "turbo": "^2.5.6",
         "typescript": "^5.9.2",
       },
-      "peerDependencies": {
-        "react": "*",
-        "react-native": "*",
-        "react-native-reanimated": "*",
-      },
     },
     "example": {
       "name": "react-native-graph-example",
@@ -50,6 +46,7 @@
         "react-dom": "19.2.0",
         "react-native": "0.83.2",
         "react-native-gesture-handler": "^2.30.0",
+        "react-native-graph": "workspace:*",
         "react-native-haptic-feedback": "^2.3.4",
         "react-native-pressable-scale": "^2.1.0",
         "react-native-reanimated": "^4.2.3",
@@ -59,6 +56,15 @@
       "devDependencies": {
         "react-native-builder-bob": "^0.40.18",
         "react-native-monorepo-config": "^0.3.3",
+      },
+    },
+    "package": {
+      "name": "react-native-graph",
+      "version": "1.3.0",
+      "peerDependencies": {
+        "react": "*",
+        "react-native": "*",
+        "react-native-reanimated": "*",
       },
     },
   },
@@ -1748,6 +1754,8 @@
     "react-native-builder-bob": ["react-native-builder-bob@0.40.18", "", { "dependencies": { "@babel/core": "^7.25.2", "@babel/plugin-transform-flow-strip-types": "^7.26.5", "@babel/plugin-transform-strict-mode": "^7.24.7", "@babel/preset-env": "^7.25.2", "@babel/preset-react": "^7.24.7", "@babel/preset-typescript": "^7.24.7", "arktype": "^2.1.15", "babel-plugin-syntax-hermes-parser": "^0.28.0", "browserslist": "^4.20.4", "cross-spawn": "^7.0.3", "dedent": "^0.7.0", "del": "^6.1.1", "escape-string-regexp": "^4.0.0", "fs-extra": "^10.1.0", "glob": "^10.5.0", "is-git-dirty": "^2.0.1", "json5": "^2.2.1", "kleur": "^4.1.4", "prompts": "^2.4.2", "react-native-monorepo-config": "^0.3.3", "which": "^2.0.2", "yargs": "^17.5.1" }, "bin": { "bob": "bin/bob" } }, "sha512-vGd6l/iaMirnVucQlm2OJWTDQjxbYxHNmqXtDRWXMRubwotKKycx1ARj/aJYbzbCdzHBB00bGzYEhUcq4sbGog=="],
 
     "react-native-gesture-handler": ["react-native-gesture-handler@2.33.0", "", { "dependencies": { "@egjs/hammerjs": "^2.0.17", "@types/react-test-renderer": "^19.1.0", "hoist-non-react-statics": "^3.3.0", "invariant": "^2.2.4" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-aFMjweXGrsDKwxjAiH7Kl+nc7qAudl0MF6Bqlxf9QQEUNDWBpsQ5WXA7sF6eLFaeRQGEq4ERKr6iuD+GfmunFA=="],
+
+    "react-native-graph": ["react-native-graph@workspace:package"],
 
     "react-native-graph-example": ["react-native-graph-example@workspace:example"],
 
