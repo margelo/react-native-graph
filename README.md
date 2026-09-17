@@ -39,6 +39,10 @@ yarn add <a href="https://github.com/Shopify/react-native-skia">@shopify/react-n
 yarn add <b>react-native-graph</b>
 </pre>
 
+### Expo
+
+The [Expo example](./example/) runs in Expo Go with Expo SDK 57. Install `react-native-graph` alongside the Expo SDK's compatible versions of Skia, Reanimated, Worklets, and Gesture Handler. Start the example from its `example` directory and open it in Expo Go to try the graph without building a custom development client.
+
 ## Usage
 
 ```tsx
