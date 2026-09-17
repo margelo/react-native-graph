@@ -1,6 +1,14 @@
 {
-  "extends": "../tsconfig",
+  "extends": "../tsconfig.base.json",
+  "include": ["src"],
+  "references": [{ "path": "../package" }],
   "compilerOptions": {
-    // Avoid expo-cli auto-generating a tsconfig
+    "composite": true,
+    "noEmit": true,
+    "tsBuildInfoFile": "../.tsbuild/example/tsconfig.tsbuildinfo",
+    "paths": {
+      "react-native-graph": ["../package/src/index"]
+    },
+    "types": ["node"]
   }
 }

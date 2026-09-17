@@ -109,6 +109,10 @@
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/lib/"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/../.tsbuild/"
     ]
   },
   "create-react-native-library": {
