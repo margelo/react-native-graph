@@ -9,7 +9,6 @@ import {
   generateRandomGraphData,
   generateSinusGraphData,
 } from '../data/GraphData';
-import { HapticFeedbackTypes } from 'react-native-haptic-feedback';
 import { useColors } from '../hooks/useColors';
 import { hapticFeedback } from '../utils/HapticFeedback';
 
@@ -36,7 +35,7 @@ export function GraphPage() {
 
   const refreshData = useCallback(() => {
     setPoints(generateRandomGraphData(POINT_COUNT));
-    hapticFeedback(HapticFeedbackTypes.impactLight);
+    hapticFeedback();
   }, []);
 
   const highestDate = useMemo(
@@ -95,7 +94,7 @@ export function GraphPage() {
         gradientFillColors={enableGradient ? GRADIENT_FILL_COLORS : undefined}
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
-        onGestureStart={() => hapticFeedback(HapticFeedbackTypes.impactLight)}
+        onGestureStart={hapticFeedback}
         SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
         range={range}
         enableIndicator={enableIndicator}
