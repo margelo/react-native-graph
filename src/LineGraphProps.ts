@@ -10,6 +10,7 @@ export interface GraphPoint {
 }
 
 export type GraphRange = Partial<GraphPathRange>;
+export type GraphCurve = 'bezier' | 'linear';
 
 export interface SelectionDotProps {
   isActive: SharedValue<boolean>;
@@ -50,7 +51,12 @@ interface BaseLineGraphProps extends ViewProps {
 }
 
 export type StaticLineGraphProps = BaseLineGraphProps & {
-  /* any static-only line graph props? */
+  /**
+   * Path used to connect adjacent graph points.
+   *
+   * @default 'bezier'
+   */
+  curve?: GraphCurve;
 };
 export type AnimatedLineGraphProps = BaseLineGraphProps & {
   /**
