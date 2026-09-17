@@ -1,4 +1,4 @@
-import type { GraphPoint } from '../../../src/LineGraphProps';
+import type { GraphPoint } from '../../../package/src/LineGraphProps';
 import gaussian from 'gaussian';
 
 function weightedRandom(mean: number, variance: number): number {

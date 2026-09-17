@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-graph": ["./src/index"]
+      "react-native-graph": ["./package/src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

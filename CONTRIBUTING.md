@@ -8,7 +8,7 @@ We want this community to be friendly and respectful to each other. Please follo
 
 This project is a monorepo managed using [Bun workspaces](https://bun.sh/docs/install/workspaces). It contains the following packages:
 
-- The library package in the root directory.
+- The library package in the `package/` directory.
 - An example app in the `example/` directory.
 
 To get started, install Bun 1.3.1 and the version of [Node.js](https://nodejs.org/) specified in [`.nvmrc`](./.nvmrc).
