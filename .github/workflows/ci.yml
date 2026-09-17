@@ -26,10 +26,10 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Lint files
-        run: yarn lint
+        run: bun lint
 
       - name: Typecheck files
-        run: yarn typecheck
+        run: bun typecheck
 
   build-library:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build package
-        run: yarn prepare
+        run: bun run prepare
 
   build-web:
     runs-on: ubuntu-latest
@@ -56,4 +56,4 @@ jobs:
 
       - name: Build example for Web
         run: |
-          yarn example expo export --platform web
+          bun example expo export --platform web
