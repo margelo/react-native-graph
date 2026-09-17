@@ -110,6 +110,9 @@
   "workspaces": [
     "example"
   ],
+  "trustedDependencies": [
+    "@shopify/react-native-skia"
+  ],
   "packageManager": "bun@1.3.1",
   "react-native-builder-bob": {
     "source": "src",
