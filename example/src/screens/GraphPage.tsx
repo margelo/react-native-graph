@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { View, StyleSheet, Text, Button, ScrollView } from 'react-native';
 import { LineGraph } from 'react-native-graph';
 // import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
-import type { GraphRange } from '../../../src/LineGraphProps';
+import type { GraphRange } from '../../../package/src/LineGraphProps';
 import { SelectionDot } from '../components/CustomSelectionDot';
 import { Toggle } from '../components/Toggle';
 import {

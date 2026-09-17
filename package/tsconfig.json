@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.base.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": ".",
+    "outDir": "../.tsbuild/package",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "tsBuildInfoFile": "../.tsbuild/package/tsconfig.tsbuildinfo",
+    "types": ["jest", "node"]
+  }
+}
