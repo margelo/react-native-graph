@@ -44,6 +44,10 @@ type GraphPathConfig = {
    * Range of the graph's x and y-axis
    */
   range: GraphPathRange;
+  /**
+   * Interpolation used between graph points.
+   */
+  curve?: 'bezier' | 'linear';
 };
 
 type GraphPathConfigWithGradient = GraphPathConfig & {
@@ -140,6 +144,7 @@ function createGraphPathBase({
   verticalPadding,
   canvasHeight: height,
   canvasWidth: width,
+  curve = 'bezier',
   shouldFillGradient,
 }: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
   | SkPath
@@ -214,16 +219,18 @@ function createGraphPathBase({
   for (let i = 0; i < points.length; i++) {
     const point = points[i]!;
 
-    // first point needs to start the path
-    if (i === 0) path.moveTo(point.x, point.y);
+    if (i === 0) {
+      path.moveTo(point.x, point.y);
+      continue;
+    }
 
-    const prev = points[i - 1];
-    const prevPrev = points[i - 2];
+    if (curve === 'linear') {
+      path.lineTo(point.x, point.y);
+      continue;
+    }
 
-    if (prev == null) continue;
-
-    const p0 = prevPrev ?? prev;
-    const p1 = prev;
+    const p1 = points[i - 1]!;
+    const p0 = points[i - 2] ?? p1;
     const cp1x = (2 * p0.x + p1.x) / 3;
     const cp1y = (2 * p0.y + p1.y) / 3;
     const cp2x = (p0.x + 2 * p1.x) / 3;

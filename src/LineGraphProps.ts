@@ -50,7 +50,12 @@ interface BaseLineGraphProps extends ViewProps {
 }
 
 export type StaticLineGraphProps = BaseLineGraphProps & {
-  /* any static-only line graph props? */
+  /**
+   * Interpolation used between graph points.
+   *
+   * @default 'bezier'
+   */
+  curve?: 'bezier' | 'linear';
 };
 export type AnimatedLineGraphProps = BaseLineGraphProps & {
   /**
