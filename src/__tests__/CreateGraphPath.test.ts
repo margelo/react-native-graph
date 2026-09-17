@@ -76,6 +76,46 @@ it('creates a visible path when graph points share the same date', () => {
   ).toBe(true);
 });
 
+it('keeps a large same-date path bounded without losing its value range', () => {
+  const date = new Date('2023-01-01');
+  const points = Array.from({ length: 10_000 }, (_, index) => ({
+    date,
+    value: index === 2_500 ? 0 : index === 7_500 ? 100 : 50,
+  }));
+  const range = getGraphPathRange(points);
+
+  createGraphPath({
+    pointsInRange: getPointsInRange(points, range),
+    range,
+    horizontalPadding: 0,
+    verticalPadding: 0,
+    canvasHeight: 200,
+    canvasWidth: 300,
+  });
+
+  expect(mockPath.moveTo).toHaveBeenCalledWith(150, 100);
+  expect(mockPath.cubicTo).toHaveBeenCalledTimes(3);
+  expect(mockPath.cubicTo).toHaveBeenNthCalledWith(
+    1,
+    150,
+    200,
+    150,
+    200,
+    150,
+    200
+  );
+  expect(mockPath.cubicTo).toHaveBeenNthCalledWith(2, 150, 0, 150, 0, 150, 0);
+  expect(mockPath.cubicTo).toHaveBeenNthCalledWith(
+    3,
+    150,
+    100,
+    150,
+    100,
+    150,
+    100
+  );
+});
+
 it('filters different dates from a zero-duration range', () => {
   const date = new Date('2023-01-01');
   const points = [

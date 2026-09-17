@@ -188,13 +188,39 @@ function createGraphPathBase({
     points.push({ x, y });
   };
 
-  const firstPointTime = graphData[0]!.date.getTime();
-  const allPointsShareDate = graphData.every(
-    (point) => point.date.getTime() === firstPointTime
-  );
+  let allPointsShareDate = false;
+  let minValueIndex = 0;
+  let maxValueIndex = 0;
 
-  if (endX === startX && allPointsShareDate) {
-    graphData.forEach((_point, index) => addPoint(index, startX));
+  if (endX === startX) {
+    const firstPointTime = graphData[0]!.date.getTime();
+    let minValue = graphData[0]!.value;
+    let maxValue = minValue;
+    allPointsShareDate = true;
+
+    for (let index = 1; index < graphData.length; index++) {
+      const point = graphData[index]!;
+      if (point.date.getTime() !== firstPointTime) {
+        allPointsShareDate = false;
+        break;
+      }
+
+      if (point.value < minValue) {
+        minValue = point.value;
+        minValueIndex = index;
+      }
+      if (point.value > maxValue) {
+        maxValue = point.value;
+        maxValueIndex = index;
+      }
+    }
+  }
+
+  if (allPointsShareDate) {
+    const indices = [
+      ...new Set([0, minValueIndex, maxValueIndex, graphData.length - 1]),
+    ].sort((a, b) => a - b);
+    indices.forEach((index) => addPoint(index, startX));
   } else {
     for (
       let pixel = startX;
@@ -232,7 +258,15 @@ function createGraphPathBase({
     const point = points[i]!;
 
     // first point needs to start the path
-    if (i === 0) path.moveTo(point.x, point.y);
+    if (i === 0) {
+      path.moveTo(point.x, point.y);
+      continue;
+    }
+
+    if (allPointsShareDate) {
+      path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y);
+      continue;
+    }
 
     const prev = points[i - 1];
     const prevPrev = points[i - 2];
