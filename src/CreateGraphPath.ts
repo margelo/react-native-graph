@@ -87,6 +87,10 @@ export const getXPositionInRange = (
   const diff = xRange.max.getTime() - xRange.min.getTime();
   const x = date.getTime();
 
+  if (diff === 0) {
+    return x === xRange.min.getTime() ? 0.5 : Number.NaN;
+  }
+
   return (x - xRange.min.getTime()) / diff;
 };
 
@@ -174,48 +178,95 @@ function createGraphPathBase({
     return endX;
   };
 
-  for (
-    let pixel = startX;
-    startX <= pixel && pixel <= endX;
-    pixel = getNextPixelValue(pixel)
-  ) {
-    const index = getGraphDataIndex(pixel);
-
-    // Draw first point only on the very first pixel
-    if (index === 0 && pixel !== startX) continue;
-    // Draw last point only on the very last pixel
-
-    if (index === graphData.length - 1 && pixel !== endX) continue;
-
-    if (index !== 0 && index !== graphData.length - 1) {
-      // Only draw point, when the point is exact
-      const exactPointX =
-        getXInRange(drawingWidth, graphData[index]!.date, range.x) +
-        horizontalPadding;
-
-      const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
-        .fill(0)
-        .some((_value, additionalPixel) => {
-          return pixel + additionalPixel === exactPointX;
-        });
-
-      if (!isExactPointInsidePixelRatio) continue;
-    }
-
+  const addPoint = (index: number, x: number) => {
     const value = graphData[index]!.value;
     const y =
       drawingHeight -
       getYInRange(drawingHeight, value, range.y) +
       verticalPadding;
 
-    points.push({ x: pixel, y: y });
+    points.push({ x, y });
+  };
+
+  let allPointsShareDate = false;
+  let minValueIndex = 0;
+  let maxValueIndex = 0;
+
+  if (endX === startX) {
+    const firstPointTime = graphData[0]!.date.getTime();
+    let minValue = graphData[0]!.value;
+    let maxValue = minValue;
+    allPointsShareDate = true;
+
+    for (let index = 1; index < graphData.length; index++) {
+      const point = graphData[index]!;
+      if (point.date.getTime() !== firstPointTime) {
+        allPointsShareDate = false;
+        break;
+      }
+
+      if (point.value < minValue) {
+        minValue = point.value;
+        minValueIndex = index;
+      }
+      if (point.value > maxValue) {
+        maxValue = point.value;
+        maxValueIndex = index;
+      }
+    }
+  }
+
+  if (allPointsShareDate) {
+    const indices = [
+      ...new Set([0, minValueIndex, maxValueIndex, graphData.length - 1]),
+    ].sort((a, b) => a - b);
+    indices.forEach((index) => addPoint(index, startX));
+  } else {
+    for (
+      let pixel = startX;
+      startX <= pixel && pixel <= endX;
+      pixel = getNextPixelValue(pixel)
+    ) {
+      const index = getGraphDataIndex(pixel);
+
+      // Draw first point only on the very first pixel
+      if (index === 0 && pixel !== startX) continue;
+      // Draw last point only on the very last pixel
+
+      if (index === graphData.length - 1 && pixel !== endX) continue;
+
+      if (index !== 0 && index !== graphData.length - 1) {
+        // Only draw point, when the point is exact
+        const exactPointX =
+          getXInRange(drawingWidth, graphData[index]!.date, range.x) +
+          horizontalPadding;
+
+        const isExactPointInsidePixelRatio = Array(PIXEL_RATIO)
+          .fill(0)
+          .some((_value, additionalPixel) => {
+            return pixel + additionalPixel === exactPointX;
+          });
+
+        if (!isExactPointInsidePixelRatio) continue;
+      }
+
+      addPoint(index, pixel);
+    }
   }
 
   for (let i = 0; i < points.length; i++) {
     const point = points[i]!;
 
     // first point needs to start the path
-    if (i === 0) path.moveTo(point.x, point.y);
+    if (i === 0) {
+      path.moveTo(point.x, point.y);
+      continue;
+    }
+
+    if (allPointsShareDate) {
+      path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y);
+      continue;
+    }
 
     const prev = points[i - 1];
     const prevPrev = points[i - 2];
