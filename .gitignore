@@ -51,6 +51,7 @@ example/vendor/
 # node.js
 #
 node_modules/
+.tsbuild/
 npm-debug.log
 bun-debug.log
 bun-error.log
