@@ -25,7 +25,6 @@ import {
   Canvas,
   LinearGradient,
   Path,
-  Skia,
   vec,
   Group,
   mix,
@@ -39,6 +38,7 @@ import { SelectionDot as DefaultSelectionDot } from './SelectionDot';
 import {
   createGraphPath,
   createGraphPathWithGradient,
+  makePathBuilder,
   getGraphPathRange,
   getXInRange,
   getPointsInRange,
@@ -133,15 +133,15 @@ export function AnimatedLineGraph({
   );
 
   const straightLine = useMemo(() => {
-    const path = Skia.Path.Make();
-    path.moveTo(0, height / 2);
+    const builder = makePathBuilder();
+    builder.moveTo(0, height / 2);
     for (let i = 0; i < width - 1; i += 2) {
       const x = i;
       const y = height / 2;
-      path.cubicTo(x, y, x, y, x, y);
+      builder.cubicTo(x, y, x, y, x, y);
     }
 
-    return path;
+    return builder.build();
   }, [height, width]);
 
   const paths = useSharedValue<{ from?: SkPath; to?: SkPath }>({});

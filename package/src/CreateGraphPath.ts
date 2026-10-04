@@ -4,6 +4,46 @@ import type { GraphPoint, GraphRange } from './LineGraphProps';
 
 const PIXEL_RATIO = 2;
 
+interface GraphPathBuilder {
+  moveTo(x: number, y: number): unknown;
+  lineTo(x: number, y: number): unknown;
+  cubicTo(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    x3: number,
+    y3: number
+  ): unknown;
+  build(): SkPath;
+}
+
+// SkPath before Skia v3, where paths are mutated in place.
+type MutableSkPath = SkPath & Omit<GraphPathBuilder, 'build'>;
+
+/**
+ * Creates a path builder, optionally starting from an existing path.
+ *
+ * Skia v3 made SkPath immutable, so paths have to be built with
+ * Skia.PathBuilder. @shopify/react-native-skia before 2.6.0 has no
+ * Skia.PathBuilder, so we fall back to the mutable SkPath API there.
+ */
+export function makePathBuilder(from?: SkPath): GraphPathBuilder {
+  if (Skia.PathBuilder != null) {
+    return from == null
+      ? Skia.PathBuilder.Make()
+      : Skia.PathBuilder.MakeFromPath(from);
+  }
+
+  const path = (from == null ? Skia.Path.Make() : from.copy()) as MutableSkPath;
+  return {
+    moveTo: (x, y) => path.moveTo(x, y),
+    lineTo: (x, y) => path.lineTo(x, y),
+    cubicTo: (x1, y1, x2, y2, x3, y3) => path.cubicTo(x1, y1, x2, y2, x3, y3),
+    build: () => path,
+  };
+}
+
 export interface GraphXRange {
   min: Date;
   max: Date;
@@ -148,14 +188,14 @@ function createGraphPathBase({
 }: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
   | SkPath
   | GraphPathWithGradient {
-  const path = Skia.Path.Make();
+  const builder = makePathBuilder();
 
   // Canvas width substracted by the horizontal padding => Actual drawing width
   const drawingWidth = width - 2 * horizontalPadding;
   // Canvas height substracted by the vertical padding => Actual drawing height
   const drawingHeight = height - 2 * verticalPadding;
 
-  if (graphData[0] == null) return path;
+  if (graphData[0] == null) return builder.build();
 
   const points: SkPoint[] = [];
 
@@ -259,12 +299,12 @@ function createGraphPathBase({
 
     // first point needs to start the path
     if (i === 0) {
-      path.moveTo(point.x, point.y);
+      builder.moveTo(point.x, point.y);
       continue;
     }
 
     if (allPointsShareDate) {
-      path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y);
+      builder.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y);
       continue;
     }
 
@@ -282,19 +322,20 @@ function createGraphPathBase({
     const cp3x = (p0.x + 4 * p1.x + point.x) / 6;
     const cp3y = (p0.y + 4 * p1.y + point.y) / 6;
 
-    path.cubicTo(cp1x, cp1y, cp2x, cp2y, cp3x, cp3y);
+    builder.cubicTo(cp1x, cp1y, cp2x, cp2y, cp3x, cp3y);
 
     if (i === points.length - 1) {
-      path.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y);
+      builder.cubicTo(point.x, point.y, point.x, point.y, point.x, point.y);
     }
   }
 
+  const path = builder.build();
   if (!shouldFillGradient) return path;
 
-  const gradientPath = path.copy();
-
-  gradientPath.lineTo(endX, height + verticalPadding);
-  gradientPath.lineTo(0 + horizontalPadding, height + verticalPadding);
+  const gradientBuilder = makePathBuilder(path);
+  gradientBuilder.lineTo(endX, height + verticalPadding);
+  gradientBuilder.lineTo(0 + horizontalPadding, height + verticalPadding);
+  const gradientPath = gradientBuilder.build();
 
   return { path: path, gradientPath: gradientPath };
 }
