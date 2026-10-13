@@ -117,6 +117,31 @@ it('keeps a large same-date path bounded without losing its value range', () => 
   );
 });
 
+it('copies the line path for the gradient when Skia.PathBuilder is missing', () => {
+  const gradientCopy = { lineTo: jest.fn() };
+  mockPath.copy.mockReturnValueOnce(gradientCopy);
+  const points = [
+    { date: new Date('2024-01-01'), value: 10 },
+    { date: new Date('2024-01-02'), value: 20 },
+  ];
+  const range = getGraphPathRange(points);
+
+  const { path, gradientPath } = createGraphPathWithGradient({
+    pointsInRange: getPointsInRange(points, range),
+    range,
+    horizontalPadding: 0,
+    verticalPadding: 0,
+    canvasHeight: 200,
+    canvasWidth: 300,
+  });
+
+  expect(path).toBe(mockPath);
+  expect(mockPath.lineTo).not.toHaveBeenCalled();
+  expect(gradientPath).toBe(gradientCopy);
+  expect(gradientCopy.lineTo).toHaveBeenNthCalledWith(1, 300, 200);
+  expect(gradientCopy.lineTo).toHaveBeenNthCalledWith(2, 0, 200);
+});
+
 it('filters different dates from a zero-duration range', () => {
   const date = new Date('2023-01-01');
   const points = [
