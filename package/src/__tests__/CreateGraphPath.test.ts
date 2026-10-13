@@ -15,6 +15,7 @@ jest.mock('@shopify/react-native-skia', () => ({
 
 import {
   createGraphPath,
+  createGraphPathWithGradient,
   getGraphPathRange,
   getPointsInRange,
 } from '../CreateGraphPath';
@@ -130,4 +131,138 @@ it('filters different dates from a zero-duration range', () => {
       y: { min: 1, max: 3 },
     })
   ).toEqual([points[1]]);
+});
+
+it('uses date-derived positions for every point when sampling is disabled', () => {
+  const points = [
+    { date: new Date(0), value: 0 },
+    { date: new Date(9), value: 100 },
+    { date: new Date(10), value: 0 },
+  ];
+
+  createGraphPath({
+    pointsInRange: points,
+    range: getGraphPathRange(points),
+    horizontalPadding: 5,
+    verticalPadding: 5,
+    canvasHeight: 210,
+    canvasWidth: 110,
+    checkExactPoints: false,
+  });
+
+  expect(mockPath.moveTo).toHaveBeenCalledWith(5, 205);
+  expect(mockPath.cubicTo).toHaveBeenCalledTimes(3);
+  expect(mockPath.cubicTo).toHaveBeenNthCalledWith(
+    2,
+    35,
+    415 / 3,
+    65,
+    215 / 3,
+    490 / 6,
+    430 / 6
+  );
+  expect(mockPath.cubicTo).toHaveBeenLastCalledWith(
+    105,
+    205,
+    105,
+    205,
+    105,
+    205
+  );
+});
+
+it('preserves a dense spike that the default sampling skips', () => {
+  const points = Array.from({ length: 11 }, (_, index) => ({
+    date: new Date(index),
+    value: index === 1 ? 100 : 0,
+  }));
+  const config = {
+    pointsInRange: points,
+    range: getGraphPathRange(points),
+    horizontalPadding: 0,
+    verticalPadding: 0,
+    canvasHeight: 100,
+    canvasWidth: 4,
+  };
+
+  createGraphPath(config);
+  const defaultCalls = [...mockPath.cubicTo.mock.calls];
+  expect(defaultCalls).toHaveLength(3);
+  expect(
+    defaultCalls.every(
+      (call) => call[1] === 100 && call[3] === 100 && call[5] === 100
+    )
+  ).toBe(true);
+
+  jest.clearAllMocks();
+  createGraphPath({ ...config, checkExactPoints: true });
+  expect(mockPath.cubicTo.mock.calls).toEqual(defaultCalls);
+
+  jest.clearAllMocks();
+  createGraphPath({ ...config, checkExactPoints: false });
+  expect(mockPath.cubicTo).toHaveBeenCalledTimes(points.length);
+  expect(
+    mockPath.cubicTo.mock.calls.some(
+      (call) => call[1] < 100 || call[3] < 100 || call[5] < 100
+    )
+  ).toBe(true);
+});
+
+it('fills the same full-point path when a gradient is requested', () => {
+  const points = [
+    { date: new Date(0), value: 0 },
+    { date: new Date(1), value: 100 },
+    { date: new Date(10), value: 0 },
+  ];
+  const gradientPath = { lineTo: jest.fn() };
+  mockPath.copy.mockReturnValue(gradientPath);
+  const config = {
+    pointsInRange: points,
+    range: getGraphPathRange(points),
+    horizontalPadding: 5,
+    verticalPadding: 5,
+    canvasHeight: 210,
+    canvasWidth: 110,
+    checkExactPoints: false,
+  };
+
+  createGraphPath(config);
+  const lineCalls = [...mockPath.cubicTo.mock.calls];
+  jest.clearAllMocks();
+
+  const result = createGraphPathWithGradient(config);
+  expect(result).toEqual({ path: mockPath, gradientPath });
+  expect(mockPath.cubicTo.mock.calls).toEqual(lineCalls);
+  expect(mockPath.copy).toHaveBeenCalledTimes(1);
+  expect(gradientPath.lineTo).toHaveBeenNthCalledWith(1, 105, 215);
+  expect(gradientPath.lineTo).toHaveBeenNthCalledWith(2, 5, 215);
+});
+
+it('uses every same-date point only when sampling is explicitly disabled', () => {
+  const points = Array.from({ length: 20 }, (_, index) => ({
+    date: new Date(0),
+    value: index % 3,
+  }));
+
+  createGraphPath({
+    pointsInRange: points,
+    range: getGraphPathRange(points),
+    horizontalPadding: 0,
+    verticalPadding: 0,
+    canvasHeight: 100,
+    canvasWidth: 100,
+    checkExactPoints: false,
+  });
+
+  expect(mockPath.moveTo).toHaveBeenCalledWith(50, 100);
+  expect(mockPath.cubicTo).toHaveBeenCalledTimes(points.length - 1);
+  expect(
+    mockPath.cubicTo.mock.calls.every(
+      (call) =>
+        call[0] === 50 &&
+        call[2] === 50 &&
+        call[4] === 50 &&
+        call.every(Number.isFinite)
+    )
+  ).toBe(true);
 });

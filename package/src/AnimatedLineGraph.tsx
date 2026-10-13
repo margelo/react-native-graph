@@ -48,6 +48,7 @@ import { getSixDigitHex } from './utils/getSixDigitHex';
 import { usePanGesture } from './hooks/usePanGesture';
 import { getYForX } from './GetYForX';
 import { hexToRgba } from './utils/hexToRgba';
+import { getClosestPointIndex } from './utils/getClosestPointIndex';
 
 const INDICATOR_RADIUS = 7;
 const INDICATOR_BORDER_MULTIPLIER = 1.3;
@@ -77,6 +78,7 @@ export function AnimatedLineGraph({
   verticalPadding = lineThickness,
   TopAxisLabel,
   BottomAxisLabel,
+  checkExactPoints = true,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0);
@@ -204,6 +206,7 @@ export function AnimatedLineGraph({
       verticalPadding,
       canvasHeight: height,
       canvasWidth: width,
+      checkExactPoints,
     };
 
     if (shouldFillGradient) {
@@ -269,6 +272,7 @@ export function AnimatedLineGraph({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    checkExactPoints,
     height,
     horizontalPadding,
     interpolateProgress,
@@ -349,15 +353,25 @@ export function AnimatedLineGraph({
     (fingerX: number) => {
       const fingerXInRange = Math.max(fingerX - horizontalPadding, 0);
 
-      const index = Math.round(
-        (fingerXInRange /
-          getXInRange(
-            drawingWidth,
-            pointsInRange[pointsInRange.length - 1]!.date,
-            pathRange.x
-          )) *
-          (pointsInRange.length - 1)
-      );
+      if (!checkExactPoints && drawingWidth <= 0) return;
+
+      const index = checkExactPoints
+        ? Math.round(
+            (fingerXInRange /
+              getXInRange(
+                drawingWidth,
+                pointsInRange[pointsInRange.length - 1]!.date,
+                pathRange.x
+              )) *
+              (pointsInRange.length - 1)
+          )
+        : getClosestPointIndex(
+            pointsInRange,
+            pathRange.x.min.getTime() +
+              (fingerXInRange / drawingWidth) *
+                (pathRange.x.max.getTime() - pathRange.x.min.getTime())
+          );
+      if (index == null) return;
       const pointIndex = Math.min(Math.max(index, 0), pointsInRange.length - 1);
 
       if (pointSelectedIndex.current !== pointIndex) {
@@ -370,6 +384,7 @@ export function AnimatedLineGraph({
       }
     },
     [
+      checkExactPoints,
       drawingWidth,
       horizontalPadding,
       isActive,
@@ -434,7 +449,7 @@ export function AnimatedLineGraph({
         runOnJS(setFingerPoint)(fingerX);
       }
     },
-    [isActive, setFingerX, width, x]
+    [isActive, setFingerX, setFingerPoint, width, x]
   );
 
   useAnimatedReaction(

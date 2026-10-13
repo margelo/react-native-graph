@@ -47,6 +47,13 @@ interface BaseLineGraphProps extends ViewProps {
    * Enable the Fade-In Gradient Effect at the beginning of the Graph
    */
   enableFadeInMask?: boolean;
+  /**
+   * Sample points to limit path density. Set to false to use every point at its
+   * date-derived horizontal position. Large datasets create larger paths.
+   *
+   * @default true
+   */
+  checkExactPoints?: boolean;
 }
 
 export type StaticLineGraphProps = BaseLineGraphProps & {

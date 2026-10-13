@@ -44,6 +44,8 @@ type GraphPathConfig = {
    * Range of the graph's x and y-axis
    */
   range: GraphPathRange;
+  /** Sample points by default. Set to false to use every point. */
+  checkExactPoints?: boolean;
 };
 
 type GraphPathConfigWithGradient = GraphPathConfig & {
@@ -145,6 +147,7 @@ function createGraphPathBase({
   canvasHeight: height,
   canvasWidth: width,
   shouldFillGradient,
+  checkExactPoints = true,
 }: GraphPathConfigWithGradient | GraphPathConfigWithoutGradient):
   | SkPath
   | GraphPathWithGradient {
@@ -216,7 +219,14 @@ function createGraphPathBase({
     }
   }
 
-  if (allPointsShareDate) {
+  if (!checkExactPoints) {
+    graphData.forEach((point, index) =>
+      addPoint(
+        index,
+        getXInRange(drawingWidth, point.date, range.x) + horizontalPadding
+      )
+    );
+  } else if (allPointsShareDate) {
     const indices = [
       ...new Set([0, minValueIndex, maxValueIndex, graphData.length - 1]),
     ].sort((a, b) => a - b);

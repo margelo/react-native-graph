@@ -22,6 +22,7 @@ export function GraphPage() {
   const colors = useColors();
 
   const [isAnimated, setIsAnimated] = useState(true);
+  const [drawEveryPoint, setDrawEveryPoint] = useState(false);
   const [enablePanGesture, setEnablePanGesture] = useState(true);
   const [enableFadeInEffect, setEnableFadeInEffect] = useState(false);
   const [enableCustomSelectionDot, setEnableCustomSelectionDot] =
@@ -91,6 +92,7 @@ export function GraphPage() {
         animated={isAnimated}
         color={COLOR}
         points={points}
+        checkExactPoints={!drawEveryPoint}
         gradientFillColors={enableGradient ? GRADIENT_FILL_COLORS : undefined}
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
@@ -112,6 +114,11 @@ export function GraphPage() {
           title="Animated:"
           isEnabled={isAnimated}
           setIsEnabled={setIsAnimated}
+        />
+        <Toggle
+          title="Draw every point:"
+          isEnabled={drawEveryPoint}
+          setIsEnabled={setDrawEveryPoint}
         />
         <Toggle
           title="Enable Gesture:"
