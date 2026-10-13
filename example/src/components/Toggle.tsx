@@ -1,16 +1,15 @@
-import SegmentedControl from '@react-native-segmented-control/segmented-control'
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { useColors } from '../hooks/useColors'
+import SegmentedControl from '@react-native-segmented-control/segmented-control';
+import { StyleSheet, Text, View } from 'react-native';
+import { useColors } from '../hooks/useColors';
 
 interface Props {
-  title: string
-  isEnabled: boolean
-  setIsEnabled: (isEnabled: boolean) => void
+  title: string;
+  isEnabled: boolean;
+  setIsEnabled: (isEnabled: boolean) => void;
 }
 
 export function Toggle({ title, isEnabled, setIsEnabled }: Props) {
-  const colors = useColors()
+  const colors = useColors();
 
   return (
     <View style={styles.row}>
@@ -27,7 +26,7 @@ export function Toggle({ title, isEnabled, setIsEnabled }: Props) {
         onValueChange={(v) => setIsEnabled(v === 'yes')}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -47,4 +46,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: 140,
   },
-})
+});

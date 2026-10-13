@@ -1,0 +1,58 @@
+import { useMemo } from 'react';
+import { Gesture } from 'react-native-gesture-handler';
+import type { PanGesture } from 'react-native-gesture-handler';
+import { useSharedValue } from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
+
+interface Config {
+  enabled: boolean;
+  holdDuration: number;
+}
+
+interface Result {
+  x: SharedValue<number>;
+  y: SharedValue<number>;
+  isActive: SharedValue<boolean>;
+  gesture: PanGesture;
+}
+
+export function usePanGesture({ enabled, holdDuration = 300 }: Config): Result {
+  const x = useSharedValue(0);
+  const y = useSharedValue(0);
+  const isPanGestureActive = useSharedValue(false);
+
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .enabled(enabled)
+        .activateAfterLongPress(holdDuration)
+        .onChange((e) => {
+          x.value = e.x;
+          y.value = e.y;
+        })
+        .onStart(() => {
+          isPanGestureActive.value = true;
+        })
+        .onEnd(() => {
+          isPanGestureActive.value = false;
+        })
+        // `onEnd` does not fire when the gesture is cancelled or interrupted
+        // (e.g. a parent ScrollView/FlatList takes over the pan). `onFinalize`
+        // always runs, so reset here too — otherwise `isActive` stays `true` and
+        // the selection dot / scrub stays stuck visible after the finger lifts.
+        .onFinalize(() => {
+          isPanGestureActive.value = false;
+        }),
+    [enabled, holdDuration, isPanGestureActive, x, y]
+  );
+
+  return useMemo(
+    () => ({
+      gesture: panGesture,
+      isActive: isPanGestureActive,
+      x: x,
+      y: y,
+    }),
+    [isPanGestureActive, panGesture, x, y]
+  );
+}

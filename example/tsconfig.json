@@ -1,15 +1,14 @@
 {
-  "extends": "../tsconfig",
+  "extends": "../tsconfig.base.json",
+  "include": ["src"],
+  "references": [{ "path": "../package" }],
   "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "tsBuildInfoFile": "../.tsbuild/example/tsconfig.tsbuildinfo",
     "paths": {
-      "react-native-graph": ["../src/index"]
+      "react-native-graph": ["../package/src/index"]
     },
-  },
-  "include": [
-    "src",
-    "index.js"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "types": ["node"]
+  }
 }
